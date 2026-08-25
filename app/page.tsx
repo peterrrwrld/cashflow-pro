@@ -6,7 +6,8 @@ import {
   AlertTriangle, Sparkles, Plus, Download, Search, ShieldCheck, 
   Layers, PieChart as PieIcon, Printer, Trash2, Building2, 
   Wallet, BarChart3, Target, Receipt, ShoppingCart, MessageCircle, 
-  Scale, Edit3, CheckCircle2, X
+  Scale, Edit3, CheckCircle2, QrCode, ArrowLeftRight, Bell, User,
+  FileText, Home, ArrowUpRight, ArrowDownRight, ChevronRight
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,7 +35,6 @@ interface Product {
   sellPrice: number;
   stock: number;
   minStock: number;
-  image?: string;
   isActive: boolean;
 }
 
@@ -153,7 +153,7 @@ const DEFAULT_BUDGETS: CategoryBudget[] = [
   { category: "Operasional Lain", allocated: 500000 },
 ];
 
-export default function CashFlowProEmeraldGlass() {
+export default function CashFlowProBankingUI() {
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "sales" | "products" | "expenses" | "debts" | "capital" | "reports" | "budget" | "analytics" | "ai"
   >("dashboard");
@@ -170,9 +170,9 @@ export default function CashFlowProEmeraldGlass() {
   const [categoryBudgets, setCategoryBudgets] = useState<CategoryBudget[]>(DEFAULT_BUDGETS);
 
   const [targetRevenue] = useState(30000000);
-  const [targetProfit] = useState(12000000);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Modals
   const [showAddSaleModal, setShowAddSaleModal] = useState(false);
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
@@ -181,12 +181,14 @@ export default function CashFlowProEmeraldGlass() {
   const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [activeReceiptSale, setActiveReceiptSale] = useState<SaleTransaction | null>(null);
 
+  // POS State
   const [cart, setCart] = useState<CartItem[]>([]);
   const [posDiscount, setPosDiscount] = useState<number>(0);
   const [posPaymentMethod, setPosPaymentMethod] = useState<PaymentMethod>("QRIS");
   const [posCashPaid, setPosCashPaid] = useState<string>("");
   const [posNotes, setPosNotes] = useState<string>("");
 
+  // Forms
   const [expCategory, setExpCategory] = useState<ExpenseCategory>("Bahan Baku");
   const [expAmount, setExpAmount] = useState("");
   const [expNotes, setExpNotes] = useState("");
@@ -217,12 +219,12 @@ export default function CashFlowProEmeraldGlass() {
 
   useEffect(() => {
     setIsClient(true);
-    const p = localStorage.getItem("cfp_dark_products_v4");
-    const s = localStorage.getItem("cfp_dark_sales_v4");
-    const e = localStorage.getItem("cfp_dark_expenses_v4");
-    const d = localStorage.getItem("cfp_dark_debts_v4");
-    const c = localStorage.getItem("cfp_dark_capital_v4");
-    const b = localStorage.getItem("cfp_dark_budgets_v4");
+    const p = localStorage.getItem("cfp_bank_products_v5");
+    const s = localStorage.getItem("cfp_bank_sales_v5");
+    const e = localStorage.getItem("cfp_bank_expenses_v5");
+    const d = localStorage.getItem("cfp_bank_debts_v5");
+    const c = localStorage.getItem("cfp_bank_capital_v5");
+    const b = localStorage.getItem("cfp_bank_budgets_v5");
 
     if (p) setProducts(JSON.parse(p));
     if (s) setSales(JSON.parse(s));
@@ -234,12 +236,12 @@ export default function CashFlowProEmeraldGlass() {
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("cfp_dark_products_v4", JSON.stringify(products));
-      localStorage.setItem("cfp_dark_sales_v4", JSON.stringify(sales));
-      localStorage.setItem("cfp_dark_expenses_v4", JSON.stringify(expenses));
-      localStorage.setItem("cfp_dark_debts_v4", JSON.stringify(debts));
-      localStorage.setItem("cfp_dark_capital_v4", JSON.stringify(capitalLogs));
-      localStorage.setItem("cfp_dark_budgets_v4", JSON.stringify(categoryBudgets));
+      localStorage.setItem("cfp_bank_products_v5", JSON.stringify(products));
+      localStorage.setItem("cfp_bank_sales_v5", JSON.stringify(sales));
+      localStorage.setItem("cfp_bank_expenses_v5", JSON.stringify(expenses));
+      localStorage.setItem("cfp_bank_debts_v5", JSON.stringify(debts));
+      localStorage.setItem("cfp_bank_capital_v5", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_bank_budgets_v5", JSON.stringify(categoryBudgets));
     }
   }, [products, sales, expenses, debts, capitalLogs, categoryBudgets, isClient]);
 
@@ -300,7 +302,7 @@ export default function CashFlowProEmeraldGlass() {
       }
       return [...prev, { productId: product.id, name: product.name, price: product.sellPrice, costPrice: product.costPrice, qty: 1 }];
     });
-    toast.success(`${product.name} masuk keranjang`);
+    toast.success(`${product.name} dimasukkan`);
   };
 
   const updateCartQty = (productId: string, newQty: number) => {
@@ -323,11 +325,11 @@ export default function CashFlowProEmeraldGlass() {
   const handleCheckoutPOS = (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) {
-      toast.error("Keranjang kosong");
+      toast.error("Pilih produk terlebih dahulu");
       return;
     }
     if (posPaymentMethod === "Cash" && (Number(posCashPaid) < cartTotal)) {
-      toast.error("Uang dibayarkan kurang");
+      toast.error("Uang yang dibayarkan kurang");
       return;
     }
 
@@ -376,7 +378,7 @@ export default function CashFlowProEmeraldGlass() {
     setShowAddExpenseModal(false);
     setExpAmount("");
     setExpNotes("");
-    toast.success("Beban Berhasil Dicatat");
+    toast.success("Pengeluaran Disimpan");
   };
 
   const handleAddProduct = (e: React.FormEvent) => {
@@ -423,7 +425,7 @@ export default function CashFlowProEmeraldGlass() {
     setDebtAmount("");
     setDebtDueDate("");
     setDebtNotes("");
-    toast.success("Tagihan Berhasil Dicatat");
+    toast.success("Tagihan Dicatat");
   };
 
   const handleToggleDebtSettled = (id: string) => {
@@ -445,7 +447,7 @@ export default function CashFlowProEmeraldGlass() {
     setShowCapitalModal(false);
     setCapAmount("");
     setCapNotes("");
-    toast.success("Mutasi Modal Berhasil Dicatat");
+    toast.success("Mutasi Modal Disimpan");
   };
 
   const handleSaveBudget = (e: React.FormEvent) => {
@@ -482,654 +484,431 @@ export default function CashFlowProEmeraldGlass() {
   };
 
   return (
-    <div className="flex h-screen bg-[#030d07] text-emerald-50 font-sans antialiased overflow-hidden pb-16 lg:pb-0 relative selection:bg-emerald-500 selection:text-black">
+    <div className="flex justify-center min-h-screen bg-[#edf5fc] text-slate-800 font-sans antialiased selection:bg-sky-200">
       
-      {/* Pendaran Cahaya Hijau / Emerald Glow Radial Background */}
-      <div className="fixed -top-32 -left-32 w-[520px] h-[520px] rounded-full bg-emerald-500/20 blur-[130px] pointer-events-none z-0" />
-      <div className="fixed top-1/4 right-0 w-[460px] h-[460px] rounded-full bg-green-400/15 blur-[120px] pointer-events-none z-0" />
-      <div className="fixed -bottom-40 left-1/3 w-[600px] h-[600px] rounded-full bg-teal-500/20 blur-[140px] pointer-events-none z-0" />
-      <div className="fixed top-2/3 -left-20 w-[380px] h-[380px] rounded-full bg-emerald-600/15 blur-[100px] pointer-events-none z-0" />
-
-      {/* ================= DARK EMERALD GLASS SIDEBAR ================= */}
-      <aside className="w-64 bg-[#06180e]/60 backdrop-blur-3xl border-r border-emerald-500/20 shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] flex flex-col justify-between hidden lg:flex relative z-10">
-        <div>
-          {/* Brand */}
-          <div className="p-5 border-b border-emerald-500/15 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center font-black text-xs text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+      {/* Container Layar Handphone / Tablet (BCA Mobile Style Frame) */}
+      <div className="w-full max-w-md bg-[#f4f9fd] min-h-screen flex flex-col justify-between shadow-[0_20px_60px_rgba(0,100,200,0.12)] relative border-x border-sky-100 overflow-x-hidden pb-24">
+        
+        {/* ================= BLUE BANKING HEADER ================= */}
+        <div className="bg-gradient-to-b from-[#0060af] via-[#0077d6] to-[#0091ff] text-white p-5 pt-8 rounded-b-[2.5rem] shadow-[0_12px_30px_rgba(0,110,220,0.25)] relative">
+          
+          {/* Top Bar: Logo & Avatar */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-xs text-white border border-white/30 shadow-inner">
                 CF
               </div>
-              <span className="font-extrabold text-sm tracking-tight text-white">
-                CashFlow<span className="text-emerald-400">Pro</span>
-              </span>
+              <div>
+                <span className="font-extrabold text-sm tracking-tight text-white block leading-none">
+                  CashFlow<span className="text-sky-200 font-light">mobile</span>
+                </span>
+                <span className="text-[9px] text-sky-100 font-medium">Kopi Senja Nusantara</span>
+              </div>
             </div>
-            <span className="text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold px-2 py-0.5 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.2)]">
-              Glass
-            </span>
+
+            {/* Profile Peter */}
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/25">
+              <div className="h-6 w-6 rounded-full bg-sky-200 text-[#0060af] font-black text-[10px] flex items-center justify-center shadow-xs">
+                P
+              </div>
+              <div className="text-left">
+                <p className="text-[11px] font-bold leading-none">Peter</p>
+                <p className="text-[8px] text-sky-200 uppercase font-semibold">Owner</p>
+              </div>
+            </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="p-3 space-y-1 text-xs font-medium">
-            <div className="text-[10px] font-extrabold text-emerald-400/50 uppercase tracking-wider px-2 py-1">Menu Utama</div>
-            {[
-              { id: "dashboard", label: "Dashboard Ringkasan", icon: PieIcon },
-              { id: "sales", label: "Kasir POS", icon: ShoppingCart },
-              { id: "products", label: "Inventori Stok", icon: Package },
-              { id: "expenses", label: "Pengeluaran", icon: TrendingDown },
-              { id: "debts", label: "Hutang & Piutang", icon: CreditCard },
-              { id: "capital", label: "Modal & Ekuitas", icon: Wallet },
-            ].map(item => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id as any)}
-                  className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl transition text-left ${
-                    isActive 
-                      ? "bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-400/40 shadow-[0_0_25px_rgba(16,185,129,0.25)] backdrop-blur-md" 
-                      : "text-emerald-100/60 hover:bg-emerald-500/10 hover:text-emerald-200"
-                  }`}
-                >
-                  <Icon className={`h-4 w-4 ${isActive ? "text-emerald-300" : "text-emerald-500/60"}`} />
-                  {item.label}
-                </button>
-              );
-            })}
+          {/* Saldo Aktif Banner */}
+          <div className="mb-4">
+            <span className="text-[11px] text-sky-100 font-medium block">Sisa Kas Toko (Saldo Aktif):</span>
+            <h2 className="text-2xl font-black tracking-tight text-white mt-0.5">
+              {formatIDR(cashOnHand)}
+            </h2>
+          </div>
 
-            <div className="text-[10px] font-extrabold text-emerald-400/50 uppercase tracking-wider px-2 pt-3 py-1">Laporan & Strategi</div>
-            {[
-              { id: "reports", label: "Laporan 3-in-1", icon: Layers },
-              { id: "budget", label: "Target & Anggaran", icon: Target },
-              { id: "analytics", label: "Analisis BEP", icon: BarChart3 },
-              { id: "ai", label: "AI Financial Advisor", icon: Sparkles },
-            ].map(item => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id as any)}
-                  className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl transition text-left ${
-                    isActive 
-                      ? "bg-emerald-500/20 text-emerald-300 font-extrabold border border-emerald-400/40 shadow-[0_0_25px_rgba(16,185,129,0.25)] backdrop-blur-md" 
-                      : "text-emerald-100/60 hover:bg-emerald-500/10 hover:text-emerald-200"
-                  }`}
-                >
-                  <Icon className={`h-4 w-4 ${isActive ? "text-emerald-300" : "text-emerald-500/60"}`} />
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
+          {/* ================= VIRTUAL PASPOR PLATINUM CARD ================= */}
+          <div className="bg-gradient-to-br from-white/95 via-sky-50/90 to-white/90 backdrop-blur-xl text-slate-800 p-4 rounded-2xl shadow-[0_10px_25px_rgba(0,60,150,0.18)] border border-white relative overflow-hidden">
+            {/* Card Chip & Network */}
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <span className="text-[10px] font-extrabold text-[#0060af] uppercase tracking-wider block">Paspor Platinum Bisnis</span>
+                <span className="text-[9px] text-slate-400 font-medium">Debit & Cash Card</span>
+              </div>
+              {/* Gold Chip Icon */}
+              <div className="h-6 w-8 rounded bg-gradient-to-tr from-amber-400 via-yellow-300 to-amber-500 border border-amber-600/30 shadow-xs flex items-center justify-center">
+                <div className="w-5 h-3 border border-amber-700/40 rounded-xs grid grid-cols-2 gap-0.5 opacity-60" />
+              </div>
+            </div>
+
+            {/* Card Number & Info */}
+            <div className="space-y-1">
+              <p className="font-mono text-sm font-black tracking-widest text-slate-700">
+                5412 •••• •••• 2026
+              </p>
+              <div className="flex justify-between items-end pt-1">
+                <div>
+                  <span className="text-[8px] text-slate-400 uppercase font-bold block">Pemilik Rekening</span>
+                  <span className="text-xs font-black text-slate-800">PETER</span>
+                </div>
+                {/* Mastercard Dual Circle Logo */}
+                <div className="flex -space-x-2">
+                  <div className="h-5 w-5 rounded-full bg-rose-500/90 shadow-2xs" />
+                  <div className="h-5 w-5 rounded-full bg-amber-400/90 shadow-2xs" />
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
-        {/* User Card - Peter */}
-        <div className="p-3 border-t border-emerald-500/15 bg-black/30">
-          <div className="flex items-center gap-2.5 p-2.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/20 shadow-inner">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 text-black font-black text-xs flex items-center justify-center shadow-[0_0_12px_rgba(16,185,129,0.5)]">
-              P
-            </div>
-            <div className="flex-1 truncate">
-              <p className="text-xs font-bold text-white truncate">Peter</p>
-              <p className="text-[10px] text-emerald-400 font-semibold">Owner • Aktif</p>
-            </div>
-          </div>
-        </div>
-      </aside>
+        {/* ================= MAIN INTERACTIVE BODY ================= */}
+        <div className="p-4 space-y-4">
 
-      {/* ================= DARK EMERALD VIEWPORT ================= */}
-      <div className="flex-1 flex flex-col overflow-y-auto relative z-10">
-        
-        {/* Top Navbar */}
-        <header className="bg-[#06180e]/50 backdrop-blur-2xl border-b border-emerald-500/15 px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
-          <div>
-            <h1 className="text-sm font-black text-white tracking-tight">
-              {activeTab === "dashboard" && "Dashboard Eksekutif"}
-              {activeTab === "sales" && "Point of Sale (Kasir)"}
-              {activeTab === "products" && "Katalog Persediaan & Stok"}
-              {activeTab === "expenses" && "Pencatatan Beban Pengeluaran"}
-              {activeTab === "debts" && "Buku Hutang & Piutang"}
-              {activeTab === "capital" && "Modal & Struktur Ekuitas"}
-              {activeTab === "reports" && "Laporan Keuangan Resmi (Laba Rugi, Neraca, Arus Kas)"}
-              {activeTab === "budget" && "Target & Pengawasan Anggaran"}
-              {activeTab === "analytics" && "Analisis Break Even Point & Margin"}
-              {activeTab === "ai" && "AI Financial Advisor"}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowAddExpenseModal(true)}
-              className="text-xs font-bold text-rose-300 hover:text-rose-200 bg-rose-950/40 hover:bg-rose-900/50 border border-rose-500/30 px-3.5 py-1.5 rounded-xl transition active:scale-95 shadow-[0_0_15px_rgba(244,63,94,0.15)]"
-            >
-              + Catat Beban
-            </button>
-            <button
-              onClick={() => setShowAddSaleModal(true)}
-              className="text-xs font-black bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500 hover:from-emerald-400 hover:to-teal-300 text-black shadow-[0_0_20px_rgba(16,185,129,0.4)] border border-emerald-300/40 px-4 py-1.5 rounded-xl transition active:scale-95"
-            >
-              + Buka Kasir POS
-            </button>
-          </div>
-        </header>
-
-        {/* Content Body */}
-        <main className="p-4 sm:p-6 max-w-6xl w-full mx-auto space-y-5">
-
-          {/* ================= 1. DARK EMERALD DASHBOARD ================= */}
+          {/* ================= 1. DASHBOARD VIEW ================= */}
           {activeTab === "dashboard" && (
             <>
-              {/* Stat Grid */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] flex flex-col justify-between hover:border-emerald-400/40 transition duration-300">
-                  <div className="flex justify-between items-center text-emerald-200/70 mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400">Total Omzet</span>
-                    <span className="p-2 bg-emerald-500/15 rounded-xl text-emerald-300 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.3)]"><DollarSign className="h-3.5 w-3.5" /></span>
-                  </div>
-                  <h3 className="text-2xl font-black text-white tracking-tight">{formatIDR(totalRevenue)}</h3>
-                  <span className="text-[10px] text-emerald-400 font-bold mt-1">Realisasi Penjualan</span>
+              {/* Ringkasan 4 Kartu Mini Finansial */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">Omzet Masuk</span>
+                  <p className="text-sm font-black text-slate-900 mt-0.5">{formatIDR(totalRevenue)}</p>
+                  <span className="text-[8px] text-emerald-600 font-bold flex items-center gap-0.5 mt-0.5">
+                    <ArrowUpRight className="h-2.5 w-2.5" /> Penjualan
+                  </span>
                 </div>
 
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] flex flex-col justify-between hover:border-rose-400/40 transition duration-300">
-                  <div className="flex justify-between items-center text-rose-300/80 mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-rose-400">Total Beban</span>
-                    <span className="p-2 bg-rose-500/15 rounded-xl text-rose-300 border border-rose-500/30 shadow-[0_0_12px_rgba(244,63,94,0.3)]"><TrendingDown className="h-3.5 w-3.5" /></span>
-                  </div>
-                  <h3 className="text-2xl font-black text-rose-400 tracking-tight">{formatIDR(totalExpenses)}</h3>
-                  <span className="text-[10px] text-emerald-100/50 font-semibold mt-1">{expenses.length} transaksi beban</span>
+                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">Beban Keluar</span>
+                  <p className="text-sm font-black text-rose-600 mt-0.5">{formatIDR(totalExpenses)}</p>
+                  <span className="text-[8px] text-rose-500 font-bold flex items-center gap-0.5 mt-0.5">
+                    <ArrowDownRight className="h-2.5 w-2.5" /> Biaya Toko
+                  </span>
                 </div>
 
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] flex flex-col justify-between hover:border-emerald-400/40 transition duration-300">
-                  <div className="flex justify-between items-center text-emerald-200/70 mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-teal-400">Laba Bersih</span>
-                    <span className="p-2 bg-teal-500/15 rounded-xl text-teal-300 border border-teal-500/30 shadow-[0_0_12px_rgba(20,184,166,0.3)]"><TrendingUp className="h-3.5 w-3.5" /></span>
-                  </div>
-                  <h3 className={`text-2xl font-black tracking-tight ${netProfit >= 0 ? "text-emerald-300" : "text-rose-400"}`}>
+                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">Laba Bersih</span>
+                  <p className={`text-sm font-black mt-0.5 ${netProfit >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                     {formatIDR(netProfit)}
-                  </h3>
-                  <span className="text-[10px] text-teal-300 font-bold mt-1">Margin: {profitMarginPercent}%</span>
+                  </p>
+                  <span className="text-[8px] text-[#0060af] font-bold">Margin: {profitMarginPercent}%</span>
                 </div>
 
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] flex flex-col justify-between hover:border-emerald-400/40 transition duration-300">
-                  <div className="flex justify-between items-center text-emerald-200/70 mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-400">Kas & ROI</span>
-                    <span className="p-2 bg-emerald-500/15 rounded-xl text-emerald-300 border border-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.3)]"><ShieldCheck className="h-3.5 w-3.5" /></span>
-                  </div>
-                  <h3 className="text-2xl font-black text-white tracking-tight">{formatIDR(cashOnHand)}</h3>
-                  <span className="text-[10px] text-emerald-400 font-black mt-1">ROI: +{roiPercentage}%</span>
+                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase">ROI Modal</span>
+                  <p className="text-sm font-black text-[#0060af] mt-0.5">+{roiPercentage}%</p>
+                  <span className="text-[8px] text-emerald-600 font-bold">Status Sehat</span>
                 </div>
               </div>
 
-              {/* Cards Summary */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Indikator Finansial */}
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-6 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-3.5">
-                  <div className="flex justify-between items-center border-b border-emerald-500/15 pb-2.5">
-                    <span className="text-xs font-black text-white">Rincian Posisi Keuangan</span>
-                    <span className="text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold px-2.5 py-0.5 rounded-full">Real-Time</span>
-                  </div>
-                  <div className="space-y-2.5 text-xs font-medium text-emerald-100/70">
-                    <div className="flex justify-between">
-                      <span>Harga Pokok Penjualan (HPP):</span>
-                      <span className="font-bold text-white">{formatIDR(totalCOGS)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Nilai Persediaan Stok Toko:</span>
-                      <span className="font-bold text-white">{formatIDR(inventoryValue)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Piutang Pelanggan:</span>
-                      <span className="font-black text-amber-400">{formatIDR(totalReceivables)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Hutang Dagang Supplier:</span>
-                      <span className="font-black text-rose-400">{formatIDR(totalPayables)}</span>
-                    </div>
-                  </div>
+              {/* Grid 8 Menu Ikon Kasir & Finansial (BCA Grid Style) */}
+              <div className="bg-white p-4 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3">
+                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                  <span className="text-xs font-black text-[#0060af]">Layanan Finansial Peter</span>
+                  <span className="text-[9px] bg-sky-50 text-[#0060af] font-bold px-2 py-0.5 rounded-full">Menu Utama</span>
                 </div>
 
-                {/* Progress Target */}
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-6 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-3.5 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-center border-b border-emerald-500/15 pb-2.5 mb-3">
-                      <span className="text-xs font-black text-white">Target Omzet Bulanan</span>
-                      <span className="text-xs font-black text-emerald-400">{((totalRevenue / targetRevenue) * 100).toFixed(0)}% Tercapai</span>
+                <div className="grid grid-cols-4 gap-2.5 text-center">
+                  <button onClick={() => setShowAddSaleModal(true)} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-[#0060af] to-sky-400 text-white flex items-center justify-center shadow-md shadow-sky-500/30">
+                      <ShoppingCart className="h-5 w-5" />
                     </div>
-                    <div className="w-full bg-emerald-950/60 h-3 rounded-full overflow-hidden mb-2.5 border border-emerald-500/30">
-                      <div className="bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 h-full transition-all duration-500 shadow-[0_0_15px_rgba(16,185,129,0.7)]" style={{ width: `${Math.min((totalRevenue / targetRevenue) * 100, 100)}%` }} />
-                    </div>
-                    <div className="flex justify-between text-[11px] text-emerald-200/60 font-bold">
-                      <span>Realisasi: {formatIDR(totalRevenue)}</span>
-                      <span>Target: {formatIDR(targetRevenue)}</span>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-emerald-950/50 border border-emerald-500/30 rounded-2xl text-[11px] text-emerald-200 font-medium">
-                    💡 <strong>Status Peter:</strong> Usaha berada dalam zona profit sehat di atas titik impas (BEP).
-                  </div>
-                </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Kasir</span>
+                  </button>
 
+                  <button onClick={() => setActiveTab("products")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-teal-400 text-white flex items-center justify-center shadow-md shadow-teal-500/30">
+                      <Package className="h-5 w-5" />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Produk</span>
+                  </button>
+
+                  <button onClick={() => setShowAddExpenseModal(true)} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-400 text-white flex items-center justify-center shadow-md shadow-rose-500/30">
+                      <TrendingDown className="h-5 w-5" />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Beban</span>
+                  </button>
+
+                  <button onClick={() => setActiveTab("debts")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center shadow-md shadow-amber-500/30">
+                      <CreditCard className="h-5 w-5" />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Tagihan</span>
+                  </button>
+
+                  <button onClick={() => setShowCapitalModal(true)} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-500/30">
+                      <Wallet className="h-5 w-5" />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Modal</span>
+                  </button>
+
+                  <button onClick={() => setActiveTab("reports")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-md shadow-blue-500/30">
+                      <Layers className="h-5 w-5" />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Laporan</span>
+                  </button>
+
+                  <button onClick={() => setActiveTab("budget")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/30">
+                      <Target className="h-5 w-5" />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Target</span>
+                  </button>
+
+                  <button onClick={() => setActiveTab("ai")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-500/30">
+                      <Sparkles className="h-5 w-5" />
+                    </div>
+                    <span className="text-[9px] font-bold text-slate-700">m-Advisor</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Transaction Table */}
-              <div className="bg-[#071c11]/65 backdrop-blur-2xl rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] overflow-hidden">
-                <div className="p-4 border-b border-emerald-500/15 flex justify-between items-center">
-                  <span className="text-xs font-black text-white">Transaksi Penjualan Terbaru</span>
-                  <button onClick={() => setActiveTab("sales")} className="text-xs font-bold text-emerald-400 hover:text-emerald-300">Lihat Semua &rarr;</button>
+              {/* Mutasi Transaksi Terakhir (Daftar Transfer / Riwayat POS) */}
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] overflow-hidden">
+                <div className="p-3.5 border-b border-slate-100 flex justify-between items-center">
+                  <span className="text-xs font-black text-[#0060af]">Riwayat Mutasi Penjualan</span>
+                  <button onClick={() => setActiveTab("sales")} className="text-[10px] font-bold text-[#0060af]">Lihat Semua</button>
                 </div>
-                <table className="w-full text-left text-xs text-emerald-100/70">
-                  <thead className="bg-emerald-950/40 text-emerald-400/80 font-black uppercase text-[10px] tracking-wider border-b border-emerald-500/15">
-                    <tr>
-                      <th className="py-3 px-4">Invoice</th>
-                      <th className="py-3 px-4">Daftar Item</th>
-                      <th className="py-3 px-4">Metode</th>
-                      <th className="py-3 px-4 text-right">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-emerald-500/10 font-medium">
-                    {sales.slice(0, 4).map(s => (
-                      <tr key={s.id} className="hover:bg-emerald-500/10 transition">
-                        <td className="py-3.5 px-4 font-mono font-bold text-white">{s.invoiceNo}</td>
-                        <td className="py-3.5 px-4 text-emerald-100 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
-                        <td className="py-3.5 px-4"><span className="bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 px-2.5 py-0.5 rounded-lg text-[10px] font-bold">{s.paymentMethod}</span></td>
-                        <td className="py-3.5 px-4 text-right font-black text-emerald-400 text-sm">{formatIDR(s.total)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="divide-y divide-slate-100">
+                  {sales.slice(0, 3).map(s => (
+                    <div key={s.id} className="p-3 flex justify-between items-center hover:bg-sky-50/50 transition">
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-bold text-slate-800">{s.items.map(i => i.name).join(", ")}</p>
+                        <p className="text-[9px] text-slate-400 font-mono">{s.invoiceNo} • {s.paymentMethod}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-black text-emerald-600">+{formatIDR(s.total)}</span>
+                        <span className="block text-[8px] text-slate-400">{s.date}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </>
           )}
 
-          {/* ================= 2. SALES / POS ================= */}
+          {/* ================= 2. SALES / POS VIEW ================= */}
           {activeTab === "sales" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center gap-2">
-                <div className="relative flex-1 max-w-sm">
-                  <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-emerald-500" />
-                  <input
-                    type="text"
-                    placeholder="Cari nomor faktur..."
-                    className="w-full pl-9 pr-3 py-2 bg-[#071c11]/80 border border-emerald-500/30 rounded-2xl text-xs text-white placeholder:text-emerald-100/40 backdrop-blur-2xl shadow-2xs focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={handleExportCSV} className="bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/30 text-emerald-200 font-bold px-3.5 py-2 rounded-2xl text-xs flex items-center gap-1.5">
-                    <Download className="h-3.5 w-3.5" /> CSV
-                  </button>
-                  <button onClick={() => setShowAddSaleModal(true)} className="bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-black font-black px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5 shadow-[0_0_20px_rgba(16,185,129,0.35)]">
-                    <Plus className="h-3.5 w-3.5" /> Buka Kasir POS
-                  </button>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-black text-[#0060af]">Daftar Mutasi Transaksi POS</span>
+                <div className="flex gap-1.5">
+                  <button onClick={handleExportCSV} className="bg-white border border-sky-200 text-[#0060af] px-2.5 py-1 rounded-xl text-xs font-bold shadow-2xs">CSV</button>
+                  <button onClick={() => setShowAddSaleModal(true)} className="bg-[#0060af] text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Kasir</button>
                 </div>
               </div>
 
-              <div className="bg-[#071c11]/65 backdrop-blur-2xl rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] overflow-hidden">
-                <table className="w-full text-left text-xs text-emerald-100/70">
-                  <thead className="bg-emerald-950/40 text-emerald-400/80 font-black uppercase text-[10px] border-b border-emerald-500/15">
-                    <tr>
-                      <th className="py-3 px-4">No. Invoice</th>
-                      <th className="py-3 px-4">Tanggal</th>
-                      <th className="py-3 px-4">Daftar Item</th>
-                      <th className="py-3 px-4">Metode</th>
-                      <th className="py-3 px-4 text-right">Total</th>
-                      <th className="py-3 px-4 text-center">Struk</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-emerald-500/10 font-medium">
-                    {sales.filter(s => s.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase())).map(s => (
-                      <tr key={s.id} className="hover:bg-emerald-500/10 transition">
-                        <td className="py-3.5 px-4 font-mono font-bold text-white">{s.invoiceNo}</td>
-                        <td className="py-3.5 px-4 text-emerald-200/50">{s.date}</td>
-                        <td className="py-3.5 px-4 text-emerald-100 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
-                        <td className="py-3.5 px-4"><span className="bg-emerald-950/80 border border-emerald-500/30 px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-emerald-300">{s.paymentMethod}</span></td>
-                        <td className="py-3.5 px-4 text-right font-black text-emerald-400 text-sm">{formatIDR(s.total)}</td>
-                        <td className="py-3.5 px-4 text-center">
-                          <button onClick={() => setActiveReceiptSale(s)} className="p-1.5 text-emerald-400 hover:text-emerald-200"><Receipt className="h-4 w-4" /></button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
+                {sales.map(s => (
+                  <div key={s.id} className="p-3.5 flex justify-between items-center">
+                    <div>
+                      <p className="text-xs font-black text-slate-800">{s.invoiceNo}</p>
+                      <p className="text-[10px] text-slate-500 font-medium">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</p>
+                      <span className="text-[8px] bg-sky-50 text-[#0060af] font-bold px-2 py-0.5 rounded-full">{s.paymentMethod} • {s.cashier}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-black text-emerald-600">+{formatIDR(s.total)}</p>
+                      <button onClick={() => setActiveReceiptSale(s)} className="text-[9px] text-[#0060af] font-bold mt-1 block ml-auto">Struk 🧾</button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* ================= 3. PRODUCTS ================= */}
+          {/* ================= 3. PRODUCTS VIEW ================= */}
           {activeTab === "products" && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-white">Katalog Produk & Stok ({products.length})</span>
-                <button onClick={() => setShowAddProductModal(true)} className="bg-gradient-to-r from-emerald-500 to-teal-400 text-black font-black px-4 py-2 rounded-2xl text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)]">
-                  + Tambah Produk
-                </button>
+                <span className="text-xs font-black text-[#0060af]">Daftar Stok Produk ({products.length})</span>
+                <button onClick={() => setShowAddProductModal(true)} className="bg-[#0060af] text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Produk</button>
               </div>
 
-              <div className="bg-[#071c11]/65 backdrop-blur-2xl rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] overflow-hidden">
-                <table className="w-full text-left text-xs text-emerald-100/70">
-                  <thead className="bg-emerald-950/40 text-emerald-400/80 font-black uppercase text-[10px] border-b border-emerald-500/15">
-                    <tr>
-                      <th className="py-3 px-4">SKU</th>
-                      <th className="py-3 px-4">Nama Produk</th>
-                      <th className="py-3 px-4">HPP</th>
-                      <th className="py-3 px-4">Harga Jual</th>
-                      <th className="py-3 px-4">Margin Laba</th>
-                      <th className="py-3 px-4 text-right">Stok Aktif</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-emerald-500/10 font-medium">
-                    {products.map(p => (
-                      <tr key={p.id} className="hover:bg-emerald-500/10 transition">
-                        <td className="py-3.5 px-4 font-mono text-emerald-200/50">{p.sku}</td>
-                        <td className="py-3.5 px-4 font-bold text-white">{p.name}</td>
-                        <td className="py-3.5 px-4 text-emerald-200/60">{formatIDR(p.costPrice)}</td>
-                        <td className="py-3.5 px-4 font-bold text-white">{formatIDR(p.sellPrice)}</td>
-                        <td className="py-3.5 px-4 text-emerald-400 font-black">+{formatIDR(p.sellPrice - p.costPrice)}</td>
-                        <td className="py-3.5 px-4 text-right">
-                          <span className={`px-3 py-0.5 rounded-full text-[10px] font-bold ${p.stock <= p.minStock ? "bg-rose-950/80 text-rose-300 border border-rose-500/30" : "bg-emerald-950/80 text-emerald-300 border border-emerald-500/30"}`}>
-                            {p.stock} pcs
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
+                {products.map(p => (
+                  <div key={p.id} className="p-3.5 flex justify-between items-center">
+                    <div>
+                      <p className="text-xs font-black text-slate-800">{p.name}</p>
+                      <p className="text-[10px] text-slate-400">Modal: {formatIDR(p.costPrice)} | Jual: {formatIDR(p.sellPrice)}</p>
+                      <span className="text-[8px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{p.sku}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${p.stock <= p.minStock ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
+                        {p.stock} pcs
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* ================= 4. EXPENSES ================= */}
+          {/* ================= 4. EXPENSES VIEW ================= */}
           {activeTab === "expenses" && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-white">Total Beban Usaha: <strong className="text-rose-400">{formatIDR(totalExpenses)}</strong></span>
-                <button onClick={() => setShowAddExpenseModal(true)} className="bg-rose-600 hover:bg-rose-500 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-[0_0_20px_rgba(244,63,94,0.35)]">
-                  + Catat Beban
-                </button>
+                <span className="text-xs font-black text-[#0060af]">Beban Toko: {formatIDR(totalExpenses)}</span>
+                <button onClick={() => setShowAddExpenseModal(true)} className="bg-rose-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Beban</button>
               </div>
 
-              <div className="bg-[#071c11]/65 backdrop-blur-2xl rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] overflow-hidden">
-                <table className="w-full text-left text-xs text-emerald-100/70">
-                  <thead className="bg-emerald-950/40 text-emerald-400/80 font-black uppercase text-[10px] border-b border-emerald-500/15">
-                    <tr>
-                      <th className="py-3 px-4">Tanggal</th>
-                      <th className="py-3 px-4">Kategori</th>
-                      <th className="py-3 px-4">Keterangan</th>
-                      <th className="py-3 px-4 text-right">Nominal</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-emerald-500/10 font-medium">
-                    {expenses.map(e => (
-                      <tr key={e.id} className="hover:bg-emerald-500/10 transition">
-                        <td className="py-3.5 px-4 text-emerald-200/50">{e.date}</td>
-                        <td className="py-3.5 px-4"><span className="bg-emerald-950/80 border border-emerald-500/30 text-emerald-200 px-2.5 py-0.5 rounded-lg text-[10px] font-bold">{e.category}</span></td>
-                        <td className="py-3.5 px-4 text-white">{e.notes}</td>
-                        <td className="py-3.5 px-4 text-right font-black text-rose-400">{formatIDR(e.amount)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
+                {expenses.map(e => (
+                  <div key={e.id} className="p-3.5 flex justify-between items-center">
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">{e.notes}</p>
+                      <span className="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">{e.category}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-black text-rose-600">-{formatIDR(e.amount)}</p>
+                      <span className="text-[8px] text-slate-400">{e.date}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* ================= 5. DEBTS ================= */}
+          {/* ================= 5. DEBTS VIEW ================= */}
           {activeTab === "debts" && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <div className="flex gap-3">
-                  <span className="text-xs text-emerald-200/70">Piutang: <strong className="text-amber-400 font-bold">{formatIDR(totalReceivables)}</strong></span>
-                  <span className="text-xs text-emerald-200/70">Hutang: <strong className="text-rose-400 font-bold">{formatIDR(totalPayables)}</strong></span>
-                </div>
-                <button onClick={() => setShowAddDebtModal(true)} className="bg-gradient-to-r from-emerald-500 to-teal-400 text-black font-black px-4 py-2 rounded-2xl text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)]">
-                  + Catat Tagihan
-                </button>
+                <span className="text-xs font-black text-[#0060af]">Daftar Tagihan Hutang/Piutang</span>
+                <button onClick={() => setShowAddDebtModal(true)} className="bg-[#0060af] text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Tagihan</button>
               </div>
 
-              <div className="bg-[#071c11]/65 backdrop-blur-2xl rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] overflow-hidden">
-                <table className="w-full text-left text-xs text-emerald-100/70">
-                  <thead className="bg-emerald-950/40 text-emerald-400/80 font-black uppercase text-[10px] border-b border-emerald-500/15">
-                    <tr>
-                      <th className="py-3 px-4">Tipe</th>
-                      <th className="py-3 px-4">Pihak</th>
-                      <th className="py-3 px-4">Nominal</th>
-                      <th className="py-3 px-4">Jatuh Tempo</th>
-                      <th className="py-3 px-4 text-center">Status</th>
-                      <th className="py-3 px-4 text-center">Tindakan</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-emerald-500/10 font-medium">
-                    {debts.map(d => (
-                      <tr key={d.id} className="hover:bg-emerald-500/10 transition">
-                        <td className="py-3.5 px-4"><span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black ${d.type === 'Piutang' ? 'bg-amber-950/80 text-amber-300 border border-amber-500/30' : 'bg-rose-950/80 text-rose-300 border border-rose-500/30'}`}>{d.type}</span></td>
-                        <td className="py-3.5 px-4 font-bold text-white">{d.person}</td>
-                        <td className="py-3.5 px-4 font-black text-white">{formatIDR(d.amount)}</td>
-                        <td className="py-3.5 px-4 text-emerald-200/50">{d.dueDate}</td>
-                        <td className="py-3.5 px-4 text-center">
-                          <span className={`px-3 py-0.5 rounded-full text-[10px] font-black ${d.isPaid ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/30' : 'bg-amber-950/80 text-amber-300 border border-amber-500/30'}`}>
-                            {d.isPaid ? 'LUNAS' : 'BELUM'}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-center">
-                          <button onClick={() => handleToggleDebtSettled(d.id)} className="text-[10px] bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/30 px-3 py-1 rounded-xl font-bold text-emerald-300">
-                            {d.isPaid ? 'Batal' : 'Tandai Lunas'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
+                {debts.map(d => (
+                  <div key={d.id} className="p-3.5 flex justify-between items-center">
+                    <div>
+                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${d.type === 'Piutang' ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'}`}>{d.type}</span>
+                      <p className="text-xs font-bold text-slate-800 mt-1">{d.person}</p>
+                      <p className="text-[9px] text-slate-400">Tempo: {d.dueDate} ({d.notes})</p>
+                    </div>
+                    <div className="text-right space-y-1">
+                      <p className="text-xs font-black text-slate-900">{formatIDR(d.amount)}</p>
+                      <button onClick={() => handleToggleDebtSettled(d.id)} className="text-[9px] bg-sky-50 text-[#0060af] font-bold px-2 py-0.5 rounded-lg border border-sky-200">
+                        {d.isPaid ? 'Lunas ✓' : 'Tandai Lunas'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* ================= 6. CAPITAL ================= */}
-          {activeTab === "capital" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-white">Modal Disetor Bersih: <strong className="text-emerald-400">{formatIDR(totalNetCapital)}</strong></span>
-                <button onClick={() => setShowCapitalModal(true)} className="bg-emerald-500 hover:bg-emerald-400 text-black font-black px-4 py-2 rounded-2xl text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)]">
-                  + Mutasi Modal
-                </button>
-              </div>
-
-              <div className="bg-[#071c11]/65 backdrop-blur-2xl rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] overflow-hidden">
-                <table className="w-full text-left text-xs text-emerald-100/70">
-                  <thead className="bg-emerald-950/40 text-emerald-400/80 font-black uppercase text-[10px] border-b border-emerald-500/15">
-                    <tr>
-                      <th className="py-3 px-4">Tanggal</th>
-                      <th className="py-3 px-4">Tipe</th>
-                      <th className="py-3 px-4">Keterangan</th>
-                      <th className="py-3 px-4 text-right">Nominal</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-emerald-500/10 font-medium">
-                    {capitalLogs.map(c => (
-                      <tr key={c.id} className="hover:bg-emerald-500/10 transition">
-                        <td className="py-3.5 px-4 text-emerald-200/50">{c.date}</td>
-                        <td className="py-3.5 px-4 font-bold text-white">{c.type}</td>
-                        <td className="py-3.5 px-4 text-emerald-100/70">{c.notes}</td>
-                        <td className="py-3.5 px-4 text-right font-black text-emerald-400">{formatIDR(c.amount)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 7. REPORTS ================= */}
+          {/* ================= 6. REPORTS VIEW ================= */}
           {activeTab === "reports" && (
-            <div className="space-y-4 max-w-2xl mx-auto">
+            <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <div className="flex gap-1.5 bg-black/40 backdrop-blur-2xl p-1.5 rounded-2xl border border-emerald-500/20">
-                  <button onClick={() => setReportSubTab("labarugi")} className={`px-4 py-1.5 rounded-xl text-xs font-black ${reportSubTab === 'labarugi' ? 'bg-emerald-500 text-black shadow-xs' : 'text-emerald-200/60'}`}>Laba Rugi</button>
-                  <button onClick={() => setReportSubTab("neraca")} className={`px-4 py-1.5 rounded-xl text-xs font-black ${reportSubTab === 'neraca' ? 'bg-emerald-500 text-black shadow-xs' : 'text-emerald-200/60'}`}>Neraca</button>
+                <div className="flex gap-1 bg-white p-1 rounded-xl border border-sky-100">
+                  <button onClick={() => setReportSubTab("labarugi")} className={`px-3 py-1 rounded-lg text-xs font-bold ${reportSubTab === 'labarugi' ? 'bg-[#0060af] text-white' : 'text-slate-500'}`}>Laba Rugi</button>
+                  <button onClick={() => setReportSubTab("neraca")} className={`px-3 py-1 rounded-lg text-xs font-bold ${reportSubTab === 'neraca' ? 'bg-[#0060af] text-white' : 'text-slate-500'}`}>Neraca</button>
                 </div>
-                <button onClick={() => window.print()} className="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/30 font-black px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5">
-                  <Printer className="h-3.5 w-3.5" /> Cetak PDF
-                </button>
+                <button onClick={() => window.print()} className="bg-[#0060af] text-white px-3 py-1.5 rounded-xl text-xs font-bold">Cetak</button>
               </div>
 
               {reportSubTab === "labarugi" && (
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-6 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-4 text-xs">
-                  <div className="border-b border-emerald-500/15 pb-3 text-center">
-                    <h3 className="font-black text-sm text-white uppercase">Laporan Laba Rugi</h3>
-                    <p className="text-[10px] text-emerald-200/50">Pemilik: Peter • Agustus 2026</p>
+                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3 text-xs">
+                  <div className="text-center border-b pb-2">
+                    <h3 className="font-black text-[#0060af]">Laporan Laba Rugi</h3>
+                    <p className="text-[9px] text-slate-400">Pemilik: Peter • Agustus 2026</p>
                   </div>
-                  <div className="space-y-2.5 text-emerald-100/80">
-                    <div className="flex justify-between"><span>Penjualan Bersih (Omzet):</span> <span className="font-bold text-white">{formatIDR(totalRevenue)}</span></div>
-                    <div className="flex justify-between text-emerald-200/50"><span>Harga Pokok Penjualan (HPP):</span> <span>({formatIDR(totalCOGS)})</span></div>
-                    <div className="flex justify-between font-black border-t border-emerald-500/15 pt-2 text-white"><span>Laba Kotor:</span> <span>{formatIDR(grossProfit)}</span></div>
-                    <div className="flex justify-between text-emerald-200/50"><span>Total Beban Operasional:</span> <span>({formatIDR(totalExpenses)})</span></div>
-                    <div className="flex justify-between font-black text-emerald-300 bg-emerald-950/60 p-3.5 rounded-2xl border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.15)]">
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between"><span>Penjualan Bersih:</span> <span className="font-bold">{formatIDR(totalRevenue)}</span></div>
+                    <div className="flex justify-between text-slate-500"><span>HPP:</span> <span>({formatIDR(totalCOGS)})</span></div>
+                    <div className="flex justify-between font-bold border-t pt-1"><span>Laba Kotor:</span> <span>{formatIDR(grossProfit)}</span></div>
+                    <div className="flex justify-between text-slate-500"><span>Total Beban:</span> <span>({formatIDR(totalExpenses)})</span></div>
+                    <div className="flex justify-between font-black text-emerald-700 bg-emerald-50 p-2.5 rounded-2xl border border-emerald-200 mt-2">
                       <span>LABA BERSIH:</span>
-                      <span className="text-sm">{formatIDR(netProfit)}</span>
+                      <span>{formatIDR(netProfit)}</span>
                     </div>
                   </div>
                 </div>
               )}
 
               {reportSubTab === "neraca" && (
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-6 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-4 text-xs">
-                  <div className="border-b border-emerald-500/15 pb-3 text-center">
-                    <h3 className="font-black text-sm text-white uppercase">Neraca Sederhana</h3>
+                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3 text-xs">
+                  <div className="text-center border-b pb-2">
+                    <h3 className="font-black text-[#0060af]">Neraca Sederhana</h3>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-black/30 p-4 rounded-2xl border border-emerald-500/15">
-                      <h4 className="font-black text-emerald-400 border-b border-emerald-500/15 pb-2">Aset</h4>
-                      <div className="space-y-1.5 mt-2.5 text-emerald-100/70">
-                        <div className="flex justify-between"><span>Kas:</span> <span className="font-bold text-white">{formatIDR(cashOnHand)}</span></div>
-                        <div className="flex justify-between"><span>Stok:</span> <span className="font-bold text-white">{formatIDR(inventoryValue)}</span></div>
-                        <div className="flex justify-between"><span>Piutang:</span> <span className="font-bold text-white">{formatIDR(totalReceivables)}</span></div>
-                        <div className="flex justify-between font-black text-emerald-400 border-t border-emerald-500/15 pt-2"><span>Total:</span> <span>{formatIDR(totalAssets)}</span></div>
-                      </div>
-                    </div>
-                    <div className="bg-black/30 p-4 rounded-2xl border border-emerald-500/15">
-                      <h4 className="font-black text-emerald-400 border-b border-emerald-500/15 pb-2">Kewajiban & Modal</h4>
-                      <div className="space-y-1.5 mt-2.5 text-emerald-100/70">
-                        <div className="flex justify-between"><span>Hutang:</span> <span className="font-bold text-white">{formatIDR(totalPayables)}</span></div>
-                        <div className="flex justify-between"><span>Modal:</span> <span className="font-bold text-white">{formatIDR(totalNetCapital)}</span></div>
-                        <div className="flex justify-between"><span>Laba:</span> <span className="font-bold text-white">{formatIDR(netProfit)}</span></div>
-                        <div className="flex justify-between font-black text-emerald-400 border-t border-emerald-500/15 pt-2"><span>Total:</span> <span>{formatIDR(totalLiabilitiesAndEquity)}</span></div>
-                      </div>
-                    </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between"><span>Total Aset (Kas + Stok + Piutang):</span> <span className="font-bold">{formatIDR(totalAssets)}</span></div>
+                    <div className="flex justify-between"><span>Kewajiban Hutang:</span> <span className="font-bold text-rose-600">{formatIDR(totalPayables)}</span></div>
+                    <div className="flex justify-between"><span>Ekuitas Modal & Laba:</span> <span className="font-bold text-[#0060af]">{formatIDR(totalEquity)}</span></div>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* ================= 8. BUDGET ================= */}
-          {activeTab === "budget" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-white">Alokasi Anggaran Beban</span>
-                <button onClick={() => setShowBudgetModal(true)} className="bg-gradient-to-r from-emerald-500 to-teal-400 text-black font-black px-4 py-2 rounded-2xl text-xs shadow-[0_0_20px_rgba(16,185,129,0.35)]">
-                  Atur Anggaran
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {categoryBudgets.map(b => {
-                  const used = expensesByCategory[b.category] || 0;
-                  const percent = Math.min(((used / b.allocated) * 100), 100);
-                  const isOver = used > b.allocated;
-
-                  return (
-                    <div key={b.category} className="bg-[#071c11]/65 backdrop-blur-2xl p-4.5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-2.5">
-                      <div className="flex justify-between text-xs font-black">
-                        <span className="text-white">{b.category}</span>
-                        <span className={isOver ? "text-rose-400" : "text-emerald-300"}>
-                          {formatIDR(used)} / {formatIDR(b.allocated)}
-                        </span>
-                      </div>
-                      <div className="w-full bg-emerald-950/60 h-2.5 rounded-full overflow-hidden border border-emerald-500/30">
-                        <div className={`h-full ${isOver ? "bg-rose-500" : "bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.7)]"}`} style={{ width: `${percent}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* ================= 9. ANALYTICS ================= */}
-          {activeTab === "analytics" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
-                  <span className="text-[10px] font-black text-emerald-400 uppercase">Titik Impas (BEP)</span>
-                  <h3 className="text-2xl font-black text-white mt-1">{formatIDR(bepRevenue)}</h3>
-                  <p className="text-[10px] text-emerald-400 font-bold mt-1">✓ Lolos Ambang Batas</p>
-                </div>
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
-                  <span className="text-[10px] font-black text-emerald-400 uppercase">Rasio Margin Kotor</span>
-                  <h3 className="text-2xl font-black text-white mt-1">{(averageMarginRatio * 100).toFixed(1)}%</h3>
-                  <p className="text-[10px] text-emerald-200/60 font-bold mt-1">Efisiensi HPP Terjaga</p>
-                </div>
-                <div className="bg-[#071c11]/65 backdrop-blur-2xl p-5 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
-                  <span className="text-[10px] font-black text-emerald-400 uppercase">Margin Bersih</span>
-                  <h3 className="text-2xl font-black text-emerald-300 mt-1">{profitMarginPercent}%</h3>
-                  <p className="text-[10px] text-emerald-200/60 font-bold mt-1">Profitabilitas Sehat</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 10. AI ADVISOR ================= */}
+          {/* ================= 7. AI ADVISOR VIEW ================= */}
           {activeTab === "ai" && (
-            <div className="bg-[#071c11]/65 backdrop-blur-2xl p-6 rounded-3xl border border-emerald-500/25 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] space-y-4 text-xs">
-              <div className="flex items-center gap-2 text-white font-black text-sm">
-                <Sparkles className="h-4 w-4 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.6)]" />
-                Rekomendasi AI untuk Peter
+            <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3 text-xs">
+              <div className="flex items-center gap-2 text-[#0060af] font-black">
+                <Sparkles className="h-4 w-4 text-[#0060af]" />
+                m-Advisor untuk Peter
               </div>
-              <div className="p-4 bg-black/40 border border-emerald-500/20 rounded-2xl space-y-2.5 text-emerald-100/80 leading-relaxed font-medium">
-                <p>• <strong>Efisiensi Bahan Baku:</strong> Biaya bahan baku menyerap 45% pengeluaran toko. Gunakan skema kontrak grosir bulanan untuk memotong HPP hingga 8%.</p>
-                <p>• <strong>Keamanan Kas:</strong> Rasio likuiditas kas Peter berada pada angka 3.4x (sangat aman untuk menutup hutang lancar).</p>
-                <p>• <strong>Proyeksi Omzet:</strong> Dengan pola transaksi saat ini, laba bersih diproyeksikan tumbuh 20% bulan depan.</p>
+              <div className="p-3.5 bg-sky-50 rounded-2xl space-y-2 text-slate-700 leading-relaxed font-medium">
+                <p>• <strong>Bahan Baku:</strong> Biaya bahan baku memakan 45% pengeluaran. Disarankan kontrak suplai bulanan untuk menghemat 8% HPP.</p>
+                <p>• <strong>Status Kas:</strong> Saldo kas aktif <strong>{formatIDR(cashOnHand)}</strong> sangat cukup untuk menutup hutang operasional.</p>
               </div>
             </div>
           )}
 
-        </main>
-      </div>
+        </div>
 
-      {/* ================= BOTTOM NAV (MOBILE) ================= */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#06180e]/80 backdrop-blur-3xl border-t border-emerald-500/20 px-2 py-1.5 flex justify-around items-center z-40 shadow-2xl">
-        {[
-          { id: "dashboard", label: "Ringkasan", icon: PieIcon },
-          { id: "sales", label: "Kasir", icon: ShoppingCart },
-          { id: "products", label: "Stok", icon: Package },
-          { id: "expenses", label: "Beban", icon: TrendingDown },
-          { id: "reports", label: "Laporan", icon: Layers },
-        ].map(item => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
+        {/* ================= BOTTOM NAVIGATION (BCA REDESIGN STYLE) ================= */}
+        <div className="fixed bottom-0 max-w-md w-full bg-white/95 backdrop-blur-xl border-t border-sky-100 px-4 py-2 flex justify-between items-center shadow-[0_-8px_25px_rgba(0,100,200,0.08)] z-40">
+          
+          {/* Nav 1: Home */}
+          <button onClick={() => setActiveTab("dashboard")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'dashboard' ? 'text-[#0060af]' : 'text-slate-400'}`}>
+            <Home className="h-5 w-5" />
+            <span className="text-[8px] font-bold">Home</span>
+          </button>
+
+          {/* Nav 2: Produk / Transaksi */}
+          <button onClick={() => setActiveTab("sales")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'sales' ? 'text-[#0060af]' : 'text-slate-400'}`}>
+            <ArrowLeftRight className="h-5 w-5" />
+            <span className="text-[8px] font-bold">Mutasi</span>
+          </button>
+
+          {/* Nav Center: FLOATING QRIS / KASIR BUTTON */}
+          <div className="-mt-7">
             <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as any)}
-              className={`flex flex-col items-center gap-0.5 p-1 ${isActive ? "text-emerald-400 font-black" : "text-emerald-500/50"}`}
+              onClick={() => setShowAddSaleModal(true)}
+              className="h-13 w-13 rounded-2xl bg-gradient-to-tr from-[#0060af] via-sky-500 to-cyan-400 text-white flex items-center justify-center shadow-[0_8px_25px_rgba(0,120,255,0.45)] border-2 border-white active:scale-90 transition"
             >
-              <Icon className="h-4 w-4" />
-              <span className="text-[9px]">{item.label}</span>
+              <QrCode className="h-6 w-6" />
             </button>
-          );
-        })}
+          </div>
+
+          {/* Nav 4: Tagihan / Hutang */}
+          <button onClick={() => setActiveTab("debts")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'debts' ? 'text-[#0060af]' : 'text-slate-400'}`}>
+            <FileText className="h-5 w-5" />
+            <span className="text-[8px] font-bold">Tagihan</span>
+          </button>
+
+          {/* Nav 5: Profile / Laporan */}
+          <button onClick={() => setActiveTab("reports")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'reports' ? 'text-[#0060af]' : 'text-slate-400'}`}>
+            <Layers className="h-5 w-5" />
+            <span className="text-[8px] font-bold">Laporan</span>
+          </button>
+        </div>
+
       </div>
 
-      {/* ================= DARK EMERALD MODALS ================= */}
+      {/* ================= MODALS (POPUP) ================= */}
 
       {/* 1. POS MODAL */}
       {showAddSaleModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-[#071c11]/95 backdrop-blur-3xl rounded-3xl max-w-lg w-full p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8)] space-y-3.5 border border-emerald-500/30">
-            <div className="flex justify-between items-center border-b border-emerald-500/15 pb-2">
-              <span className="text-xs font-black text-white">Kasir POS Multi-Item</span>
-              <button onClick={() => setShowAddSaleModal(false)} className="text-emerald-400/60 hover:text-white text-xs">✕</button>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="bg-white rounded-t-[2.5rem] sm:rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3.5 border border-sky-100 max-h-[85vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b pb-2">
+              <span className="text-xs font-black text-[#0060af]">m-Kasir Transaksi Baru</span>
+              <button onClick={() => setShowAddSaleModal(false)} className="text-slate-400 text-xs">✕</button>
             </div>
 
             <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
@@ -1138,25 +917,25 @@ export default function CashFlowProEmeraldGlass() {
                   key={p.id}
                   type="button"
                   onClick={() => addToCart(p)}
-                  className="p-2.5 bg-black/40 border border-emerald-500/20 rounded-2xl text-left hover:border-emerald-400 transition"
+                  className="p-2.5 bg-sky-50/50 border border-sky-100 rounded-2xl text-left hover:border-[#0060af] transition"
                 >
-                  <div className="text-[11px] font-bold text-white truncate">{p.name}</div>
-                  <div className="text-[10px] text-emerald-400 font-black">{formatIDR(p.sellPrice)} (Stok: {p.stock})</div>
+                  <div className="text-[11px] font-bold text-slate-800 truncate">{p.name}</div>
+                  <div className="text-[10px] text-[#0060af] font-black">{formatIDR(p.sellPrice)} (Stok: {p.stock})</div>
                 </button>
               ))}
             </div>
 
-            <div className="bg-black/30 p-3 rounded-2xl text-xs space-y-1 max-h-28 overflow-y-auto border border-emerald-500/15">
+            <div className="bg-slate-50 p-3 rounded-2xl text-xs space-y-1 max-h-24 overflow-y-auto">
               {cart.length === 0 ? (
-                <p className="text-[11px] text-emerald-200/40 italic text-center">Keranjang kosong</p>
+                <p className="text-[10px] text-slate-400 italic text-center">Keranjang belanja kosong</p>
               ) : (
                 cart.map(item => (
-                  <div key={item.productId} className="flex justify-between items-center text-white">
+                  <div key={item.productId} className="flex justify-between items-center">
                     <span className="truncate font-semibold">{item.name}</span>
                     <div className="flex items-center gap-1.5">
-                      <button onClick={() => updateCartQty(item.productId, item.qty - 1)} className="px-2 py-0.5 bg-emerald-950 border border-emerald-500/30 rounded-lg text-[10px] font-black text-emerald-300">-</button>
+                      <button onClick={() => updateCartQty(item.productId, item.qty - 1)} className="px-2 py-0.5 bg-slate-200 rounded-lg text-[10px] font-black">-</button>
                       <span className="font-bold">{item.qty}</span>
-                      <button onClick={() => updateCartQty(item.productId, item.qty + 1)} className="px-2 py-0.5 bg-emerald-950 border border-emerald-500/30 rounded-lg text-[10px] font-black text-emerald-300">+</button>
+                      <button onClick={() => updateCartQty(item.productId, item.qty + 1)} className="px-2 py-0.5 bg-slate-200 rounded-lg text-[10px] font-black">+</button>
                     </div>
                   </div>
                 ))
@@ -1166,40 +945,40 @@ export default function CashFlowProEmeraldGlass() {
             <form onSubmit={handleCheckoutPOS} className="space-y-2.5 text-xs">
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Diskon (Rp)</label>
-                  <input type="number" value={posDiscount || ""} onChange={e => setPosDiscount(Number(e.target.value))} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl" />
+                  <label className="text-[9px] text-slate-500 font-bold block mb-1">Diskon (Rp)</label>
+                  <input type="number" value={posDiscount || ""} onChange={e => setPosDiscount(Number(e.target.value))} className="w-full border p-2 rounded-xl" />
                 </div>
                 <div>
-                  <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Metode</label>
-                  <select value={posPaymentMethod} onChange={e => setPosPaymentMethod(e.target.value as any)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold">
+                  <label className="text-[9px] text-slate-500 font-bold block mb-1">Metode Bayar</label>
+                  <select value={posPaymentMethod} onChange={e => setPosPaymentMethod(e.target.value as any)} className="w-full border p-2 rounded-xl font-bold">
                     <option value="QRIS">QRIS</option>
                     <option value="Cash">Cash (Tunai)</option>
-                    <option value="Transfer">Transfer</option>
+                    <option value="Transfer">Transfer BCA</option>
                   </select>
                 </div>
               </div>
 
               {posPaymentMethod === "Cash" && (
-                <div className="grid grid-cols-2 gap-2 bg-black/40 p-2.5 rounded-2xl border border-emerald-500/20">
+                <div className="grid grid-cols-2 gap-2 bg-sky-50 p-2.5 rounded-2xl border border-sky-100">
                   <div>
-                    <label className="text-[10px] text-emerald-300 font-bold block mb-1">Uang Diterima</label>
-                    <input type="number" required value={posCashPaid} onChange={e => setPosCashPaid(e.target.value)} className="w-full border border-emerald-500/30 p-1.5 rounded-xl bg-black text-white font-bold" />
+                    <label className="text-[9px] text-[#0060af] font-bold block mb-1">Uang Diterima</label>
+                    <input type="number" required value={posCashPaid} onChange={e => setPosCashPaid(e.target.value)} className="w-full border p-1.5 rounded-xl bg-white font-bold" />
                   </div>
                   <div>
-                    <label className="text-[10px] text-emerald-300 font-bold block mb-1">Kembalian</label>
-                    <span className="font-black text-emerald-400 block pt-1">{formatIDR(cashChange)}</span>
+                    <label className="text-[9px] text-[#0060af] font-bold block mb-1">Kembalian</label>
+                    <span className="font-black text-emerald-700 block pt-1">{formatIDR(cashChange)}</span>
                   </div>
                 </div>
               )}
 
-              <div className="flex justify-between items-center font-black text-white border-t border-emerald-500/15 pt-2">
+              <div className="flex justify-between items-center font-black text-slate-900 border-t pt-2">
                 <span>Total:</span>
-                <span className="text-emerald-400 text-base">{formatIDR(cartTotal)}</span>
+                <span className="text-[#0060af] text-base">{formatIDR(cartTotal)}</span>
               </div>
 
               <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowAddSaleModal(false)} className="flex-1 bg-black/40 border border-emerald-500/20 p-2.5 rounded-2xl text-emerald-200 font-bold">Batal</button>
-                <button type="submit" disabled={cart.length === 0} className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-400 text-black p-2.5 rounded-2xl font-black shadow-[0_0_20px_rgba(16,185,129,0.4)]">Simpan Transaksi</button>
+                <button type="button" onClick={() => setShowAddSaleModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
+                <button type="submit" disabled={cart.length === 0} className="flex-1 bg-[#0060af] text-white p-2.5 rounded-2xl font-black shadow-md shadow-sky-500/30">Bayar & Cetak</button>
               </div>
             </form>
           </div>
@@ -1208,29 +987,29 @@ export default function CashFlowProEmeraldGlass() {
 
       {/* 2. EXPENSE MODAL */}
       {showAddExpenseModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-[#071c11]/95 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8)] space-y-3 text-xs border border-rose-500/30">
-            <span className="font-black text-white block text-sm">Catat Beban Pengeluaran</span>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
+            <span className="font-black text-slate-900 block text-sm">Catat Beban Toko</span>
             <form onSubmit={handleAddExpense} className="space-y-2.5">
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Kategori</label>
-                <select value={expCategory} onChange={e => setExpCategory(e.target.value as any)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold">
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Kategori</label>
+                <select value={expCategory} onChange={e => setExpCategory(e.target.value as any)} className="w-full border p-2 rounded-xl font-bold">
                   {["Bahan Baku", "Transportasi", "Gaji", "Sewa", "Listrik", "Air", "Internet", "Pajak", "Marketing", "Peralatan", "Operasional Lain"].map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Nominal (Rp)</label>
-                <input type="number" required value={expAmount} onChange={e => setExpAmount(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Nominal (Rp)</label>
+                <input type="number" required value={expAmount} onChange={e => setExpAmount(e.target.value)} className="w-full border p-2 rounded-xl font-bold" />
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Keterangan</label>
-                <input type="text" required value={expNotes} onChange={e => setExpNotes(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Keterangan</label>
+                <input type="text" required value={expNotes} onChange={e => setExpNotes(e.target.value)} className="w-full border p-2 rounded-xl" />
               </div>
               <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowAddExpenseModal(false)} className="flex-1 bg-black/40 border border-emerald-500/20 p-2.5 rounded-2xl text-emerald-200 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-rose-600 text-white p-2.5 rounded-2xl font-black shadow-[0_0_20px_rgba(244,63,94,0.35)]">Simpan</button>
+                <button type="button" onClick={() => setShowAddExpenseModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
+                <button type="submit" className="flex-1 bg-rose-600 text-white p-2.5 rounded-2xl font-black">Simpan</button>
               </div>
             </form>
           </div>
@@ -1239,31 +1018,31 @@ export default function CashFlowProEmeraldGlass() {
 
       {/* 3. PRODUCT MODAL */}
       {showAddProductModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-[#071c11]/95 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8)] space-y-3 text-xs border border-emerald-500/30">
-            <span className="font-black text-white block text-sm">Tambah Produk Baru</span>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
+            <span className="font-black text-slate-900 block text-sm">Tambah Produk Baru</span>
             <form onSubmit={handleAddProduct} className="space-y-2">
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Nama Produk</label>
-                <input type="text" required value={newProdName} onChange={e => setNewProdName(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Nama Produk</label>
+                <input type="text" required value={newProdName} onChange={e => setNewProdName(e.target.value)} className="w-full border p-2 rounded-xl" />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">HPP (Modal)</label>
-                  <input type="number" required value={newProdCost} onChange={e => setNewProdCost(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold" />
+                  <label className="text-[9px] text-slate-500 font-bold block mb-1">HPP (Modal)</label>
+                  <input type="number" required value={newProdCost} onChange={e => setNewProdCost(e.target.value)} className="w-full border p-2 rounded-xl font-bold" />
                 </div>
                 <div>
-                  <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Harga Jual</label>
-                  <input type="number" required value={newProdSell} onChange={e => setNewProdSell(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold" />
+                  <label className="text-[9px] text-slate-500 font-bold block mb-1">Harga Jual</label>
+                  <input type="number" required value={newProdSell} onChange={e => setNewProdSell(e.target.value)} className="w-full border p-2 rounded-xl font-bold" />
                 </div>
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Stok Awal</label>
-                <input type="number" value={newProdStock} onChange={e => setNewProdStock(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Stok Awal</label>
+                <input type="number" value={newProdStock} onChange={e => setNewProdStock(e.target.value)} className="w-full border p-2 rounded-xl font-bold" />
               </div>
               <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowAddProductModal(false)} className="flex-1 bg-black/40 border border-emerald-500/20 p-2.5 rounded-2xl text-emerald-200 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-400 text-black p-2.5 rounded-2xl font-black shadow-[0_0_20px_rgba(16,185,129,0.35)]">Simpan</button>
+                <button type="button" onClick={() => setShowAddProductModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
+                <button type="submit" className="flex-1 bg-[#0060af] text-white p-2.5 rounded-2xl font-black">Simpan</button>
               </div>
             </form>
           </div>
@@ -1272,29 +1051,29 @@ export default function CashFlowProEmeraldGlass() {
 
       {/* 4. DEBT MODAL */}
       {showAddDebtModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-[#071c11]/95 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8)] space-y-3 text-xs border border-emerald-500/30">
-            <span className="font-black text-white block text-sm">Catat Tagihan / Hutang</span>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
+            <span className="font-black text-slate-900 block text-sm">Catat Tagihan</span>
             <form onSubmit={handleAddDebt} className="space-y-2">
               <div className="grid grid-cols-2 gap-2">
-                <button type="button" onClick={() => setDebtType("Piutang")} className={`p-2 rounded-2xl border text-xs font-black ${debtType === 'Piutang' ? 'bg-emerald-500 text-black border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.4)]' : 'bg-black/40 text-emerald-200 border-emerald-500/20'}`}>Piutang</button>
-                <button type="button" onClick={() => setDebtType("Hutang")} className={`p-2 rounded-2xl border text-xs font-black ${debtType === 'Hutang' ? 'bg-emerald-500 text-black border-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.4)]' : 'bg-black/40 text-emerald-200 border-emerald-500/20'}`}>Hutang</button>
+                <button type="button" onClick={() => setDebtType("Piutang")} className={`p-2 rounded-2xl border text-xs font-black ${debtType === 'Piutang' ? 'bg-[#0060af] text-white' : 'bg-slate-50 text-slate-600'}`}>Piutang</button>
+                <button type="button" onClick={() => setDebtType("Hutang")} className={`p-2 rounded-2xl border text-xs font-black ${debtType === 'Hutang' ? 'bg-[#0060af] text-white' : 'bg-slate-50 text-slate-600'}`}>Hutang</button>
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Nama Pihak Terkait</label>
-                <input type="text" required value={debtPerson} onChange={e => setDebtPerson(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Nama Pihak Terkait</label>
+                <input type="text" required value={debtPerson} onChange={e => setDebtPerson(e.target.value)} className="w-full border p-2 rounded-xl" />
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Nominal (Rp)</label>
-                <input type="number" required value={debtAmount} onChange={e => setDebtAmount(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Nominal (Rp)</label>
+                <input type="number" required value={debtAmount} onChange={e => setDebtAmount(e.target.value)} className="w-full border p-2 rounded-xl font-bold" />
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Jatuh Tempo</label>
-                <input type="date" required value={debtDueDate} onChange={e => setDebtDueDate(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Jatuh Tempo</label>
+                <input type="date" required value={debtDueDate} onChange={e => setDebtDueDate(e.target.value)} className="w-full border p-2 rounded-xl" />
               </div>
               <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowAddDebtModal(false)} className="flex-1 bg-black/40 border border-emerald-500/20 p-2.5 rounded-2xl text-emerald-200 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-400 text-black p-2.5 rounded-2xl font-black shadow-[0_0_20px_rgba(16,185,129,0.35)]">Simpan</button>
+                <button type="button" onClick={() => setShowAddDebtModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
+                <button type="submit" className="flex-1 bg-[#0060af] text-white p-2.5 rounded-2xl font-black">Simpan</button>
               </div>
             </form>
           </div>
@@ -1303,74 +1082,47 @@ export default function CashFlowProEmeraldGlass() {
 
       {/* 5. CAPITAL MODAL */}
       {showCapitalModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-[#071c11]/95 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8)] space-y-3 text-xs border border-emerald-500/30">
-            <span className="font-black text-white block text-sm">Mutasi Modal Usaha</span>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
+            <span className="font-black text-slate-900 block text-sm">Mutasi Modal</span>
             <form onSubmit={handleAddCapital} className="space-y-2">
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Jenis</label>
-                <select value={capType} onChange={e => setCapType(e.target.value as any)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold">
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Jenis</label>
+                <select value={capType} onChange={e => setCapType(e.target.value as any)} className="w-full border p-2 rounded-xl font-bold">
                   <option value="Penambahan Modal">Penambahan Modal</option>
                   <option value="Penarikan Modal (Prive)">Penarikan (Prive)</option>
                 </select>
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Nominal (Rp)</label>
-                <input type="number" required value={capAmount} onChange={e => setCapAmount(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Nominal (Rp)</label>
+                <input type="number" required value={capAmount} onChange={e => setCapAmount(e.target.value)} className="w-full border p-2 rounded-xl font-bold" />
               </div>
               <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Keterangan</label>
-                <input type="text" value={capNotes} onChange={e => setCapNotes(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl" />
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Keterangan</label>
+                <input type="text" value={capNotes} onChange={e => setCapNotes(e.target.value)} className="w-full border p-2 rounded-xl" />
               </div>
               <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowCapitalModal(false)} className="flex-1 bg-black/40 border border-emerald-500/20 p-2.5 rounded-2xl text-emerald-200 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-emerald-500 text-black p-2.5 rounded-2xl font-black shadow-[0_0_20px_rgba(16,185,129,0.35)]">Simpan</button>
+                <button type="button" onClick={() => setShowCapitalModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
+                <button type="submit" className="flex-1 bg-[#0060af] text-white p-2.5 rounded-2xl font-black">Simpan</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* 6. BUDGET MODAL */}
-      {showBudgetModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-[#071c11]/95 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_60px_rgba(0,0,0,0.8)] space-y-3 text-xs border border-emerald-500/30">
-            <span className="font-black text-white block text-sm">Atur Anggaran Kategori</span>
-            <form onSubmit={handleSaveBudget} className="space-y-2">
-              <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Kategori Beban</label>
-                <select value={budgetCat} onChange={e => setBudgetCat(e.target.value as any)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold">
-                  {["Bahan Baku", "Transportasi", "Gaji", "Sewa", "Listrik", "Air", "Internet", "Pajak", "Marketing", "Peralatan", "Operasional Lain"].map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] text-emerald-200/60 font-bold block mb-1">Batas Anggaran (Rp)</label>
-                <input type="number" required value={budgetNominal} onChange={e => setBudgetNominal(e.target.value)} className="w-full border border-emerald-500/30 bg-black/40 text-white p-2 rounded-xl font-bold" />
-              </div>
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowBudgetModal(false)} className="flex-1 bg-black/40 border border-emerald-500/20 p-2.5 rounded-2xl text-emerald-200 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-emerald-500 text-black p-2.5 rounded-2xl font-black">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 7. RECEIPT MODAL */}
+      {/* 6. RECEIPT MODAL */}
       {activeReceiptSale && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-[#071c11]/95 rounded-3xl max-w-xs w-full p-5 shadow-2xl space-y-3 font-mono text-[11px] border border-emerald-500/30 text-white">
-            <div className="text-center border-b border-emerald-500/20 pb-2">
-              <span className="font-black uppercase block text-xs text-emerald-400">Kopi Senja Nusantara</span>
-              <span className="text-[10px] text-emerald-200/50">Kasir: {activeReceiptSale.cashier}</span>
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-xs w-full p-5 shadow-2xl space-y-3 font-mono text-[11px]">
+            <div className="text-center border-b pb-2">
+              <span className="font-black uppercase block text-xs text-[#0060af]">Kopi Senja Nusantara</span>
+              <span className="text-[9px] text-slate-400">Kasir: {activeReceiptSale.cashier}</span>
             </div>
-            <div className="space-y-1 text-emerald-100/70">
-              <div className="flex justify-between"><span>Faktur:</span> <strong className="text-white">{activeReceiptSale.invoiceNo}</strong></div>
+            <div className="space-y-1">
+              <div className="flex justify-between"><span>Faktur:</span> <strong>{activeReceiptSale.invoiceNo}</strong></div>
               <div className="flex justify-between"><span>Tgl:</span> <span>{activeReceiptSale.date}</span></div>
             </div>
-            <div className="border-t border-b border-emerald-500/20 py-2 space-y-1">
+            <div className="border-t border-b py-2 space-y-1">
               {activeReceiptSale.items.map((i, idx) => (
                 <div key={idx} className="flex justify-between">
                   <span>{i.name} x{i.qty}</span>
@@ -1378,13 +1130,13 @@ export default function CashFlowProEmeraldGlass() {
                 </div>
               ))}
             </div>
-            <div className="flex justify-between font-black text-xs pt-1 text-white">
+            <div className="flex justify-between font-black text-xs pt-1 text-slate-900">
               <span>TOTAL:</span>
-              <span className="text-emerald-400">{formatIDR(activeReceiptSale.total)}</span>
+              <span className="text-[#0060af]">{formatIDR(activeReceiptSale.total)}</span>
             </div>
             <div className="flex gap-2 pt-2">
-              <button onClick={() => setActiveReceiptSale(null)} className="flex-1 bg-black/40 border border-emerald-500/20 font-sans p-2 rounded-2xl text-xs font-bold text-emerald-200">Tutup</button>
-              <button onClick={() => window.print()} className="flex-1 bg-emerald-500 text-black font-sans p-2 rounded-2xl text-xs font-black shadow-[0_0_15px_rgba(16,185,129,0.4)]">Cetak</button>
+              <button onClick={() => setActiveReceiptSale(null)} className="flex-1 bg-slate-100 font-sans p-2 rounded-2xl text-xs font-bold">Tutup</button>
+              <button onClick={() => window.print()} className="flex-1 bg-[#0060af] text-white font-sans p-2 rounded-2xl text-xs font-bold">Cetak</button>
             </div>
           </div>
         </div>
