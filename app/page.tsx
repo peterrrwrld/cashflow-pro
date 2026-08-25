@@ -4,12 +4,63 @@ import React, { useState, useMemo, useEffect } from "react";
 import { 
   DollarSign, TrendingUp, TrendingDown, Package, CreditCard, 
   AlertTriangle, Sparkles, Plus, Download, Search, ShieldCheck, 
-  Layers, PieChart as PieIcon, Printer, Trash2, Building2, 
+  Layers, Printer, Trash2, Building2, 
   Wallet, BarChart3, Target, Receipt, ShoppingCart, MessageCircle, 
   Scale, Edit3, CheckCircle2, ArrowUpRight, ArrowDownRight, User,
   FileText, Home, ArrowLeftRight, Edit
 } from "lucide-react";
 import { toast } from "sonner";
+
+// ================= LOGO IKON RESMI (SESUAI GAMBAR) =================
+function KingsCountyLogo({ className = "h-8 w-8" }: { className?: string }) {
+  return (
+    <div className={`relative flex items-center justify-center ${className}`}>
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-xs">
+        <defs>
+          <linearGradient id="cfGradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0052cc" />
+            <stop offset="50%" stopColor="#0080eb" />
+            <stop offset="100%" stopColor="#00c8b3" />
+          </linearGradient>
+          <linearGradient id="cfGradGreen" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#0066cc" />
+            <stop offset="40%" stopColor="#00a884" />
+            <stop offset="100%" stopColor="#10b981" />
+          </linearGradient>
+        </defs>
+        {/* Curved Wave Line to Arrow */}
+        <path 
+          d="M 12 78 C 22 78 26 58 35 62 C 44 66 48 84 58 84 C 68 84 74 60 88 32" 
+          stroke="url(#cfGradBlue)" 
+          strokeWidth="10" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+        />
+        {/* Arrow Head */}
+        <path 
+          d="M 72 25 L 90 29 L 85 47 Z" 
+          fill="url(#cfGradGreen)" 
+        />
+        {/* Upper Stylized F Curve */}
+        <path 
+          d="M 38 40 C 38 25 50 20 62 20 C 70 20 74 23 74 23" 
+          stroke="url(#cfGradGreen)" 
+          strokeWidth="8" 
+          strokeLinecap="round" 
+        />
+        <path 
+          d="M 38 46 C 45 46 58 46 62 46" 
+          stroke="url(#cfGradBlue)" 
+          strokeWidth="7" 
+          strokeLinecap="round" 
+        />
+        {/* Dollar Coin Badge */}
+        <circle cx="55" cy="22" r="7" fill="#00a884" />
+        <text x="55" y="25.5" fontSize="8" fontWeight="bold" fill="white" textAnchor="middle">$</text>
+      </svg>
+    </div>
+  );
+}
 
 // ================= TYPES =================
 type Role = "Owner" | "Admin" | "Kasir";
@@ -230,12 +281,12 @@ export default function CashFlowProApp() {
 
   useEffect(() => {
     setIsClient(true);
-    const p = localStorage.getItem("cfp_dot_products_v7");
-    const s = localStorage.getItem("cfp_dot_sales_v7");
-    const e = localStorage.getItem("cfp_dot_expenses_v7");
-    const d = localStorage.getItem("cfp_dot_debts_v7");
-    const c = localStorage.getItem("cfp_dot_capital_v7");
-    const b = localStorage.getItem("cfp_dot_budgets_v7");
+    const p = localStorage.getItem("cfp_kings_products_v8");
+    const s = localStorage.getItem("cfp_kings_sales_v8");
+    const e = localStorage.getItem("cfp_kings_expenses_v8");
+    const d = localStorage.getItem("cfp_kings_debts_v8");
+    const c = localStorage.getItem("cfp_kings_capital_v8");
+    const b = localStorage.getItem("cfp_kings_budgets_v8");
 
     if (p) setProducts(JSON.parse(p));
     if (s) setSales(JSON.parse(s));
@@ -247,12 +298,12 @@ export default function CashFlowProApp() {
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("cfp_dot_products_v7", JSON.stringify(products));
-      localStorage.setItem("cfp_dot_sales_v7", JSON.stringify(sales));
-      localStorage.setItem("cfp_dot_expenses_v7", JSON.stringify(expenses));
-      localStorage.setItem("cfp_dot_debts_v7", JSON.stringify(debts));
-      localStorage.setItem("cfp_dot_capital_v7", JSON.stringify(capitalLogs));
-      localStorage.setItem("cfp_dot_budgets_v7", JSON.stringify(categoryBudgets));
+      localStorage.setItem("cfp_kings_products_v8", JSON.stringify(products));
+      localStorage.setItem("cfp_kings_sales_v8", JSON.stringify(sales));
+      localStorage.setItem("cfp_kings_expenses_v8", JSON.stringify(expenses));
+      localStorage.setItem("cfp_kings_debts_v8", JSON.stringify(debts));
+      localStorage.setItem("cfp_kings_capital_v8", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_kings_budgets_v8", JSON.stringify(categoryBudgets));
     }
   }, [products, sales, expenses, debts, capitalLogs, categoryBudgets, isClient]);
 
@@ -293,36 +344,54 @@ export default function CashFlowProApp() {
   const averageMarginRatio = totalRevenue > 0 ? (grossProfit / totalRevenue) : 0.45;
   const bepRevenue = averageMarginRatio > 0 ? (totalExpenses / averageMarginRatio) : 0;
 
-  // Format Rupiah dengan Titik Pemisah Ribuan (Standar Indonesia)
+  // Format Rupiah dengan Titik Pemisah Ribuan
   const formatIDR = (val: number) => {
     return "Rp " + new Intl.NumberFormat("id-ID").format(Math.round(val || 0));
   };
 
+  // ================= POS CART LOGIC DENGAN VALIDASI STOK KETAT =================
   const addToCart = (product: Product) => {
     if (product.stock <= 0) {
-      toast.error("Stok Kosong!");
+      toast.error("Stok Kosong!", { description: `${product.name} saat ini habis (0 pcs).` });
       return;
     }
+
+    const existingInCart = cart.find(item => item.productId === product.id);
+    const currentQtyInCart = existingInCart ? existingInCart.qty : 0;
+
+    if (currentQtyInCart + 1 > product.stock) {
+      toast.error("Tidak Bisa Melebihi Stok!", {
+        description: `Stok ${product.name} hanya tersedia ${product.stock} pcs.`
+      });
+      return;
+    }
+
     setCart(prev => {
-      const existing = prev.find(item => item.productId === product.id);
-      if (existing) {
-        if (existing.qty >= product.stock) {
-          toast.warning("Maksimal stok tercapai");
-          return prev;
-        }
+      if (existingInCart) {
         return prev.map(item => item.productId === product.id ? { ...item, qty: item.qty + 1 } : item);
       }
       return [...prev, { productId: product.id, name: product.name, price: product.sellPrice, costPrice: product.costPrice, qty: 1 }];
     });
-    toast.success(`${product.name} dimasukkan`);
+    toast.success(`${product.name} dimasukkan (${currentQtyInCart + 1} pcs)`);
   };
 
   const updateCartQty = (productId: string, newQty: number) => {
     if (newQty <= 0) {
       setCart(prev => prev.filter(item => item.productId !== productId));
-    } else {
-      setCart(prev => prev.map(item => item.productId === productId ? { ...item, qty: newQty } : item));
+      return;
     }
+
+    const prod = products.find(p => p.id === productId);
+    if (!prod) return;
+
+    if (newQty > prod.stock) {
+      toast.error("Batas Stok Tercapai!", {
+        description: `Stok ${prod.name} hanya tersedia maksimal ${prod.stock} pcs.`
+      });
+      return;
+    }
+
+    setCart(prev => prev.map(item => item.productId === productId ? { ...item, qty: newQty } : item));
   };
 
   const cartSubtotal = useMemo(() => cart.reduce((acc, item) => acc + (item.price * item.qty), 0), [cart]);
@@ -337,11 +406,23 @@ export default function CashFlowProApp() {
   const handleCheckoutPOS = (e: React.FormEvent) => {
     e.preventDefault();
     if (cart.length === 0) {
-      toast.error("Pilih produk terlebih dahulu");
+      toast.error("Keranjang Masih Kosong!");
       return;
     }
+
+    // Re-check seluruh stok sebelum proses bayar
+    for (const item of cart) {
+      const prod = products.find(p => p.id === item.productId);
+      if (!prod || item.qty > prod.stock) {
+        toast.error("Gagal Memproses Transaksi!", {
+          description: `Jumlah ${item.name} (${item.qty} pcs) melebihi stok yang ada (${prod?.stock || 0} pcs).`
+        });
+        return;
+      }
+    }
+
     if (posPaymentMethod === "Cash" && (Number(posCashPaid) < cartTotal)) {
-      toast.error("Uang yang dibayarkan kurang");
+      toast.error("Uang yang dibayarkan kurang!");
       return;
     }
 
@@ -373,7 +454,7 @@ export default function CashFlowProApp() {
     setPosNotes("");
     setShowAddSaleModal(false);
     setActiveReceiptSale(newSale);
-    toast.success("Transaksi Kasir Berhasil!");
+    toast.success("Transaksi Berhasil Disimpan!");
   };
 
   const handleAddExpense = (e: React.FormEvent) => {
@@ -390,7 +471,7 @@ export default function CashFlowProApp() {
     setShowAddExpenseModal(false);
     setExpAmount("");
     setExpNotes("");
-    toast.success("Pengeluaran Disimpan");
+    toast.success("Pengeluaran Berhasil Dicatat");
   };
 
   const handleAddProduct = (e: React.FormEvent) => {
@@ -417,7 +498,6 @@ export default function CashFlowProApp() {
     toast.success("Produk Baru Ditambahkan");
   };
 
-  // Open Edit Product Modal
   const openEditModal = (p: Product) => {
     setEditingProduct(p);
     setEditProdStock(String(p.stock));
@@ -427,7 +507,6 @@ export default function CashFlowProApp() {
     setShowEditProductModal(true);
   };
 
-  // Save Edited Product & Stock
   const handleUpdateProduct = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
@@ -470,7 +549,7 @@ export default function CashFlowProApp() {
     setDebtAmount("");
     setDebtDueDate("");
     setDebtNotes("");
-    toast.success("Tagihan Dicatat");
+    toast.success("Tagihan Berhasil Dicatat");
   };
 
   const handleToggleDebtSettled = (id: string) => {
@@ -521,7 +600,7 @@ export default function CashFlowProApp() {
     const csvContent = "data:text/csv;charset=utf-8," + csvRows.map(e => e.join(",")).join("\n");
     const link = document.createElement("a");
     link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", `Laporan_CashFlowPro_${new Date().toISOString().split("T")[0]}.csv`);
+    link.setAttribute("download", `Laporan_KingsCountyRoasters_${new Date().toISOString().split("T")[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -534,20 +613,18 @@ export default function CashFlowProApp() {
       {/* ================= DESKTOP SIDEBAR ================= */}
       <aside className="w-64 bg-white border-r border-sky-100 flex flex-col justify-between hidden lg:flex shadow-[0_8px_30px_rgba(0,100,200,0.04)] z-10">
         <div>
-          {/* Brand Header */}
-          <div className="p-5 border-b border-sky-100/80 bg-gradient-to-r from-sky-50 to-white flex items-center justify-between">
+          {/* Brand Header dengan Logo Baru */}
+          <div className="p-4 border-b border-sky-100 bg-gradient-to-r from-sky-50/70 to-white flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-[#0060af] via-[#0077d6] to-sky-400 flex items-center justify-center font-black text-xs text-white shadow-md shadow-sky-500/25">
-                CF
-              </div>
+              <KingsCountyLogo className="h-9 w-9 flex-shrink-0" />
               <div>
-                <span className="font-extrabold text-sm tracking-tight text-slate-900 leading-none block">
-                  CashFlow<span className="text-[#0060af]">Pro</span>
+                <span className="font-black text-sm tracking-tight text-slate-900 leading-none block">
+                  Kings County
                 </span>
-                <span className="text-[9px] text-[#0060af] font-semibold">Kopi Senja Nusantara</span>
+                <span className="text-[10px] font-extrabold text-[#0060af] tracking-wide block mt-0.5">Roasters</span>
               </div>
             </div>
-            <span className="text-[9px] bg-sky-100 text-[#0060af] font-bold px-2 py-0.5 rounded-full">Web</span>
+            <span className="text-[9px] bg-sky-100 text-[#0060af] font-black px-2 py-0.5 rounded-full">v2.1</span>
           </div>
 
           {/* Navigation Items */}
@@ -556,7 +633,7 @@ export default function CashFlowProApp() {
             {[
               { id: "dashboard", label: "Dashboard Ringkasan", icon: Home, color: "text-[#0060af]" },
               { id: "sales", label: "Kasir POS", icon: ShoppingCart, color: "text-cyan-600" },
-              { id: "products", label: "Inventori & Edit Stok", icon: Package, color: "text-teal-600" },
+              { id: "products", label: "Stok", icon: Package, color: "text-teal-600" },
               { id: "expenses", label: "Pengeluaran Toko", icon: TrendingDown, color: "text-rose-600" },
               { id: "debts", label: "Buku Hutang & Piutang", icon: CreditCard, color: "text-amber-600" },
               { id: "capital", label: "Modal & Ekuitas", icon: Wallet, color: "text-purple-600" },
@@ -625,20 +702,23 @@ export default function CashFlowProApp() {
         
         {/* Top Navbar */}
         <header className="bg-white/90 backdrop-blur-md border-b border-sky-100 px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-xs">
-          <div>
-            <h1 className="text-base font-extrabold text-slate-900">
-              {activeTab === "dashboard" && "Dashboard Eksekutif"}
-              {activeTab === "sales" && "Point of Sale (Kasir)"}
-              {activeTab === "products" && "Katalog Persediaan & Manajemen Stok"}
-              {activeTab === "expenses" && "Pencatatan Beban Pengeluaran"}
-              {activeTab === "debts" && "Buku Hutang & Piutang"}
-              {activeTab === "capital" && "Modal & Struktur Ekuitas"}
-              {activeTab === "reports" && "Laporan Keuangan Resmi (Laba Rugi, Neraca, Arus Kas)"}
-              {activeTab === "budget" && "Target & Pengawasan Anggaran"}
-              {activeTab === "analytics" && "Analisis Break Even Point & Margin"}
-              {activeTab === "ai" && "AI Financial Advisor"}
-            </h1>
-            <p className="text-[10px] text-slate-400">Sistem Keuangan & Kasir Digital UMKM</p>
+          <div className="flex items-center gap-3">
+            <KingsCountyLogo className="h-8 w-8 lg:hidden flex-shrink-0" />
+            <div>
+              <h1 className="text-base font-black text-slate-900">
+                {activeTab === "dashboard" && "Dashboard Eksekutif"}
+                {activeTab === "sales" && "Point of Sale (Kasir)"}
+                {activeTab === "products" && "Katalog Persediaan & Stok"}
+                {activeTab === "expenses" && "Pencatatan Beban Pengeluaran"}
+                {activeTab === "debts" && "Buku Hutang & Piutang"}
+                {activeTab === "capital" && "Modal & Struktur Ekuitas"}
+                {activeTab === "reports" && "Laporan Keuangan Resmi (Laba Rugi, Neraca, Arus Kas)"}
+                {activeTab === "budget" && "Target & Pengawasan Anggaran"}
+                {activeTab === "analytics" && "Analisis Break Even Point & Margin"}
+                {activeTab === "ai" && "AI Financial Advisor"}
+              </h1>
+              <p className="text-[10px] text-slate-400 font-semibold">Kings County Roasters • Manajemen Finansial Modern</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -663,7 +743,7 @@ export default function CashFlowProApp() {
           {/* ================= 1. DASHBOARD VIEW ================= */}
           {activeTab === "dashboard" && (
             <>
-              {/* 4 Kartu Metrik Finansial dengan Pemisah Ribuan Berisi Titik */}
+              {/* 4 Kartu Metrik Finansial dengan Titik Ribuan */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 
                 {/* 1. Omzet */}
@@ -691,7 +771,7 @@ export default function CashFlowProApp() {
                     </div>
                   </div>
                   <h3 className="text-2xl font-black text-rose-600 tracking-tight">{formatIDR(totalExpenses)}</h3>
-                  <span className="text-[10px] text-slate-400 font-semibold mt-1">{expenses.length} pos beban usaha</span>
+                  <span className="text-[10px] text-slate-400 font-semibold mt-1">{expenses.length} pos beban toko</span>
                 </div>
 
                 {/* 3. Laba Bersih */}
@@ -726,7 +806,7 @@ export default function CashFlowProApp() {
               {/* 8 Menu Akses Cepat Warna-Warni */}
               <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-3">
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                  <span className="text-xs font-black text-[#0060af]">Layanan Finansial & Operasional Peter</span>
+                  <span className="text-xs font-black text-[#0060af]">Layanan Finansial Kings County Roasters</span>
                   <span className="text-[10px] bg-sky-50 text-[#0060af] font-bold px-2.5 py-0.5 rounded-full border border-sky-200">Akses Cepat</span>
                 </div>
 
@@ -742,7 +822,7 @@ export default function CashFlowProApp() {
                     <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-teal-500 to-cyan-400 text-white flex items-center justify-center shadow-md shadow-teal-500/25">
                       <Package className="h-5 w-5" />
                     </div>
-                    <span className="text-[10px] font-bold text-slate-700">Stok Produk</span>
+                    <span className="text-[10px] font-bold text-slate-700">Stok</span>
                   </button>
 
                   <button onClick={() => setShowAddExpenseModal(true)} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-rose-50/50 hover:bg-rose-100/70 border border-rose-100 transition active:scale-95">
@@ -791,8 +871,6 @@ export default function CashFlowProApp() {
 
               {/* Rincian Posisi Keuangan & Target Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Rincian Keuangan */}
                 <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-3">
                   <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                     <span className="text-xs font-black text-slate-900">Rincian Posisi Finansial Toko</span>
@@ -818,7 +896,6 @@ export default function CashFlowProApp() {
                   </div>
                 </div>
 
-                {/* Progress Target */}
                 <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-3 flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-3">
@@ -834,10 +911,9 @@ export default function CashFlowProApp() {
                     </div>
                   </div>
                   <div className="p-3 bg-sky-50/80 border border-sky-100 rounded-2xl text-[11px] text-[#0060af] font-medium">
-                    💡 <strong>Status Peter:</strong> Usaha berada dalam zona profit sehat di atas titik impas (BEP).
+                    💡 <strong>Status Peter:</strong> Kings County Roasters berada di atas titik impas (BEP).
                   </div>
                 </div>
-
               </div>
 
               {/* Tabel Transaksi Terakhir */}
@@ -858,10 +934,10 @@ export default function CashFlowProApp() {
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {sales.slice(0, 4).map(s => (
                       <tr key={s.id} className="hover:bg-sky-50/40 transition">
-                        <td className="py-3 px-4 font-mono font-bold text-slate-900">{s.invoiceNo}</td>
-                        <td className="py-3 px-4 text-slate-800 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
-                        <td className="py-3 px-4"><span className="bg-sky-50 text-[#0060af] border border-sky-200 px-2 py-0.5 rounded-lg text-[10px] font-bold">{s.paymentMethod}</span></td>
-                        <td className="py-3 px-4 text-right font-black text-emerald-600 text-sm">+{formatIDR(s.total)}</td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{s.invoiceNo}</td>
+                        <td className="py-3.5 px-4 text-slate-800 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
+                        <td className="py-3.5 px-4"><span className="bg-sky-50 text-[#0060af] border border-sky-200 px-2 py-0.5 rounded-lg text-[10px] font-bold">{s.paymentMethod}</span></td>
+                        <td className="py-3.5 px-4 text-right font-black text-emerald-600 text-sm">+{formatIDR(s.total)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -909,12 +985,12 @@ export default function CashFlowProApp() {
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {sales.filter(s => s.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase())).map(s => (
                       <tr key={s.id} className="hover:bg-sky-50/40 transition">
-                        <td className="py-3 px-4 font-mono font-bold text-slate-900">{s.invoiceNo}</td>
-                        <td className="py-3 px-4 text-slate-400">{s.date}</td>
-                        <td className="py-3 px-4 text-slate-800 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
-                        <td className="py-3 px-4"><span className="bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-lg text-[10px] font-bold text-[#0060af]">{s.paymentMethod}</span></td>
-                        <td className="py-3 px-4 text-right font-black text-emerald-600 text-sm">+{formatIDR(s.total)}</td>
-                        <td className="py-3 px-4 text-center">
+                        <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{s.invoiceNo}</td>
+                        <td className="py-3.5 px-4 text-slate-400">{s.date}</td>
+                        <td className="py-3.5 px-4 text-slate-800 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
+                        <td className="py-3.5 px-4"><span className="bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-lg text-[10px] font-bold text-[#0060af]">{s.paymentMethod}</span></td>
+                        <td className="py-3.5 px-4 text-right font-black text-emerald-600 text-sm">+{formatIDR(s.total)}</td>
+                        <td className="py-3.5 px-4 text-center">
                           <button onClick={() => setActiveReceiptSale(s)} className="p-1.5 text-[#0060af] hover:bg-sky-50 rounded-lg"><Receipt className="h-4 w-4" /></button>
                         </td>
                       </tr>
@@ -925,13 +1001,13 @@ export default function CashFlowProApp() {
             </div>
           )}
 
-          {/* ================= 3. PRODUCTS VIEW (DENGAN EDIT STOK) ================= */}
+          {/* ================= 3. STOK VIEW ================= */}
           {activeTab === "products" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">Katalog Produk & Manajemen Stok ({products.length})</h3>
-                  <p className="text-xs text-slate-400">Klik tombol Edit untuk memperbarui stok dan harga</p>
+                  <h3 className="text-sm font-bold text-slate-900">Manajemen Stok Barang ({products.length} Item)</h3>
+                  <p className="text-xs text-slate-400">Klik tombol Edit untuk mengubah kuantitas stok atau harga</p>
                 </div>
                 <button onClick={() => setShowAddProductModal(true)} className="bg-gradient-to-r from-teal-600 to-cyan-500 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-teal-500/25">
                   + Tambah Produk
@@ -948,7 +1024,7 @@ export default function CashFlowProApp() {
                       <th className="py-3 px-4">Harga Jual</th>
                       <th className="py-3 px-4">Margin Laba</th>
                       <th className="py-3 px-4">Stok Aktif</th>
-                      <th className="py-3 px-4 text-center">Aksi / Edit</th>
+                      <th className="py-3 px-4 text-center">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
@@ -1118,7 +1194,7 @@ export default function CashFlowProApp() {
                 <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.06)] space-y-4 text-xs">
                   <div className="border-b border-slate-100 pb-3 text-center">
                     <h3 className="font-black text-base text-[#0060af] uppercase">Laporan Laba Rugi (SAK EMKM)</h3>
-                    <p className="text-[10px] text-slate-400">Pemilik: Peter • Periode Berjalan</p>
+                    <p className="text-[10px] text-slate-400">Kings County Roasters • Pemilik: Peter</p>
                   </div>
                   <div className="space-y-2.5">
                     <div className="flex justify-between"><span>Penjualan Bersih (Omzet):</span> <span className="font-bold text-slate-900">{formatIDR(totalRevenue)}</span></div>
@@ -1137,6 +1213,7 @@ export default function CashFlowProApp() {
                 <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.06)] space-y-4 text-xs">
                   <div className="border-b border-slate-100 pb-3 text-center">
                     <h3 className="font-black text-base text-[#0060af] uppercase">Neraca Sederhana</h3>
+                    <p className="text-[10px] text-slate-400">Kings County Roasters</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-sky-50/50 p-4 rounded-2xl border border-sky-100">
@@ -1225,7 +1302,7 @@ export default function CashFlowProApp() {
             <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-4 text-xs">
               <div className="flex items-center gap-2 text-[#0060af] font-black text-sm">
                 <Sparkles className="h-4 w-4 text-[#0060af]" />
-                Rekomendasi AI untuk Peter
+                Rekomendasi AI untuk Kings County Roasters (Peter)
               </div>
               <div className="p-4 bg-sky-50/70 border border-sky-100 rounded-2xl space-y-2.5 text-slate-700 leading-relaxed font-medium">
                 <p>• <strong>Bahan Baku:</strong> Pembelian bahan baku menyerap 45% pengeluaran toko. Gunakan skema kontrak grosir bulanan untuk memotong HPP hingga 8%.</p>
@@ -1240,43 +1317,87 @@ export default function CashFlowProApp() {
 
       {/* ================= MODALS (POPUP) ================= */}
 
-      {/* 1. POS MODAL (BEBAS DARI KATA BCA) */}
+      {/* 1. POS MODAL (DENGAN PROTEKSI STOK & METODE UMUM) */}
       {showAddSaleModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl space-y-3.5 border border-sky-100 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-2">
-              <span className="text-xs font-black text-[#0060af]">Kasir POS Multi-Item</span>
+              <div>
+                <span className="text-xs font-black text-[#0060af] block">Kasir POS Multi-Item</span>
+                <span className="text-[10px] text-slate-400 font-semibold">Kings County Roasters</span>
+              </div>
               <button onClick={() => setShowAddSaleModal(false)} className="text-slate-400 hover:text-slate-700 text-xs">✕</button>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
-              {products.map(p => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => addToCart(p)}
-                  className="p-2.5 bg-sky-50/50 border border-sky-100 rounded-2xl text-left hover:border-[#0060af] transition"
-                >
-                  <div className="text-[11px] font-bold text-slate-800 truncate">{p.name}</div>
-                  <div className="text-[10px] text-[#0060af] font-black">{formatIDR(p.sellPrice)} (Stok: {p.stock})</div>
-                </button>
-              ))}
+            {/* Daftar Produk untuk Dipilih */}
+            <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-1 bg-slate-50/50 rounded-2xl">
+              {products.map(p => {
+                const inCart = cart.find(c => c.productId === p.id);
+                const isOutOfStock = p.stock <= 0;
+                const isMaxInCart = (inCart?.qty || 0) >= p.stock;
+
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    disabled={isOutOfStock || isMaxInCart}
+                    onClick={() => addToCart(p)}
+                    className={`p-2.5 rounded-2xl text-left border transition ${
+                      isOutOfStock || isMaxInCart 
+                        ? "bg-slate-100 border-slate-200 opacity-60 cursor-not-allowed" 
+                        : "bg-white border-sky-100 hover:border-[#0060af] shadow-2xs"
+                    }`}
+                  >
+                    <div className="text-[11px] font-bold text-slate-800 truncate">{p.name}</div>
+                    <div className="text-[10px] text-[#0060af] font-black">{formatIDR(p.sellPrice)}</div>
+                    <div className="text-[9px] text-slate-400 font-semibold mt-0.5">
+                      Stok: {p.stock} {isMaxInCart && "(Maksimal)"}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
-            <div className="bg-slate-50 p-3 rounded-2xl text-xs space-y-1 max-h-28 overflow-y-auto">
+            {/* Keranjang Belanja */}
+            <div className="bg-slate-50 p-3 rounded-2xl text-xs space-y-1.5 max-h-32 overflow-y-auto border border-slate-100">
               {cart.length === 0 ? (
-                <p className="text-[10px] text-slate-400 italic text-center">Keranjang belanja kosong</p>
+                <p className="text-[10px] text-slate-400 italic text-center py-2">Keranjang belanja kosong</p>
               ) : (
-                cart.map(item => (
-                  <div key={item.productId} className="flex justify-between items-center">
-                    <span className="truncate font-semibold">{item.name}</span>
-                    <div className="flex items-center gap-1.5">
-                      <button onClick={() => updateCartQty(item.productId, item.qty - 1)} className="px-2 py-0.5 bg-slate-200 rounded-lg text-[10px] font-black">-</button>
-                      <span className="font-bold">{item.qty}</span>
-                      <button onClick={() => updateCartQty(item.productId, item.qty + 1)} className="px-2 py-0.5 bg-slate-200 rounded-lg text-[10px] font-black">+</button>
+                cart.map(item => {
+                  const prod = products.find(p => p.id === item.productId);
+                  const isMaxReached = prod ? item.qty >= prod.stock : false;
+
+                  return (
+                    <div key={item.productId} className="flex justify-between items-center bg-white p-2 rounded-xl border border-slate-100 shadow-2xs">
+                      <div className="truncate pr-2">
+                        <span className="font-bold text-slate-800 block truncate">{item.name}</span>
+                        <span className="text-[10px] text-slate-400">{formatIDR(item.price)} / pcs</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        <button 
+                          type="button"
+                          onClick={() => updateCartQty(item.productId, item.qty - 1)} 
+                          className="h-6 w-6 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-black flex items-center justify-center"
+                        >
+                          -
+                        </button>
+                        <span className="font-black px-1 text-xs text-slate-900">{item.qty}</span>
+                        <button 
+                          type="button"
+                          disabled={isMaxReached}
+                          onClick={() => updateCartQty(item.productId, item.qty + 1)} 
+                          className={`h-6 w-6 rounded-lg text-xs font-black flex items-center justify-center ${
+                            isMaxReached 
+                              ? "bg-slate-100 text-slate-300 cursor-not-allowed" 
+                              : "bg-[#0060af] text-white hover:bg-sky-600"
+                          }`}
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
@@ -1343,7 +1464,7 @@ export default function CashFlowProApp() {
         </div>
       )}
 
-      {/* 2. EXPENSE MODAL (DENGAN PREVIEW TITIK RUPIAH) */}
+      {/* 2. EXPENSE MODAL */}
       {showAddExpenseModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-rose-100">
@@ -1386,7 +1507,7 @@ export default function CashFlowProApp() {
         </div>
       )}
 
-      {/* 3. PRODUCT MODAL (TAMBAH PRODUK BARU) */}
+      {/* 3. TAMBAH PRODUK BARU */}
       {showAddProductModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-sky-100">
@@ -1394,7 +1515,7 @@ export default function CashFlowProApp() {
             <form onSubmit={handleAddProduct} className="space-y-2">
               <div>
                 <label className="text-[9px] text-slate-500 font-bold block mb-1">Nama Produk</label>
-                <input type="text" required placeholder="Contoh: Es Kopi Susu" value={newProdName} onChange={e => setNewProdName(e.target.value)} className="w-full border p-2 rounded-xl" />
+                <input type="text" required placeholder="Contoh: Cold Brew Coffee" value={newProdName} onChange={e => setNewProdName(e.target.value)} className="w-full border p-2 rounded-xl" />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
@@ -1421,7 +1542,7 @@ export default function CashFlowProApp() {
         </div>
       )}
 
-      {/* 4. EDIT PRODUK & STOK MODAL (FITUR BARU) */}
+      {/* 4. EDIT STOK & HARGA */}
       {showEditProductModal && editingProduct && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-sky-100">
@@ -1490,7 +1611,7 @@ export default function CashFlowProApp() {
         </div>
       )}
 
-      {/* 5. DEBT MODAL (DENGAN PREVIEW TITIK RUPIAH) */}
+      {/* 5. DEBT MODAL */}
       {showAddDebtModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-amber-100">
@@ -1533,7 +1654,7 @@ export default function CashFlowProApp() {
         </div>
       )}
 
-      {/* 6. CAPITAL MODAL (DENGAN PREVIEW TITIK RUPIAH) */}
+      {/* 6. CAPITAL MODAL */}
       {showCapitalModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-purple-100">
@@ -1619,7 +1740,7 @@ export default function CashFlowProApp() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-xs w-full p-5 shadow-2xl space-y-3 font-mono text-[11px] border border-sky-100">
             <div className="text-center border-b pb-2">
-              <span className="font-black uppercase block text-xs text-[#0060af]">Kopi Senja Nusantara</span>
+              <span className="font-black uppercase block text-xs text-[#0060af]">KINGS COUNTY ROASTERS</span>
               <span className="text-[9px] text-slate-400">Kasir: {activeReceiptSale.cashier}</span>
             </div>
             <div className="space-y-1 text-slate-600">
