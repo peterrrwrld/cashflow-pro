@@ -6,7 +6,8 @@ import {
   AlertTriangle, Sparkles, Plus, Download, Search, ShieldCheck, 
   ArrowUpRight, Layers, PieChart as PieIcon, Printer, Trash2,
   Building2, Clock, Wallet, BarChart3, Target, Receipt,
-  ShoppingCart, X, CheckCircle, AlertCircle, RefreshCw
+  ShoppingCart, X, CheckCircle2, AlertCircle, MessageCircle,
+  Scale, Edit3
 } from "lucide-react";
 import { 
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, 
@@ -70,6 +71,7 @@ interface DebtItem {
   id: string;
   type: "Hutang" | "Piutang";
   person: string;
+  phone?: string;
   amount: number;
   dueDate: string;
   isPaid: boolean;
@@ -84,12 +86,17 @@ interface CapitalLog {
   notes: string;
 }
 
+interface CategoryBudget {
+  category: ExpenseCategory;
+  allocated: number;
+}
+
 // ================= DEFAULT DATA =================
 const DEFAULT_PRODUCTS: Product[] = [
   { id: "P1", name: "Kopi Arabika Gayo 250g", sku: "KOP-001", category: "Minuman", costPrice: 35000, sellPrice: 65000, stock: 35, minStock: 10, isActive: true, image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=120" },
-  { id: "P2", name: "Croissant Almond Butter", sku: "BAK-002", category: "Makanan", costPrice: 12000, sellPrice: 28000, stock: 5, minStock: 8, isActive: true, image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120" },
+  { id: "P2", name: "Croissant Almond Butter", sku: "BAK-002", category: "Makanan", costPrice: 12000, sellPrice: 28000, stock: 4, minStock: 8, isActive: true, image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=120" },
   { id: "P3", name: "Matcha Latte Premium 500g", sku: "BEV-003", category: "Minuman", costPrice: 55000, sellPrice: 95000, stock: 18, minStock: 5, isActive: true, image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=120" },
-  { id: "P4", name: "Susu Fresh Milk 1L", sku: "ING-004", category: "Bahan Baku", costPrice: 17000, sellPrice: 24000, stock: 4, minStock: 10, isActive: true, image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=120" },
+  { id: "P4", name: "Susu Fresh Milk 1L", sku: "ING-004", category: "Bahan Baku", costPrice: 17000, sellPrice: 24000, stock: 3, minStock: 10, isActive: true, image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=120" },
 ];
 
 const DEFAULT_SALES: SaleTransaction[] = [
@@ -97,51 +104,82 @@ const DEFAULT_SALES: SaleTransaction[] = [
     id: "S1",
     invoiceNo: "INV-2026-0801",
     date: "2026-08-24",
-    items: [{ productId: "P1", name: "Kopi Arabika Gayo 250g", price: 65000, costPrice: 35000, qty: 2 }],
-    subtotal: 130000,
+    items: [{ productId: "P1", name: "Kopi Arabika Gayo 250g", price: 65000, costPrice: 35000, qty: 3 }],
+    subtotal: 195000,
     discount: 5000,
-    total: 125000,
-    cogs: 70000,
+    total: 190000,
+    cogs: 105000,
     paymentMethod: "QRIS",
-    amountPaid: 125000,
+    amountPaid: 190000,
     change: 0,
     cashier: "Kasir 1",
-    notes: "Dine in Meja 02"
+    notes: "Dine in Meja 04"
+  },
+  {
+    id: "S2",
+    invoiceNo: "INV-2026-0802",
+    date: "2026-08-24",
+    items: [{ productId: "P2", name: "Croissant Almond Butter", price: 28000, costPrice: 12000, qty: 2 }],
+    subtotal: 56000,
+    discount: 0,
+    total: 56000,
+    cogs: 24000,
+    paymentMethod: "Cash",
+    amountPaid: 100000,
+    change: 44000,
+    cashier: "Kasir 1",
+    notes: "Takeaway"
   }
 ];
 
 const DEFAULT_EXPENSES: ExpenseItem[] = [
-  { id: "E1", category: "Bahan Baku", amount: 450000, date: "2026-08-24", notes: "Restock Biji Kopi" },
-  { id: "E2", category: "Listrik", amount: 250000, date: "2026-08-22", notes: "Token Listrik Mesin Espresso" },
-  { id: "E3", category: "Marketing", amount: 150000, date: "2026-08-23", notes: "Instagram Ads Weekend Promo" },
+  { id: "E1", category: "Bahan Baku", amount: 650000, date: "2026-08-24", notes: "Restock Biji Kopi Fresh 10kg" },
+  { id: "E2", category: "Listrik", amount: 350000, date: "2026-08-21", notes: "Token Listrik Mesin Espresso" },
+  { id: "E3", category: "Marketing", amount: 200000, date: "2026-08-22", notes: "Instagram Ads Promo Merdeka" },
+  { id: "E4", category: "Gaji", amount: 2500000, date: "2026-08-01", notes: "Gaji Barista Utama" },
+  { id: "E5", category: "Internet", amount: 275000, date: "2026-08-10", notes: "Wifi Toko IndiHome" },
 ];
 
 const DEFAULT_DEBTS: DebtItem[] = [
-  { id: "D1", type: "Piutang", person: "Katering Bu Dewi", amount: 650000, dueDate: "2026-08-28", isPaid: false, notes: "Pesanan 25 botol kopi susu" },
-  { id: "D2", type: "Hutang", person: "Supplier Biji Kopi", amount: 480000, dueDate: "2026-08-27", isPaid: false, notes: "Tempo pembayaran bahan baku" },
+  { id: "D1", type: "Piutang", person: "Katering Bu Dewi", phone: "628123456789", amount: 750000, dueDate: "2026-08-26", isPaid: false, notes: "Pesanan 30 botol Cold Brew" },
+  { id: "D2", type: "Hutang", person: "Supplier Susu Segar Lembang", phone: "628987654321", amount: 480000, dueDate: "2026-08-25", isPaid: false, notes: "Pembayaran tempo 7 hari" },
+  { id: "D3", type: "Piutang", person: "PT Maju Gemilang", phone: "628111222333", amount: 1500000, dueDate: "2026-08-20", isPaid: false, notes: "Coffee Break Event (Overdue)" },
 ];
 
 const DEFAULT_CAPITAL: CapitalLog[] = [
-  { id: "C1", date: "2026-01-10", type: "Modal Awal", amount: 20000000, notes: "Modal Awal Toko" },
-  { id: "C2", date: "2026-05-15", type: "Penambahan Modal", amount: 5000000, notes: "Beli Alat Grinder Baru" },
+  { id: "C1", date: "2026-01-10", type: "Modal Awal", amount: 25000000, notes: "Setoran Modal Pendirian Toko" },
+  { id: "C2", date: "2026-05-15", type: "Penambahan Modal", amount: 5000000, notes: "Beli Alat Espresso Tambahan" },
+  { id: "C3", date: "2026-07-20", type: "Penarikan Modal (Prive)", amount: 1500000, notes: "Keperluan Pribadi Owner" },
+];
+
+const DEFAULT_BUDGETS: CategoryBudget[] = [
+  { category: "Bahan Baku", allocated: 3000000 },
+  { category: "Marketing", allocated: 500000 },
+  { category: "Gaji", allocated: 3000000 },
+  { category: "Listrik", allocated: 500000 },
+  { category: "Internet", allocated: 300000 },
+  { category: "Sewa", allocated: 2000000 },
+  { category: "Operasional Lain", allocated: 500000 },
 ];
 
 const FINANCIAL_CHART_DATA = [
-  { date: "Sen", pemasukan: 1200000, pengeluaran: 450000, laba: 750000 },
-  { date: "Sel", pemasukan: 1450000, pengeluaran: 300000, laba: 1150000 },
-  { date: "Rab", pemasukan: 980000, pengeluaran: 550000, laba: 430000 },
-  { date: "Kam", pemasukan: 1850000, pengeluaran: 620000, laba: 1230000 },
-  { date: "Jum", pemasukan: 2300000, pengeluaran: 480000, laba: 1820000 },
-  { date: "Sab", pemasukan: 2100000, pengeluaran: 390000, laba: 1710000 },
-  { date: "Min", pemasukan: 1950000, pengeluaran: 710000, laba: 1240000 },
+  { date: "18 Aug", pemasukan: 1200000, pengeluaran: 450000, laba: 750000 },
+  { date: "19 Aug", pemasukan: 1450000, pengeluaran: 300000, laba: 1150000 },
+  { date: "20 Aug", pemasukan: 980000, pengeluaran: 550000, laba: 430000 },
+  { date: "21 Aug", pemasukan: 1850000, pengeluaran: 620000, laba: 1230000 },
+  { date: "22 Aug", pemasukan: 2300000, pengeluaran: 480000, laba: 1820000 },
+  { date: "23 Aug", pemasukan: 2100000, pengeluaran: 390000, laba: 1710000 },
+  { date: "24 Aug", pemasukan: 1950000, pengeluaran: 710000, laba: 1240000 },
 ];
 
 export default function CashFlowProMaster() {
   // Navigation & Role
   const [activeTab, setActiveTab] = useState<
-    "dashboard" | "sales" | "products" | "expenses" | "debts" | "capital" | "reports" | "analytics" | "ai"
+    "dashboard" | "sales" | "products" | "expenses" | "debts" | "capital" | "reports" | "budget" | "analytics" | "ai"
   >("dashboard");
   const [currentRole, setCurrentRole] = useState<Role>("Owner");
+  const [reportSubTab, setReportSubTab] = useState<"labarugi" | "neraca" | "aruskas">("labarugi");
+  const [debtFilter, setDebtFilter] = useState<"Semua" | "Belum Lunas" | "Lunas" | "Piutang" | "Hutang">("Semua");
   const [isClient, setIsClient] = useState(false);
 
   // Persistent States with LocalStorage
@@ -150,8 +188,13 @@ export default function CashFlowProMaster() {
   const [expenses, setExpenses] = useState<ExpenseItem[]>(DEFAULT_EXPENSES);
   const [debts, setDebts] = useState<DebtItem[]>(DEFAULT_DEBTS);
   const [capitalLogs, setCapitalLogs] = useState<CapitalLog[]>(DEFAULT_CAPITAL);
+  const [categoryBudgets, setCategoryBudgets] = useState<CategoryBudget[]>(DEFAULT_BUDGETS);
 
-  // Search
+  // Targets
+  const [targetRevenue] = useState(30000000);
+  const [targetProfit] = useState(12000000);
+
+  // Search & Filters
   const [searchTerm, setSearchTerm] = useState("");
 
   // Modals
@@ -160,6 +203,7 @@ export default function CashFlowProMaster() {
   const [showAddProductModal, setShowAddProductModal] = useState(false);
   const [showAddDebtModal, setShowAddDebtModal] = useState(false);
   const [showCapitalModal, setShowCapitalModal] = useState(false);
+  const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [activeReceiptSale, setActiveReceiptSale] = useState<SaleTransaction | null>(null);
 
   // POS Cart State
@@ -188,6 +232,7 @@ export default function CashFlowProMaster() {
   // Form States - Debt
   const [debtType, setDebtType] = useState<"Hutang" | "Piutang">("Piutang");
   const [debtPerson, setDebtPerson] = useState("");
+  const [debtPhone, setDebtPhone] = useState("");
   const [debtAmount, setDebtAmount] = useState("");
   const [debtDueDate, setDebtDueDate] = useState("");
   const [debtNotes, setDebtNotes] = useState("");
@@ -197,43 +242,52 @@ export default function CashFlowProMaster() {
   const [capAmount, setCapAmount] = useState("");
   const [capNotes, setCapNotes] = useState("");
 
-  const targetRevenue = 30000000;
+  // Form States - Edit Budget
+  const [budgetCat, setBudgetCat] = useState<ExpenseCategory>("Bahan Baku");
+  const [budgetNominal, setBudgetNominal] = useState("");
+
+  // AI Prompt State
+  const [aiSelectedTopic, setAiSelectedTopic] = useState<string>("analisis_kebocoran");
 
   // Load from LocalStorage
   useEffect(() => {
     setIsClient(true);
-    const savedProducts = localStorage.getItem("cfp_products");
-    const savedSales = localStorage.getItem("cfp_sales");
-    const savedExpenses = localStorage.getItem("cfp_expenses");
-    const savedDebts = localStorage.getItem("cfp_debts");
-    const savedCapital = localStorage.getItem("cfp_capital");
+    const savedProducts = localStorage.getItem("cfp_products_v2");
+    const savedSales = localStorage.getItem("cfp_sales_v2");
+    const savedExpenses = localStorage.getItem("cfp_expenses_v2");
+    const savedDebts = localStorage.getItem("cfp_debts_v2");
+    const savedCapital = localStorage.getItem("cfp_capital_v2");
+    const savedBudgets = localStorage.getItem("cfp_budgets_v2");
 
     if (savedProducts) setProducts(JSON.parse(savedProducts));
     if (savedSales) setSales(JSON.parse(savedSales));
     if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
     if (savedDebts) setDebts(JSON.parse(savedDebts));
     if (savedCapital) setCapitalLogs(JSON.parse(savedCapital));
+    if (savedBudgets) setCategoryBudgets(JSON.parse(savedBudgets));
   }, []);
 
   // Save to LocalStorage
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("cfp_products", JSON.stringify(products));
-      localStorage.setItem("cfp_sales", JSON.stringify(sales));
-      localStorage.setItem("cfp_expenses", JSON.stringify(expenses));
-      localStorage.setItem("cfp_debts", JSON.stringify(debts));
-      localStorage.setItem("cfp_capital", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_products_v2", JSON.stringify(products));
+      localStorage.setItem("cfp_sales_v2", JSON.stringify(sales));
+      localStorage.setItem("cfp_expenses_v2", JSON.stringify(expenses));
+      localStorage.setItem("cfp_debts_v2", JSON.stringify(debts));
+      localStorage.setItem("cfp_capital_v2", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_budgets_v2", JSON.stringify(categoryBudgets));
     }
-  }, [products, sales, expenses, debts, capitalLogs, isClient]);
+  }, [products, sales, expenses, debts, capitalLogs, categoryBudgets, isClient]);
 
-  // ================= FINANCIAL FORMULAS =================
+  // ================= FORMULA KEUANGAN MENDALAM =================
   const totalRevenue = useMemo(() => sales.reduce((acc, curr) => acc + curr.total, 0), [sales]);
   const totalCOGS = useMemo(() => sales.reduce((acc, curr) => acc + curr.cogs, 0), [sales]);
   const totalExpenses = useMemo(() => expenses.reduce((acc, curr) => acc + curr.amount, 0), [expenses]);
   
-  const grossProfit = totalRevenue - totalCOGS;
-  const netProfit = grossProfit - totalExpenses;
+  const grossProfit = totalRevenue - totalCOGS; // Laba Kotor
+  const netProfit = grossProfit - totalExpenses; // Laba Bersih
 
+  // Modal Bersih Disetor
   const totalNetCapital = useMemo(() => {
     return capitalLogs.reduce((acc, curr) => {
       if (curr.type === "Penarikan Modal (Prive)") return acc - curr.amount;
@@ -241,14 +295,61 @@ export default function CashFlowProMaster() {
     }, 0);
   }, [capitalLogs]);
 
-  const cashOnHand = totalNetCapital + netProfit;
+  const cashOnHand = totalNetCapital + netProfit; // Kas Nyata Toko
   const roiPercentage = totalNetCapital > 0 ? ((netProfit / totalNetCapital) * 100).toFixed(1) : "0.0";
   const profitMarginPercent = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : "0.0";
 
+  // Total Nilai Aset Stok
+  const inventoryValue = useMemo(() => products.reduce((acc, p) => acc + (p.costPrice * p.stock), 0), [products]);
+
+  // Hutang & Piutang
   const totalReceivables = useMemo(() => debts.filter(d => d.type === "Piutang" && !d.isPaid).reduce((acc, curr) => acc + curr.amount, 0), [debts]);
   const totalPayables = useMemo(() => debts.filter(d => d.type === "Hutang" && !d.isPaid).reduce((acc, curr) => acc + curr.amount, 0), [debts]);
+
+  // Neraca Components (Balance Sheet)
+  const totalAssets = cashOnHand + inventoryValue + totalReceivables;
+  const totalLiabilities = totalPayables;
+  const totalEquity = totalNetCapital + netProfit;
+  const totalLiabilitiesAndEquity = totalLiabilities + totalEquity;
+  const isBalanceSheetBalanced = Math.abs(totalAssets - totalLiabilitiesAndEquity) < 1;
+
+  // Breakdown Pengeluaran per Kategori
+  const expensesByCategory = useMemo(() => {
+    const map: Record<string, number> = {};
+    expenses.forEach(e => {
+      map[e.category] = (map[e.category] || 0) + e.amount;
+    });
+    return map;
+  }, [expenses]);
+
+  // Top Products by Revenue & Profit
+  const productAnalytics = useMemo(() => {
+    const stats: Record<string, { qty: number; revenue: number; profit: number }> = {};
+    sales.forEach(s => {
+      s.items.forEach(item => {
+        if (!stats[item.name]) stats[item.name] = { qty: 0, revenue: 0, profit: 0 };
+        const itemRevenue = item.price * item.qty;
+        const itemCOGS = item.costPrice * item.qty;
+        stats[item.name].qty += item.qty;
+        stats[item.name].revenue += itemRevenue;
+        stats[item.name].profit += (itemRevenue - itemCOGS);
+      });
+    });
+    return Object.entries(stats).map(([name, val]) => ({ name, ...val }));
+  }, [sales]);
+
+  // Break-Even Point (BEP) Calculations
+  const averageMarginRatio = totalRevenue > 0 ? (grossProfit / totalRevenue) : 0.45;
+  const bepRevenue = averageMarginRatio > 0 ? (totalExpenses / averageMarginRatio) : 0;
+
+  // Estimasi Hari Capai Target Omzet
+  const avgDailyRevenue = totalRevenue > 0 ? (totalRevenue / 24) : 0;
+  const estimatedDaysToTarget = avgDailyRevenue > 0 ? Math.ceil(Math.max(0, targetRevenue - totalRevenue) / avgDailyRevenue) : 0;
+
+  // Low Stock
   const lowStockAlerts = useMemo(() => products.filter(p => p.stock <= p.minStock), [products]);
 
+  // Format Rupiah
   const formatIDR = (val: number) => {
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(val);
   };
@@ -256,7 +357,7 @@ export default function CashFlowProMaster() {
   // ================= POS CART LOGIC =================
   const addToCart = (product: Product) => {
     if (product.stock <= 0) {
-      toast.error("Stok Habis!", { description: `${product.name} saat ini kosong.` });
+      toast.error("Stok Habis!", { description: `${product.name} kosong.` });
       return;
     }
 
@@ -321,16 +422,11 @@ export default function CashFlowProMaster() {
       notes: posNotes
     };
 
-    // Kurangi stok produk secara permanen
-    setProducts(prevProducts => {
-      return prevProducts.map(p => {
-        const itemInCart = cart.find(c => c.productId === p.id);
-        if (itemInCart) {
-          return { ...p, stock: p.stock - itemInCart.qty };
-        }
-        return p;
-      });
-    });
+    // Potong stok
+    setProducts(prev => prev.map(p => {
+      const itemInCart = cart.find(c => c.productId === p.id);
+      return itemInCart ? { ...p, stock: p.stock - itemInCart.qty } : p;
+    }));
 
     setSales([newSale, ...sales]);
     setCart([]);
@@ -339,7 +435,7 @@ export default function CashFlowProMaster() {
     setPosNotes("");
     setShowAddSaleModal(false);
     setActiveReceiptSale(newSale);
-    toast.success("Transaksi Kasir Sukses!", { description: `No Faktur: ${newSale.invoiceNo}` });
+    toast.success("Transaksi Kasir Berhasil!", { description: `No Faktur: ${newSale.invoiceNo}` });
   };
 
   // ================= ACTION HANDLERS =================
@@ -387,7 +483,7 @@ export default function CashFlowProMaster() {
     setNewProdSell("");
     setNewProdStock("");
     setNewProdImg("");
-    toast.success("Produk Baru Ditambahkan!", { description: newP.name });
+    toast.success("Produk Ditambahkan!", { description: newP.name });
   };
 
   const handleAddDebt = (e: React.FormEvent) => {
@@ -398,6 +494,7 @@ export default function CashFlowProMaster() {
       id: `D${Date.now()}`,
       type: debtType,
       person: debtPerson,
+      phone: debtPhone,
       amount: Number(debtAmount),
       dueDate: debtDueDate,
       isPaid: false,
@@ -407,17 +504,18 @@ export default function CashFlowProMaster() {
     setDebts([newD, ...debts]);
     setShowAddDebtModal(false);
     setDebtPerson("");
+    setDebtPhone("");
     setDebtAmount("");
     setDebtDueDate("");
     setDebtNotes("");
-    toast.success("Catatan Hutang/Piutang Disimpan!");
+    toast.success("Catatan Tagihan Disimpan!");
   };
 
   const handleToggleDebtSettled = (id: string) => {
     setDebts(prev => prev.map(d => {
       if (d.id === id) {
         const nextState = !d.isPaid;
-        toast.info(nextState ? "Tagihan Ditandai LUNAS!" : "Status Tagihan Diubah ke BELUM LUNAS");
+        toast.info(nextState ? "Tagihan Ditandai LUNAS! 🎉" : "Status Tagihan Diubah ke BELUM LUNAS");
         return { ...d, isPaid: nextState };
       }
       return d;
@@ -443,14 +541,45 @@ export default function CashFlowProMaster() {
     toast.success("Mutasi Modal Berhasil Dicatat!");
   };
 
+  const handleDeleteCapital = (id: string) => {
+    if (confirm("Hapus catatan mutasi modal ini?")) {
+      setCapitalLogs(capitalLogs.filter(c => c.id !== id));
+      toast.warning("Mutasi Modal Dihapus!");
+    }
+  };
+
+  const handleSaveBudget = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!budgetNominal || Number(budgetNominal) <= 0) return;
+
+    setCategoryBudgets(prev => {
+      const existing = prev.find(b => b.category === budgetCat);
+      if (existing) {
+        return prev.map(b => b.category === budgetCat ? { ...b, allocated: Number(budgetNominal) } : b);
+      }
+      return [...prev, { category: budgetCat, allocated: Number(budgetNominal) }];
+    });
+    setShowBudgetModal(false);
+    setBudgetNominal("");
+    toast.success(`Anggaran ${budgetCat} Berhasil Diatur!`);
+  };
+
   const handleDeleteSale = (id: string) => {
-    if (confirm("Apakah Anda yakin ingin membatalkan & menghapus transaksi ini?")) {
+    if (confirm("Batalkan transaksi penjualan ini?")) {
       setSales(sales.filter(s => s.id !== id));
       toast.warning("Transaksi Dihapus!");
     }
   };
 
-  // ================= EXPORT CSV =================
+  // WhatsApp Reminder Link Generator
+  const generateWhatsAppReminder = (debt: DebtItem) => {
+    const cleanPhone = (debt.phone || "").replace(/[^0-9]/g, "");
+    const message = `Halo ${debt.person}, ini pengingat ramah dari Kopi Senja Nusantara terkait tagihan ${debt.type} sebesar *${formatIDR(debt.amount)}* yang jatuh tempo pada *${debt.dueDate}* (${debt.notes}). Mohon konfirmasinya ya. Terima kasih!`;
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${cleanPhone || ""}?text=${encoded}`, "_blank");
+  };
+
+  // Ekspor Excel CSV
   const handleExportCSV = () => {
     const csvRows = [
       ["No Faktur", "Tanggal", "Total Item", "Subtotal", "Diskon", "Total Bayar", "Metode", "Kasir"],
@@ -470,7 +599,7 @@ export default function CashFlowProMaster() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Laporan_Penjualan_CashFlowPro_${new Date().toISOString().split("T")[0]}.csv`);
+    link.setAttribute("download", `Laporan_Keuangan_CashFlowPro_${new Date().toISOString().split("T")[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -480,7 +609,7 @@ export default function CashFlowProMaster() {
   return (
     <div className="flex h-screen bg-slate-100 text-slate-900 font-sans antialiased overflow-hidden pb-16 lg:pb-0">
       
-      {/* ================= SIDEBAR (DESKTOP) ================= */}
+      {/* ================= SIDEBAR NAVIGATION (DESKTOP) ================= */}
       <aside className="w-72 bg-slate-950 text-white flex flex-col justify-between hidden lg:flex border-r border-slate-800 shadow-2xl">
         <div>
           <div className="p-6 border-b border-slate-800/80">
@@ -509,7 +638,7 @@ export default function CashFlowProMaster() {
             {[
               { id: "dashboard", label: "Dashboard Eksekutif", icon: PieIcon },
               { id: "sales", label: "Kasir & Transaksi POS", icon: ShoppingCart },
-              { id: "products", label: "Inventori & Katalog Produk", icon: Package },
+              { id: "products", label: "Inventori & Stok", icon: Package },
               { id: "expenses", label: "Beban & Pengeluaran", icon: TrendingDown },
               { id: "debts", label: "Buku Hutang & Piutang", icon: CreditCard },
               { id: "capital", label: "Modal & Ekuitas Usaha", icon: Wallet },
@@ -534,7 +663,8 @@ export default function CashFlowProMaster() {
 
             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 pt-4 mb-2">Laporan & Strategi</div>
             {[
-              { id: "reports", label: "Laporan Laba Rugi & Neraca", icon: Layers },
+              { id: "reports", label: "Laporan Finansial (3-in-1)", icon: Layers },
+              { id: "budget", label: "Target & Budget Planning", icon: Target },
               { id: "analytics", label: "Analisis BEP & Margin", icon: BarChart3 },
               { id: "ai", label: "AI Financial Advisor", icon: Sparkles },
             ].map(item => {
@@ -577,7 +707,7 @@ export default function CashFlowProMaster() {
             </div>
             <div>
               <p className="text-xs font-bold text-white">Budi Santoso</p>
-              <p className="text-[10px] text-emerald-400">LocalStorage Terhubung</p>
+              <p className="text-[10px] text-emerald-400">LocalStorage Aktif</p>
             </div>
           </div>
         </div>
@@ -591,29 +721,20 @@ export default function CashFlowProMaster() {
           <div>
             <h1 className="text-base sm:text-lg font-black text-slate-800">
               {activeTab === "dashboard" && "Dashboard Eksekutif Real-Time"}
-              {activeTab === "sales" && "Point of Sale (POS) & Penjualan"}
+              {activeTab === "sales" && "Point of Sale (POS) & Kasir"}
               {activeTab === "products" && "Katalog Persediaan & Stok"}
               {activeTab === "expenses" && "Pencatatan Beban & Pengeluaran"}
               {activeTab === "debts" && "Buku Catatan Hutang & Piutang"}
               {activeTab === "capital" && "Riwayat Modal & Struktur Ekuitas"}
-              {activeTab === "reports" && "Laporan Laba Rugi & Neraca SAK EMKM"}
-              {activeTab === "analytics" && "Analisis Break Even Point (BEP)"}
-              {activeTab === "ai" && "AI Business Advisor"}
+              {activeTab === "reports" && "Laporan Keuangan Resmi (Laba Rugi, Neraca, Arus Kas)"}
+              {activeTab === "budget" && "Target Finansial & Anggaran Kategori"}
+              {activeTab === "analytics" && "Analisis Break Even Point (BEP) & Kinerja Produk"}
+              {activeTab === "ai" && "AI Financial Advisor & Business Strategy"}
             </h1>
             <p className="text-[11px] text-slate-500 font-medium">Sistem Kas & Akuntansi Terintegrasi</p>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {lowStockAlerts.length > 0 && (
-              <button 
-                onClick={() => setActiveTab("products")}
-                className="hidden sm:flex items-center gap-1.5 bg-amber-50 border border-amber-300 text-amber-900 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-amber-100 transition"
-              >
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
-                <span>{lowStockAlerts.length} Kritis</span>
-              </button>
-            )}
-
             <button
               onClick={() => setShowAddExpenseModal(true)}
               className="hidden sm:flex items-center gap-1.5 bg-rose-50 border border-rose-200 hover:bg-rose-100 text-rose-700 font-bold px-3 py-2 rounded-xl text-xs transition"
@@ -635,7 +756,7 @@ export default function CashFlowProMaster() {
         {/* BODY CONTENT */}
         <main className="p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
 
-          {/* 1. DASHBOARD */}
+          {/* ================= 1. DASHBOARD ================= */}
           {activeTab === "dashboard" && (
             <>
               <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
@@ -678,7 +799,7 @@ export default function CashFlowProMaster() {
                 </div>
               </div>
 
-              {/* CHART & TARGET */}
+              {/* DUAL CHARTS */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
                   <div className="flex justify-between items-center mb-4">
@@ -728,51 +849,18 @@ export default function CashFlowProMaster() {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-slate-900 text-white rounded-xl text-xs mt-4">
-                    💡 <strong>Tips AI:</strong> Margin kotor rata-rata <strong>{profitMarginPercent}%</strong> berada di atas rata-rata standar industri UMKM F&B.
-                  </div>
-                </div>
-              </div>
-
-              {/* TRANSAKSI TERAKHIR */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-                <div className="p-4 border-b border-slate-100 flex justify-between items-center">
-                  <h4 className="text-sm font-bold text-slate-800">Transaksi Penjualan Terbaru</h4>
-                  <button onClick={() => setActiveTab("sales")} className="text-xs font-bold text-emerald-600 hover:text-emerald-700">Lihat Semua &rarr;</button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-slate-600">
-                    <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
-                      <tr>
-                        <th className="py-3 px-4">Invoice</th>
-                        <th className="py-3 px-4">Item Terjual</th>
-                        <th className="py-3 px-4">Metode</th>
-                        <th className="py-3 px-4">Total</th>
-                        <th className="py-3 px-4 text-center">Struk</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 font-medium">
-                      {sales.slice(0, 5).map(s => (
-                        <tr key={s.id} className="hover:bg-slate-50">
-                          <td className="py-3 px-4 font-mono font-bold text-slate-800">{s.invoiceNo}</td>
-                          <td className="py-3 px-4 text-slate-800">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
-                          <td className="py-3 px-4"><span className="px-2 py-0.5 rounded bg-slate-100 font-bold text-[10px]">{s.paymentMethod}</span></td>
-                          <td className="py-3 px-4 font-bold text-emerald-600">{formatIDR(s.total)}</td>
-                          <td className="py-3 px-4 text-center">
-                            <button onClick={() => setActiveReceiptSale(s)} className="p-1 text-slate-400 hover:text-slate-800" title="Cetak Struk">
-                              <Receipt className="h-4 w-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <button 
+                    onClick={() => setActiveTab("ai")}
+                    className="mt-4 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-2"
+                  >
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" /> Buka Rekomendasi AI
+                  </button>
                 </div>
               </div>
             </>
           )}
 
-          {/* 2. SALES / POS */}
+          {/* ================= 2. SALES / POS ================= */}
           {activeTab === "sales" && (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200">
@@ -780,7 +868,7 @@ export default function CashFlowProMaster() {
                   <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Cari transaksi berdasarkan nomor invoice..."
+                    placeholder="Cari transaksi berdasarkan nomor invoice atau kasir..."
                     className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
@@ -821,7 +909,7 @@ export default function CashFlowProMaster() {
                         <td className="py-3.5 px-4 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button onClick={() => setActiveReceiptSale(s)} className="p-1 text-slate-400 hover:text-slate-800" title="Cetak Struk"><Receipt className="h-4 w-4" /></button>
-                            <button onClick={() => handleDeleteSale(s.id)} className="p-1 text-rose-400 hover:text-rose-700" title="Hapus Transaksi"><Trash2 className="h-4 w-4" /></button>
+                            <button onClick={() => handleDeleteSale(s.id)} className="p-1 text-rose-400 hover:text-rose-700" title="Hapus"><Trash2 className="h-4 w-4" /></button>
                           </div>
                         </td>
                       </tr>
@@ -832,7 +920,7 @@ export default function CashFlowProMaster() {
             </div>
           )}
 
-          {/* 3. PRODUCTS */}
+          {/* ================= 3. PRODUCTS & INVENTORY ================= */}
           {activeTab === "products" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
@@ -840,14 +928,14 @@ export default function CashFlowProMaster() {
                   <Search className="absolute left-3.5 top-2.5 h-4 w-4 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Cari produk berdasarkan nama atau SKU..."
+                    placeholder="Cari produk atau SKU..."
                     className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs"
                     value={searchTerm}
                     onChange={e => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <button onClick={() => setShowAddProductModal(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
-                  <Plus className="h-4 w-4" /> Tambah Produk Baru
+                  <Plus className="h-4 w-4" /> Tambah Produk
                 </button>
               </div>
 
@@ -893,12 +981,12 @@ export default function CashFlowProMaster() {
             </div>
           )}
 
-          {/* 4. EXPENSES */}
+          {/* ================= 4. EXPENSES ================= */}
           {activeTab === "expenses" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Daftar Beban & Pengeluaran Usaha</h3>
+                  <h3 className="text-sm font-bold text-slate-800">Daftar Beban & Pengeluaran Usaha (11 Pos)</h3>
                   <p className="text-xs text-slate-400">Total Pengeluaran: <strong className="text-rose-600">{formatIDR(totalExpenses)}</strong></p>
                 </div>
                 <button onClick={() => setShowAddExpenseModal(true)} className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
@@ -931,76 +1019,137 @@ export default function CashFlowProMaster() {
             </div>
           )}
 
-          {/* 5. DEBTS */}
+          {/* ================= 5. BUKU HUTANG & PIUTANG ================= */}
           {activeTab === "debts" && (
             <div className="space-y-4">
-              <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Catatan Hutang & Piutang Jatuh Tempo</h3>
-                  <p className="text-xs text-slate-400">Piutang: {formatIDR(totalReceivables)} | Hutang: {formatIDR(totalPayables)}</p>
+                  <h3 className="text-sm font-bold text-slate-800">Manajemen Buku Hutang & Piutang</h3>
+                  <p className="text-xs text-slate-400">Total Piutang: <strong className="text-amber-600">{formatIDR(totalReceivables)}</strong> | Total Hutang: <strong className="text-rose-600">{formatIDR(totalPayables)}</strong></p>
                 </div>
                 <button onClick={() => setShowAddDebtModal(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
-                  <Plus className="h-4 w-4" /> Catat Hutang / Piutang
+                  <Plus className="h-4 w-4" /> Catat Tagihan Baru
                 </button>
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex gap-2 bg-slate-200/60 p-1 rounded-xl w-fit">
+                {(["Semua", "Belum Lunas", "Lunas", "Piutang", "Hutang"] as const).map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setDebtFilter(tab)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${debtFilter === tab ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"}`}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
                 <table className="w-full text-left text-xs text-slate-600">
                   <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
                     <tr>
-                      <th className="py-3 px-4">Jenis</th>
+                      <th className="py-3 px-4">Tipe</th>
                       <th className="py-3 px-4">Pihak Terkait</th>
-                      <th className="py-3 px-4">Nominal</th>
+                      <th className="py-3 px-4">Nominal Tagihan</th>
                       <th className="py-3 px-4">Jatuh Tempo</th>
                       <th className="py-3 px-4">Keterangan</th>
                       <th className="py-3 px-4 text-center">Status</th>
-                      <th className="py-3 px-4 text-center">Tindakan</th>
+                      <th className="py-3 px-4 text-center">Aksi / Tagih WA</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
-                    {debts.map(d => (
-                      <tr key={d.id} className="hover:bg-slate-50">
-                        <td className="py-3.5 px-4">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${d.type === "Piutang" ? "bg-amber-100 text-amber-800" : "bg-rose-100 text-rose-800"}`}>
-                            {d.type}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 font-bold text-slate-900">{d.person}</td>
-                        <td className="py-3.5 px-4 font-black text-slate-900">{formatIDR(d.amount)}</td>
-                        <td className="py-3.5 px-4 text-slate-500">{d.dueDate}</td>
-                        <td className="py-3.5 px-4 text-slate-500">{d.notes}</td>
-                        <td className="py-3.5 px-4 text-center">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${d.isPaid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
-                            {d.isPaid ? "LUNAS" : "BELUM LUNAS"}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-center">
-                          <button onClick={() => handleToggleDebtSettled(d.id)} className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded text-[11px]">
-                            {d.isPaid ? "Batal" : "Tandai Lunas"}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {debts
+                      .filter(d => {
+                        if (debtFilter === "Belum Lunas") return !d.isPaid;
+                        if (debtFilter === "Lunas") return d.isPaid;
+                        if (debtFilter === "Piutang") return d.type === "Piutang";
+                        if (debtFilter === "Hutang") return d.type === "Hutang";
+                        return true;
+                      })
+                      .map(d => {
+                        const isOverdue = new Date(d.dueDate) < new Date() && !d.isPaid;
+                        return (
+                          <tr key={d.id} className="hover:bg-slate-50">
+                            <td className="py-3.5 px-4">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${d.type === "Piutang" ? "bg-amber-100 text-amber-800" : "bg-rose-100 text-rose-800"}`}>
+                                {d.type}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <p className="font-bold text-slate-900">{d.person}</p>
+                              {d.phone && <p className="text-[10px] text-slate-400">{d.phone}</p>}
+                            </td>
+                            <td className="py-3.5 px-4 font-black text-slate-900">{formatIDR(d.amount)}</td>
+                            <td className="py-3.5 px-4">
+                              <span className={isOverdue ? "text-rose-600 font-bold" : "text-slate-600"}>{d.dueDate}</span>
+                              {isOverdue && <span className="block text-[9px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded font-bold w-fit mt-0.5">Lewat Tempo!</span>}
+                            </td>
+                            <td className="py-3.5 px-4 text-slate-500">{d.notes}</td>
+                            <td className="py-3.5 px-4 text-center">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${d.isPaid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                                {d.isPaid ? "LUNAS" : "BELUM LUNAS"}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-center">
+                              <div className="flex items-center justify-center gap-1.5">
+                                <button onClick={() => handleToggleDebtSettled(d.id)} className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded text-[10px]">
+                                  {d.isPaid ? "Batal" : "Tandai Lunas"}
+                                </button>
+                                {d.type === "Piutang" && !d.isPaid && (
+                                  <button onClick={() => generateWhatsAppReminder(d)} className="p-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded" title="Kirim Pengingat WhatsApp">
+                                    <MessageCircle className="h-3.5 w-3.5" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>
             </div>
           )}
 
-          {/* 6. CAPITAL */}
+          {/* ================= 6. MODAL & EKUITAS USAHA ================= */}
           {activeTab === "capital" && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
                 <div>
-                  <h3 className="text-sm font-bold text-slate-800">Manajemen Modal & Ekuitas</h3>
-                  <p className="text-xs text-slate-400">Total Modal Disetor: {formatIDR(totalNetCapital)} | ROI: +{roiPercentage}%</p>
+                  <h3 className="text-sm font-bold text-slate-800">Manajemen Ekuitas & Return on Investment (ROI)</h3>
+                  <p className="text-xs text-slate-400">Total Modal Disetor Bersih: <strong className="text-purple-600">{formatIDR(totalNetCapital)}</strong></p>
                 </div>
                 <button onClick={() => setShowCapitalModal(true)} className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
-                  <Plus className="h-4 w-4" /> Tambah / Tarik Modal
+                  <Plus className="h-4 w-4" /> Kelola Mutasi Modal
                 </button>
               </div>
 
+              {/* 3 Detail Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+                  <span className="text-xs font-bold text-slate-400 uppercase">Modal Disetor Bersih</span>
+                  <h3 className="text-xl font-black text-slate-900 mt-1">{formatIDR(totalNetCapital)}</h3>
+                  <p className="text-[11px] text-slate-500 mt-2">Modal Awal + Penambahan - Prive</p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+                  <span className="text-xs font-bold text-slate-400 uppercase">Total Ekuitas Pemilik</span>
+                  <h3 className="text-xl font-black text-emerald-600 mt-1">{formatIDR(totalEquity)}</h3>
+                  <p className="text-[11px] text-slate-500 mt-2">Modal Bersih + Laba Bersih</p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+                  <span className="text-xs font-bold text-slate-400 uppercase">Persentase ROI Investasi</span>
+                  <h3 className="text-xl font-black text-purple-600 mt-1">+{roiPercentage}%</h3>
+                  <p className="text-[11px] text-emerald-600 font-bold mt-2">Tingkat pengembalian modal positif</p>
+                </div>
+              </div>
+
               <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="p-4 border-b">
+                  <h4 className="text-xs font-bold uppercase text-slate-700">Riwayat Mutasi Modal</h4>
+                </div>
                 <table className="w-full text-left text-xs text-slate-600">
                   <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
                     <tr>
@@ -1008,6 +1157,7 @@ export default function CashFlowProMaster() {
                       <th className="py-3 px-4">Jenis Mutasi</th>
                       <th className="py-3 px-4">Keterangan</th>
                       <th className="py-3 px-4 text-right">Nominal</th>
+                      <th className="py-3 px-4 text-center">Aksi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium">
@@ -1019,6 +1169,9 @@ export default function CashFlowProMaster() {
                         <td className={`py-3.5 px-4 text-right font-black ${c.type.includes("Penarikan") ? "text-rose-600" : "text-emerald-600"}`}>
                           {c.type.includes("Penarikan") ? `-${formatIDR(c.amount)}` : `+${formatIDR(c.amount)}`}
                         </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <button onClick={() => handleDeleteCapital(c.id)} className="p-1 text-rose-400 hover:text-rose-700" title="Hapus"><Trash2 className="h-3.5 w-3.5" /></button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -1027,94 +1180,402 @@ export default function CashFlowProMaster() {
             </div>
           )}
 
-          {/* 7. REPORTS */}
+          {/* ================= 7. LAPORAN KEUANGAN 3-IN-1 (LABA RUGI, NERACA, ARUS KAS) ================= */}
           {activeTab === "reports" && (
-            <div className="space-y-4 max-w-3xl mx-auto">
-              <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200">
-                <h3 className="text-sm font-bold text-slate-800">Laporan Laba Rugi Otomatis</h3>
+            <div className="space-y-4 max-w-4xl mx-auto">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+                {/* 3 Report Tabs Switcher */}
+                <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
+                  <button onClick={() => setReportSubTab("labarugi")} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${reportSubTab === "labarugi" ? "bg-white text-slate-900 shadow-xs" : "text-slate-500"}`}>
+                    1. Laba Rugi
+                  </button>
+                  <button onClick={() => setReportSubTab("neraca")} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${reportSubTab === "neraca" ? "bg-white text-slate-900 shadow-xs" : "text-slate-500"}`}>
+                    2. Neraca Sederhana
+                  </button>
+                  <button onClick={() => setReportSubTab("aruskas")} className={`px-3 py-1.5 rounded-lg text-xs font-bold ${reportSubTab === "aruskas" ? "bg-white text-slate-900 shadow-xs" : "text-slate-500"}`}>
+                    3. Arus Kas (Cash Flow)
+                  </button>
+                </div>
+
                 <div className="flex gap-2">
                   <button onClick={handleExportCSV} className="bg-slate-100 hover:bg-slate-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1"><Download className="h-3.5 w-3.5" /> Unduh CSV</button>
                   <button onClick={() => window.print()} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1"><Printer className="h-3.5 w-3.5" /> Cetak PDF</button>
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 text-xs">
-                <div className="text-center border-b pb-3">
-                  <h2 className="text-base font-black uppercase text-slate-800">Laporan Laba Rugi (Income Statement)</h2>
-                  <p className="text-[10px] text-slate-400">Periode Berjalan: Agustus 2026 | Entitas: Kopi Senja Nusantara</p>
-                </div>
+              {/* REPORT 1: LABA RUGI */}
+              {reportSubTab === "labarugi" && (
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 text-xs">
+                  <div className="text-center border-b pb-3">
+                    <h2 className="text-base font-black uppercase text-slate-800">Laporan Laba Rugi (Income Statement)</h2>
+                    <p className="text-[10px] text-slate-400">Periode: Agustus 2026 | Entitas: Kopi Senja Nusantara (SAK EMKM)</p>
+                  </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between font-bold text-slate-800 border-b pb-1">
-                    <span>1. Total Pendapatan Penjualan (Revenue)</span>
-                    <span className="text-emerald-600">{formatIDR(totalRevenue)}</span>
-                  </div>
-                  <div className="flex justify-between text-slate-600">
-                    <span>2. Harga Pokok Penjualan (HPP)</span>
-                    <span className="text-rose-600">({formatIDR(totalCOGS)})</span>
-                  </div>
-                  <div className="flex justify-between font-black text-slate-900 bg-slate-50 p-2 rounded">
-                    <span>LABA KOTOR (GROSS PROFIT)</span>
-                    <span>{formatIDR(grossProfit)}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 border-t pt-2">
-                  <span className="font-bold text-slate-800 block">3. Beban Operasional:</span>
-                  {expenses.map(e => (
-                    <div key={e.id} className="flex justify-between text-slate-500 pl-3">
-                      <span>Beban {e.category} ({e.notes})</span>
-                      <span className="text-rose-600">({formatIDR(e.amount)})</span>
+                  <div className="space-y-2">
+                    <div className="flex justify-between font-bold text-slate-800 border-b pb-1">
+                      <span>1. Total Pendapatan Penjualan (Revenue)</span>
+                      <span className="text-emerald-600">{formatIDR(totalRevenue)}</span>
                     </div>
-                  ))}
-                  <div className="flex justify-between font-bold text-rose-700 pt-1 border-t">
-                    <span>Total Beban Operasional</span>
-                    <span>({formatIDR(totalExpenses)})</span>
+                    <div className="flex justify-between text-slate-600">
+                      <span>2. Harga Pokok Penjualan (HPP Bahan Baku)</span>
+                      <span className="text-rose-600">({formatIDR(totalCOGS)})</span>
+                    </div>
+                    <div className="flex justify-between font-black text-slate-900 bg-slate-50 p-2 rounded">
+                      <span>LABA KOTOR (GROSS PROFIT)</span>
+                      <span>{formatIDR(grossProfit)}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 border-t pt-2">
+                    <span className="font-bold text-slate-800 block">3. Beban Operasional:</span>
+                    {expenses.map(e => (
+                      <div key={e.id} className="flex justify-between text-slate-500 pl-3">
+                        <span>Beban {e.category} ({e.notes})</span>
+                        <span className="text-rose-600">({formatIDR(e.amount)})</span>
+                      </div>
+                    ))}
+                    <div className="flex justify-between font-bold text-rose-700 pt-1 border-t">
+                      <span>Total Beban Operasional</span>
+                      <span>({formatIDR(totalExpenses)})</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-slate-950 text-white rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">LABA BERSIH BERJALAN</span>
+                      <span className="text-xs text-emerald-400 font-semibold">Margin Bersih: {profitMarginPercent}%</span>
+                    </div>
+                    <h3 className="text-xl font-black text-emerald-400">{formatIDR(netProfit)}</h3>
                   </div>
                 </div>
+              )}
 
-                <div className="p-4 bg-slate-950 text-white rounded-xl flex justify-between items-center">
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block">LABA BERSIH BERJALAN</span>
-                    <span className="text-xs text-emerald-400 font-semibold">Margin Bersih: {profitMarginPercent}%</span>
+              {/* REPORT 2: NERACA SEDERHANA */}
+              {reportSubTab === "neraca" && (
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 text-xs">
+                  <div className="text-center border-b pb-3">
+                    <h2 className="text-base font-black uppercase text-slate-800">Neraca Keuangan Sederhana (Balance Sheet)</h2>
+                    <p className="text-[10px] text-slate-400">Posisi Keuangan per {new Date().toLocaleDateString("id-ID")}</p>
                   </div>
-                  <h3 className="text-xl font-black text-emerald-400">{formatIDR(netProfit)}</h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* SISI AKTIVA (ASET) */}
+                    <div className="space-y-3 border p-4 rounded-xl bg-slate-50/50">
+                      <h4 className="font-bold text-slate-900 uppercase border-b pb-1">Aset / Aktiva (Kekayaan)</h4>
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between"><span>Kas & Rekening Toko</span> <span className="font-bold">{formatIDR(cashOnHand)}</span></div>
+                        <div className="flex justify-between"><span>Nilai Persediaan Barang (Stok)</span> <span className="font-bold">{formatIDR(inventoryValue)}</span></div>
+                        <div className="flex justify-between"><span>Piutang Pelanggan</span> <span className="font-bold">{formatIDR(totalReceivables)}</span></div>
+                      </div>
+                      <div className="flex justify-between font-black text-emerald-700 border-t pt-2">
+                        <span>TOTAL ASET (AKTIVA)</span>
+                        <span>{formatIDR(totalAssets)}</span>
+                      </div>
+                    </div>
+
+                    {/* SISI PASIVA (KEWAJIBAN & EKUITAS) */}
+                    <div className="space-y-3 border p-4 rounded-xl bg-slate-50/50">
+                      <h4 className="font-bold text-slate-900 uppercase border-b pb-1">Kewajiban & Ekuitas (Pasiva)</h4>
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-rose-700"><span>Hutang Dagang / Supplier</span> <span className="font-bold">{formatIDR(totalPayables)}</span></div>
+                        <div className="flex justify-between"><span>Modal Disetor Bersih</span> <span className="font-bold">{formatIDR(totalNetCapital)}</span></div>
+                        <div className="flex justify-between text-emerald-700"><span>Laba Ditahan / Berjalan</span> <span className="font-bold">{formatIDR(netProfit)}</span></div>
+                      </div>
+                      <div className="flex justify-between font-black text-slate-900 border-t pt-2">
+                        <span>TOTAL KEWAJIBAN & EKUITAS</span>
+                        <span>{formatIDR(totalLiabilitiesAndEquity)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between text-emerald-900">
+                    <span className="font-bold flex items-center gap-1.5">
+                      <Scale className="h-4 w-4 text-emerald-600" />
+                      Status Keseimbangan Neraca (Aset = Kewajiban + Ekuitas):
+                    </span>
+                    <span className="font-black bg-emerald-600 text-white px-2 py-0.5 rounded text-[11px]">
+                      {isBalanceSheetBalanced ? "SEIMBANG (BALANCED)" : "PERIKSA KEMBALI"}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* REPORT 3: ARUS KAS (CASH FLOW) */}
+              {reportSubTab === "aruskas" && (
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 text-xs">
+                  <div className="text-center border-b pb-3">
+                    <h2 className="text-base font-black uppercase text-slate-800">Laporan Arus Kas (Cash Flow Statement)</h2>
+                    <p className="text-[10px] text-slate-400">Penerimaan & Pengeluaran Kas Riil</p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <span className="font-bold text-slate-800 block">1. Arus Kas dari Aktivitas Operasional:</span>
+                    <div className="pl-3 space-y-1 text-slate-600">
+                      <div className="flex justify-between"><span>Penerimaan Kas dari Pelanggan</span> <span className="text-emerald-600 font-bold">+{formatIDR(totalRevenue)}</span></div>
+                      <div className="flex justify-between"><span>Pembayaran Beban Operasional Usaha</span> <span className="text-rose-600 font-bold">-{formatIDR(totalExpenses)}</span></div>
+                      <div className="flex justify-between font-bold text-slate-900 border-t pt-1">
+                        <span>Arus Kas Bersih Operasional</span>
+                        <span className="text-emerald-600">+{formatIDR(totalRevenue - totalExpenses)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 border-t pt-2">
+                    <span className="font-bold text-slate-800 block">2. Arus Kas dari Aktivitas Pendanaan & Modal:</span>
+                    <div className="pl-3 space-y-1 text-slate-600">
+                      <div className="flex justify-between"><span>Setoran Modal Masuk</span> <span className="text-emerald-600 font-bold">+{formatIDR(totalNetCapital)}</span></div>
+                      <div className="flex justify-between font-bold text-slate-900 border-t pt-1">
+                        <span>Arus Kas Bersih Pendanaan</span>
+                        <span>+{formatIDR(totalNetCapital)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-slate-950 text-white rounded-xl flex justify-between items-center">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">TOTAL SALDO KAS AKHIR</span>
+                      <span className="text-xs text-emerald-400">Tersedia di Kasir & Rekening</span>
+                    </div>
+                    <h3 className="text-xl font-black text-emerald-400">{formatIDR(cashOnHand)}</h3>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ================= 8. TARGET & BUDGET PLANNING ================= */}
+          {activeTab === "budget" && (
+            <div className="space-y-6">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-800">Target Finansial & Pengawasan Anggaran Kategori</h3>
+                  <p className="text-xs text-slate-400">Kontrol pengeluaran agar tidak melebihi alokasi budget bulanan</p>
+                </div>
+                <button onClick={() => setShowBudgetModal(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+                  <Edit3 className="h-4 w-4" /> Atur Anggaran Kategori
+                </button>
+              </div>
+
+              {/* Progress Target Omzet & Laba */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-slate-700">Target Omzet Bulanan</span>
+                    <span className="text-xs font-black text-emerald-600">{((totalRevenue / targetRevenue) * 100).toFixed(0)}% Tercapai</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                    <div className="bg-emerald-500 h-full transition-all duration-500" style={{ width: `${Math.min((totalRevenue / targetRevenue) * 100, 100)}%` }} />
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-500 font-semibold">
+                    <span>Realisasi: {formatIDR(totalRevenue)}</span>
+                    <span>Target: {formatIDR(targetRevenue)}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">💡 Estimasi tercapai dalam <strong>{estimatedDaysToTarget} hari</strong> lagi.</p>
+                </div>
+
+                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs font-bold text-slate-700">Target Laba Bersih Bulanan</span>
+                    <span className="text-xs font-black text-blue-600">{((netProfit / targetProfit) * 100).toFixed(0)}% Tercapai</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                    <div className="bg-blue-500 h-full transition-all duration-500" style={{ width: `${Math.min((netProfit / targetProfit) * 100, 100)}%` }} />
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-500 font-semibold">
+                    <span>Realisasi: {formatIDR(netProfit)}</span>
+                    <span>Target: {formatIDR(targetProfit)}</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">💡 Margin keuntungan saat ini: <strong>{profitMarginPercent}%</strong>.</p>
+                </div>
+              </div>
+
+              {/* Tabel Pengawasan Anggaran per Pos */}
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="p-4 border-b flex justify-between items-center">
+                  <h4 className="text-xs font-bold uppercase text-slate-700">Monitoring Pemakaian Anggaran (Budget Meter)</h4>
+                  <span className="text-xs text-slate-400">Alokasi vs Realisasi</span>
+                </div>
+                <div className="p-4 space-y-4">
+                  {categoryBudgets.map(b => {
+                    const used = expensesByCategory[b.category] || 0;
+                    const percent = Math.min(((used / b.allocated) * 100), 100);
+                    const isOver = used > b.allocated;
+                    const isNear = used > (b.allocated * 0.8) && !isOver;
+
+                    return (
+                      <div key={b.category} className="space-y-1.5">
+                        <div className="flex justify-between text-xs font-bold">
+                          <span className="text-slate-800">{b.category}</span>
+                          <span className={isOver ? "text-rose-600 font-black" : "text-slate-600"}>
+                            {formatIDR(used)} / {formatIDR(b.allocated)} ({((used / b.allocated) * 100).toFixed(0)}%)
+                            {isOver && " ⚠️ MELEBIHI BUDGET"}
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full transition-all duration-500 ${isOver ? "bg-rose-500 animate-pulse" : isNear ? "bg-amber-500" : "bg-emerald-500"}`} 
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
           )}
 
-          {/* 8. ANALYTICS & AI */}
-          {(activeTab === "analytics" || activeTab === "ai") && (
-            <div className="space-y-4">
+          {/* ================= 9. ANALISIS BEP & MARGIN ================= */}
+          {activeTab === "analytics" && (
+            <div className="space-y-6">
               <div className="bg-slate-950 text-white p-6 rounded-3xl space-y-2">
                 <div className="inline-flex items-center gap-1.5 bg-emerald-800/60 px-3 py-1 rounded-full text-xs font-bold text-emerald-300">
-                  <Sparkles className="h-3.5 w-3.5" /> AI Financial Engine
+                  <BarChart3 className="h-3.5 w-3.5" /> Analisis BEP & Profitabilitas
                 </div>
-                <h2 className="text-xl font-black">Analisis Titik Impas & Proyeksi Finansial</h2>
+                <h2 className="text-xl font-black">Perhitungan Break Even Point & Produk Terlaris</h2>
                 <p className="text-xs text-slate-300 leading-relaxed max-w-2xl">
-                  Sistem mengevaluasi struktur biaya tetap, margin produk, dan volume transaksi untuk memastikan usaha Anda berada di atas Break Even Point (BEP).
+                  Memantau titik impas operasional toko untuk memastikan penjualan selalu berada pada zona menguntungkan (*profit zone*).
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-white p-5 rounded-2xl border border-slate-200">
-                  <span className="text-xs font-bold text-slate-400 uppercase">Titik Impas (BEP Rupiah)</span>
-                  <h3 className="text-xl font-black text-slate-900 mt-1">{formatIDR(18500000)}</h3>
-                  <p className="text-[11px] text-emerald-600 font-bold mt-2">✓ Status: Lolos BEP</p>
+                  <span className="text-xs font-bold text-slate-400 uppercase">Titik Impas (BEP Omzet)</span>
+                  <h3 className="text-xl font-black text-slate-900 mt-1">{formatIDR(bepRevenue)}</h3>
+                  <p className="text-[11px] text-emerald-600 font-bold mt-2">✓ Status: Penjualan di atas BEP</p>
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200">
-                  <span className="text-xs font-bold text-slate-400 uppercase">Prediksi Omzet Bulan Depan</span>
-                  <h3 className="text-xl font-black text-blue-600 mt-1">{formatIDR(totalRevenue * 1.18)}</h3>
-                  <p className="text-[11px] text-slate-500 mt-2">Proyeksi pertumbuhan +18%</p>
+                  <span className="text-xs font-bold text-slate-400 uppercase">Rata-Rata Margin Kotor</span>
+                  <h3 className="text-xl font-black text-emerald-600 mt-1">{(averageMarginRatio * 100).toFixed(1)}%</h3>
+                  <p className="text-[11px] text-slate-500 mt-2">Setiap Rp 100 omzet, laba kotor Rp {(averageMarginRatio * 100).toFixed(0)}</p>
                 </div>
 
                 <div className="bg-white p-5 rounded-2xl border border-slate-200">
-                  <span className="text-xs font-bold text-slate-400 uppercase">Rasio Likuiditas Kas</span>
-                  <h3 className="text-xl font-black text-purple-600 mt-1">3.4x</h3>
-                  <p className="text-[11px] text-slate-500 mt-2">Kondisi kas sangat likuid</p>
+                  <span className="text-xs font-bold text-slate-400 uppercase">Margin Laba Bersih</span>
+                  <h3 className="text-xl font-black text-blue-600 mt-1">{profitMarginPercent}%</h3>
+                  <p className="text-[11px] text-slate-500 mt-2">Kinerja profitabilitas sehat</p>
                 </div>
+              </div>
+
+              {/* Ranking Produk */}
+              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                <div className="p-4 border-b">
+                  <h4 className="text-xs font-bold uppercase text-slate-700">Peringkat Produk Paling Menguntungkan</h4>
+                </div>
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
+                    <tr>
+                      <th className="py-3 px-4">Nama Produk</th>
+                      <th className="py-3 px-4">Jumlah Terjual</th>
+                      <th className="py-3 px-4">Kontribusi Omzet</th>
+                      <th className="py-3 px-4 text-right">Total Laba Kotor Dihasilkan</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {productAnalytics.map(p => (
+                      <tr key={p.name} className="hover:bg-slate-50">
+                        <td className="py-3.5 px-4 font-bold text-slate-900">{p.name}</td>
+                        <td className="py-3.5 px-4">{p.qty} pcs</td>
+                        <td className="py-3.5 px-4 font-bold text-slate-800">{formatIDR(p.revenue)}</td>
+                        <td className="py-3.5 px-4 text-right font-black text-emerald-600">+{formatIDR(p.profit)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ================= 10. AI FINANCIAL ADVISOR ================= */}
+          {activeTab === "ai" && (
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-emerald-950 via-slate-900 to-slate-950 text-white p-8 rounded-3xl space-y-3">
+                <div className="inline-flex items-center gap-1.5 bg-emerald-800/60 px-3 py-1 rounded-full text-xs font-bold text-emerald-300">
+                  <Sparkles className="h-3.5 w-3.5" /> CashFlow Pro AI Engine
+                </div>
+                <h2 className="text-2xl font-black">Konsultan Finansial & Strategi Bisnis Cerdas</h2>
+                <p className="text-xs text-slate-300 leading-relaxed max-w-2xl">
+                  Pilih topik analisis di bawah ini untuk mendapatkan rekomendasi perbaikan dan penghematan biaya secara otomatis:
+                </p>
+
+                {/* 4 Multi-Action Topic Selector */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2">
+                  {[
+                    { id: "analisis_kebocoran", label: "🔍 Kebocoran Biaya" },
+                    { id: "naikkan_omzet", label: "🚀 Naikkan Omzet 30%" },
+                    { id: "cek_kesehatan_kas", label: "🛡️ Kesehatan Kas" },
+                    { id: "prediksi_bulan_depan", label: "📈 Prediksi Bulan Depan" },
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => setAiSelectedTopic(t.id)}
+                      className={`p-2.5 rounded-xl text-xs font-bold border transition ${
+                        aiSelectedTopic === t.id ? "bg-emerald-500 text-slate-950 border-emerald-400 shadow-md" : "bg-slate-900/80 text-slate-300 border-slate-700"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dynamic AI Advice Card */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
+                {aiSelectedTopic === "analisis_kebocoran" && (
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-slate-900 flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-amber-500" />
+                      Hasil Audit AI: Efisiensi Beban Bahan Baku & Utilitas
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Pengeluaran Bahan Baku tercatat sebesar <strong>{formatIDR(expensesByCategory["Bahan Baku"] || 0)}</strong> (menyumbang porsi terbesar pengeluaran).
+                    </p>
+                    <div className="p-3 bg-slate-50 border rounded-xl text-xs space-y-2 text-slate-700">
+                      <p>✅ <strong>Rekomendasi 1:</strong> Lakukan kontrak suplai susu bulanan dengan peternak lokal untuk memotong HPP hingga 8%.</p>
+                      <p>✅ <strong>Rekomendasi 2:</strong> Pengeluaran listrik mesin espresso dapat ditekan dengan mengatur jam operasional standby.</p>
+                    </div>
+                  </div>
+                )}
+
+                {aiSelectedTopic === "naikkan_omzet" && (
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-slate-900 flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-emerald-500" />
+                      Strategi Penjualan: Paket Bundling Kopi + Pastry
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Produk <strong>Kopi Arabika Gayo</strong> dan <strong>Croissant Almond</strong> memiliki tingkat margin di atas 45%.
+                    </p>
+                    <div className="p-3 bg-slate-50 border rounded-xl text-xs space-y-2 text-slate-700">
+                      <p>✅ <strong>Ide Bundling:</strong> Buat paket sarapan "Kopi + Croissant" seharga Rp 79.000 untuk meningkatkan nominal transaksi rata-rata kasir.</p>
+                    </div>
+                  </div>
+                )}
+
+                {aiSelectedTopic === "cek_kesehatan_kas" && (
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-slate-900 flex items-center gap-2">
+                      <ShieldCheck className="h-4 w-4 text-purple-500" />
+                      Rasio Likuiditas Kas Toko: 3.4x (Sangat Aman)
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Sisa kas aktif <strong>{formatIDR(cashOnHand)}</strong> dapat melunasi seluruh kewajiban hutang berjalan senilai <strong>{formatIDR(totalPayables)}</strong> sebanyak 3 kali lipat.
+                    </p>
+                  </div>
+                )}
+
+                {aiSelectedTopic === "prediksi_bulan_depan" && (
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-slate-900 flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4 text-blue-500" />
+                      Proyeksi Omzet Bulan Depan: {formatIDR(totalRevenue * 1.2)}
+                    </h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      Dengan pola repeat order saat ini, pertumbuhan omzet diproyeksikan naik <strong>+20%</strong> pada bulan berikutnya.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1385,6 +1846,10 @@ export default function CashFlowProMaster() {
                 <label className="text-xs font-bold text-slate-600 block mb-1">Nama Pihak Terkait</label>
                 <input type="text" required placeholder="Contoh: Bu Sari Catering / Supplier Susu" className="w-full bg-slate-50 border p-2 rounded-xl text-xs" value={debtPerson} onChange={e => setDebtPerson(e.target.value)} />
               </div>
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1">No. WhatsApp (Untuk Kirim Pengingat)</label>
+                <input type="text" placeholder="Contoh: 628123456789" className="w-full bg-slate-50 border p-2 rounded-xl text-xs" value={debtPhone} onChange={e => setDebtPhone(e.target.value)} />
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-xs font-bold text-slate-600 block mb-1">Nominal (Rp)</label>
@@ -1441,7 +1906,37 @@ export default function CashFlowProMaster() {
         </div>
       )}
 
-      {/* 6. MODAL STRUK STRUK PEMBAYARAN THERMAL */}
+      {/* 6. MODAL ATUR ANGGARAN KATEGORI */}
+      {showBudgetModal && (
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <h3 className="text-base font-black text-slate-800 flex items-center gap-2">
+              <Target className="h-5 w-5 text-emerald-600" />
+              Atur Alokasi Anggaran
+            </h3>
+            <form onSubmit={handleSaveBudget} className="space-y-3">
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1">Pilih Kategori Beban</label>
+                <select value={budgetCat} onChange={e => setBudgetCat(e.target.value as ExpenseCategory)} className="w-full bg-slate-50 border p-2 rounded-xl text-xs font-bold">
+                  {["Bahan Baku", "Transportasi", "Gaji", "Sewa", "Listrik", "Air", "Internet", "Pajak", "Marketing", "Peralatan", "Operasional Lain"].map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-600 block mb-1">Batas Maksimal Anggaran Bulanan (Rp)</label>
+                <input type="number" required placeholder="Contoh: 3000000" className="w-full bg-slate-50 border p-2 rounded-xl text-xs font-bold" value={budgetNominal} onChange={e => setBudgetNominal(e.target.value)} />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button type="button" onClick={() => setShowBudgetModal(false)} className="flex-1 bg-slate-100 text-slate-700 font-bold py-2 rounded-xl text-xs">Batal</button>
+                <button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs">Simpan Anggaran</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 7. MODAL STRUK PEMBAYARAN THERMAL */}
       {activeReceiptSale && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 font-mono text-xs">
