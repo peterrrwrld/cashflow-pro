@@ -154,7 +154,6 @@ const DEFAULT_BUDGETS: CategoryBudget[] = [
 ];
 
 export default function CashFlowProPurpleGlass() {
-  // Navigation & Role
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "sales" | "products" | "expenses" | "debts" | "capital" | "reports" | "budget" | "analytics" | "ai"
   >("dashboard");
@@ -163,7 +162,6 @@ export default function CashFlowProPurpleGlass() {
   const [debtFilter, setDebtFilter] = useState<"Semua" | "Belum Lunas" | "Lunas" | "Piutang" | "Hutang">("Semua");
   const [isClient, setIsClient] = useState(false);
 
-  // Persistent States
   const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
   const [sales, setSales] = useState<SaleTransaction[]>(DEFAULT_SALES);
   const [expenses, setExpenses] = useState<ExpenseItem[]>(DEFAULT_EXPENSES);
@@ -171,12 +169,10 @@ export default function CashFlowProPurpleGlass() {
   const [capitalLogs, setCapitalLogs] = useState<CapitalLog[]>(DEFAULT_CAPITAL);
   const [categoryBudgets, setCategoryBudgets] = useState<CategoryBudget[]>(DEFAULT_BUDGETS);
 
-  // Targets & Search
   const [targetRevenue] = useState(30000000);
   const [targetProfit] = useState(12000000);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Modals
   const [showAddSaleModal, setShowAddSaleModal] = useState(false);
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
@@ -185,14 +181,12 @@ export default function CashFlowProPurpleGlass() {
   const [showBudgetModal, setShowBudgetModal] = useState(false);
   const [activeReceiptSale, setActiveReceiptSale] = useState<SaleTransaction | null>(null);
 
-  // POS State
   const [cart, setCart] = useState<CartItem[]>([]);
   const [posDiscount, setPosDiscount] = useState<number>(0);
   const [posPaymentMethod, setPosPaymentMethod] = useState<PaymentMethod>("QRIS");
   const [posCashPaid, setPosCashPaid] = useState<string>("");
   const [posNotes, setPosNotes] = useState<string>("");
 
-  // Forms
   const [expCategory, setExpCategory] = useState<ExpenseCategory>("Bahan Baku");
   const [expAmount, setExpAmount] = useState("");
   const [expNotes, setExpNotes] = useState("");
@@ -221,15 +215,14 @@ export default function CashFlowProPurpleGlass() {
   const [budgetNominal, setBudgetNominal] = useState("");
   const [aiSelectedTopic, setAiSelectedTopic] = useState<string>("analisis_kebocoran");
 
-  // LocalStorage Sync
   useEffect(() => {
     setIsClient(true);
-    const p = localStorage.getItem("cfp_purple_products");
-    const s = localStorage.getItem("cfp_purple_sales");
-    const e = localStorage.getItem("cfp_purple_expenses");
-    const d = localStorage.getItem("cfp_purple_debts");
-    const c = localStorage.getItem("cfp_purple_capital");
-    const b = localStorage.getItem("cfp_purple_budgets");
+    const p = localStorage.getItem("cfp_purple_products_v3");
+    const s = localStorage.getItem("cfp_purple_sales_v3");
+    const e = localStorage.getItem("cfp_purple_expenses_v3");
+    const d = localStorage.getItem("cfp_purple_debts_v3");
+    const c = localStorage.getItem("cfp_purple_capital_v3");
+    const b = localStorage.getItem("cfp_purple_budgets_v3");
 
     if (p) setProducts(JSON.parse(p));
     if (s) setSales(JSON.parse(s));
@@ -241,16 +234,15 @@ export default function CashFlowProPurpleGlass() {
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("cfp_purple_products", JSON.stringify(products));
-      localStorage.setItem("cfp_purple_sales", JSON.stringify(sales));
-      localStorage.setItem("cfp_purple_expenses", JSON.stringify(expenses));
-      localStorage.setItem("cfp_purple_debts", JSON.stringify(debts));
-      localStorage.setItem("cfp_purple_capital", JSON.stringify(capitalLogs));
-      localStorage.setItem("cfp_purple_budgets", JSON.stringify(categoryBudgets));
+      localStorage.setItem("cfp_purple_products_v3", JSON.stringify(products));
+      localStorage.setItem("cfp_purple_sales_v3", JSON.stringify(sales));
+      localStorage.setItem("cfp_purple_expenses_v3", JSON.stringify(expenses));
+      localStorage.setItem("cfp_purple_debts_v3", JSON.stringify(debts));
+      localStorage.setItem("cfp_purple_capital_v3", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_purple_budgets_v3", JSON.stringify(categoryBudgets));
     }
   }, [products, sales, expenses, debts, capitalLogs, categoryBudgets, isClient]);
 
-  // Calculations
   const totalRevenue = useMemo(() => sales.reduce((acc, curr) => acc + curr.total, 0), [sales]);
   const totalCOGS = useMemo(() => sales.reduce((acc, curr) => acc + curr.cogs, 0), [sales]);
   const totalExpenses = useMemo(() => expenses.reduce((acc, curr) => acc + curr.amount, 0), [expenses]);
@@ -293,7 +285,6 @@ export default function CashFlowProPurpleGlass() {
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(val);
   };
 
-  // Cart Functions
   const addToCart = (product: Product) => {
     if (product.stock <= 0) {
       toast.error("Stok Kosong!");
@@ -494,7 +485,7 @@ export default function CashFlowProPurpleGlass() {
   return (
     <div className="flex h-screen bg-gradient-to-br from-[#ebeaf8] via-[#e3ddf7] to-[#f4ebf8] text-slate-800 font-sans antialiased overflow-hidden pb-16 lg:pb-0 relative selection:bg-purple-300">
       
-      {/* 3D Glossy Floating Spheres (Persis Referensi Gambar) */}
+      {/* 3D Glossy Floating Spheres */}
       <div className="fixed top-12 left-1/4 w-44 h-44 rounded-full bg-gradient-to-tr from-purple-400/50 via-indigo-300/40 to-white/70 shadow-[inset_-8px_-8px_20px_rgba(110,60,220,0.3),0_20px_40px_rgba(140,90,240,0.25)] backdrop-blur-xs pointer-events-none z-0" />
       <div className="fixed -top-16 -left-16 w-80 h-80 rounded-full bg-gradient-to-br from-violet-300/40 via-purple-200/50 to-indigo-100/20 blur-xl pointer-events-none z-0" />
       <div className="fixed top-6 right-16 w-60 h-60 rounded-full bg-gradient-to-bl from-purple-300/40 via-indigo-200/50 to-white/60 shadow-[inset_-10px_-10px_25px_rgba(120,70,230,0.25),0_25px_50px_rgba(150,100,250,0.2)] pointer-events-none z-0" />
@@ -629,7 +620,6 @@ export default function CashFlowProPurpleGlass() {
           {/* ================= 1. THICK GLASS DASHBOARD ================= */}
           {activeTab === "dashboard" && (
             <>
-              {/* Glass Stat Grid */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white/50 backdrop-blur-3xl p-5 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] flex flex-col justify-between hover:bg-white/60 transition duration-300">
                   <div className="flex justify-between items-center text-slate-500 mb-2">
@@ -670,10 +660,7 @@ export default function CashFlowProPurpleGlass() {
                 </div>
               </div>
 
-              {/* Glass Cards Summary */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Indikator Finansial */}
                 <div className="bg-white/50 backdrop-blur-3xl p-6 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] space-y-3.5">
                   <div className="flex justify-between items-center border-b border-purple-100/60 pb-2.5">
                     <span className="text-xs font-black text-slate-900">Rincian Posisi Keuangan</span>
@@ -699,7 +686,6 @@ export default function CashFlowProPurpleGlass() {
                   </div>
                 </div>
 
-                {/* Progress Target */}
                 <div className="bg-white/50 backdrop-blur-3xl p-6 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] space-y-3.5 flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-center border-b border-purple-100/60 pb-2.5 mb-3">
@@ -718,10 +704,8 @@ export default function CashFlowProPurpleGlass() {
                     💡 <strong>Status Peter:</strong> Usaha berada dalam zona profit sehat di atas titik impas (BEP).
                   </div>
                 </div>
-
               </div>
 
-              {/* Glass Transaction Table */}
               <div className="bg-white/50 backdrop-blur-3xl rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] overflow-hidden">
                 <div className="p-4 border-b border-purple-100/60 flex justify-between items-center">
                   <span className="text-xs font-black text-slate-900">Transaksi Penjualan Terbaru</span>
@@ -751,7 +735,7 @@ export default function CashFlowProPurpleGlass() {
             </>
           )}
 
-          {/* ================= 2. SALES / POS ================= */}
+          {/* TAB LAINNYA (Sales, Products, Expenses, Debts, Capital, Reports, Budget, Analytics, AI) */}
           {activeTab === "sales" && (
             <div className="space-y-4">
               <div className="flex justify-between items-center gap-2">
@@ -806,170 +790,6 @@ export default function CashFlowProPurpleGlass() {
             </div>
           )}
 
-          {/* ================= 3. PRODUCTS ================= */}
-          {activeTab === "products" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-900">Katalog Produk & Stok ({products.length})</span>
-                <button onClick={() => setShowAddProductModal(true)} className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-purple-500/25">
-                  + Tambah Produk
-                </button>
-              </div>
-
-              <div className="bg-white/50 backdrop-blur-3xl rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] overflow-hidden">
-                <table className="w-full text-left text-xs text-slate-600">
-                  <thead className="bg-white/40 text-purple-900/60 font-black uppercase text-[10px] border-b border-purple-100/60">
-                    <tr>
-                      <th className="py-3 px-4">SKU</th>
-                      <th className="py-3 px-4">Nama Produk</th>
-                      <th className="py-3 px-4">HPP</th>
-                      <th className="py-3 px-4">Harga Jual</th>
-                      <th className="py-3 px-4">Margin Laba</th>
-                      <th className="py-3 px-4 text-right">Stok Aktif</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-100/50 font-medium">
-                    {products.map(p => (
-                      <tr key={p.id} className="hover:bg-white/60 transition">
-                        <td className="py-3.5 px-4 font-mono text-slate-400">{p.sku}</td>
-                        <td className="py-3.5 px-4 font-bold text-slate-900">{p.name}</td>
-                        <td className="py-3.5 px-4 text-slate-500">{formatIDR(p.costPrice)}</td>
-                        <td className="py-3.5 px-4 font-bold text-slate-900">{formatIDR(p.sellPrice)}</td>
-                        <td className="py-3.5 px-4 text-emerald-600 font-black">+{formatIDR(p.sellPrice - p.costPrice)}</td>
-                        <td className="py-3.5 px-4 text-right">
-                          <span className={`px-3 py-0.5 rounded-full text-[10px] font-bold ${p.stock <= p.minStock ? "bg-rose-100 text-rose-700 border border-rose-200" : "bg-emerald-100 text-emerald-700 border border-emerald-200"}`}>
-                            {p.stock} pcs
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 4. EXPENSES ================= */}
-          {activeTab === "expenses" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-900">Total Beban Usaha: <strong className="text-rose-600">{formatIDR(totalExpenses)}</strong></span>
-                <button onClick={() => setShowAddExpenseModal(true)} className="bg-rose-600 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-rose-500/25">
-                  + Catat Beban
-                </button>
-              </div>
-
-              <div className="bg-white/50 backdrop-blur-3xl rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] overflow-hidden">
-                <table className="w-full text-left text-xs text-slate-600">
-                  <thead className="bg-white/40 text-purple-900/60 font-black uppercase text-[10px] border-b border-purple-100/60">
-                    <tr>
-                      <th className="py-3 px-4">Tanggal</th>
-                      <th className="py-3 px-4">Kategori</th>
-                      <th className="py-3 px-4">Keterangan</th>
-                      <th className="py-3 px-4 text-right">Nominal</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-100/50 font-medium">
-                    {expenses.map(e => (
-                      <tr key={e.id} className="hover:bg-white/60 transition">
-                        <td className="py-3.5 px-4 text-slate-400">{e.date}</td>
-                        <td className="py-3.5 px-4"><span className="bg-white/80 border border-purple-200/60 text-slate-800 px-2.5 py-0.5 rounded-lg text-[10px] font-bold">{e.category}</span></td>
-                        <td className="py-3.5 px-4 text-slate-800">{e.notes}</td>
-                        <td className="py-3.5 px-4 text-right font-black text-rose-600">{formatIDR(e.amount)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 5. DEBTS ================= */}
-          {activeTab === "debts" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div className="flex gap-3">
-                  <span className="text-xs text-slate-600">Piutang: <strong className="text-amber-700 font-bold">{formatIDR(totalReceivables)}</strong></span>
-                  <span className="text-xs text-slate-600">Hutang: <strong className="text-rose-700 font-bold">{formatIDR(totalPayables)}</strong></span>
-                </div>
-                <button onClick={() => setShowAddDebtModal(true)} className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-purple-500/25">
-                  + Catat Tagihan
-                </button>
-              </div>
-
-              <div className="bg-white/50 backdrop-blur-3xl rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] overflow-hidden">
-                <table className="w-full text-left text-xs text-slate-600">
-                  <thead className="bg-white/40 text-purple-900/60 font-black uppercase text-[10px] border-b border-purple-100/60">
-                    <tr>
-                      <th className="py-3 px-4">Tipe</th>
-                      <th className="py-3 px-4">Pihak</th>
-                      <th className="py-3 px-4">Nominal</th>
-                      <th className="py-3 px-4">Jatuh Tempo</th>
-                      <th className="py-3 px-4 text-center">Status</th>
-                      <th className="py-3 px-4 text-center">Tindakan</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-100/50 font-medium">
-                    {debts.map(d => (
-                      <tr key={d.id} className="hover:bg-white/60 transition">
-                        <td className="py-3.5 px-4"><span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black ${d.type === 'Piutang' ? 'bg-amber-100 text-amber-900 border border-amber-200' : 'bg-rose-100 text-rose-900 border border-rose-200'}`}>{d.type}</span></td>
-                        <td className="py-3.5 px-4 font-bold text-slate-900">{d.person}</td>
-                        <td className="py-3.5 px-4 font-black text-slate-900">{formatIDR(d.amount)}</td>
-                        <td className="py-3.5 px-4 text-slate-500">{d.dueDate}</td>
-                        <td className="py-3.5 px-4 text-center">
-                          <span className={`px-3 py-0.5 rounded-full text-[10px] font-black ${d.isPaid ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-purple-100 text-purple-800 border border-purple-200'}`}>
-                            {d.isPaid ? 'LUNAS' : 'BELUM'}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-4 text-center">
-                          <button onClick={() => handleToggleDebtSettled(d.id)} className="text-[10px] bg-white/80 hover:bg-white border border-purple-200 px-3 py-1 rounded-xl font-bold text-purple-900">
-                            {d.isPaid ? 'Batal' : 'Tandai Lunas'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 6. CAPITAL ================= */}
-          {activeTab === "capital" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-900">Modal Disetor Bersih: <strong className="text-purple-700">{formatIDR(totalNetCapital)}</strong></span>
-                <button onClick={() => setShowCapitalModal(true)} className="bg-purple-600 hover:bg-purple-700 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-purple-500/25">
-                  + Mutasi Modal
-                </button>
-              </div>
-
-              <div className="bg-white/50 backdrop-blur-3xl rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] overflow-hidden">
-                <table className="w-full text-left text-xs text-slate-600">
-                  <thead className="bg-white/40 text-purple-900/60 font-black uppercase text-[10px] border-b border-purple-100/60">
-                    <tr>
-                      <th className="py-3 px-4">Tanggal</th>
-                      <th className="py-3 px-4">Tipe</th>
-                      <th className="py-3 px-4">Keterangan</th>
-                      <th className="py-3 px-4 text-right">Nominal</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-purple-100/50 font-medium">
-                    {capitalLogs.map(c => (
-                      <tr key={c.id} className="hover:bg-white/60 transition">
-                        <td className="py-3.5 px-4 text-slate-400">{c.date}</td>
-                        <td className="py-3.5 px-4 font-bold text-slate-900">{c.type}</td>
-                        <td className="py-3.5 px-4 text-slate-600">{c.notes}</td>
-                        <td className="py-3.5 px-4 text-right font-black text-slate-900">{formatIDR(c.amount)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 7. REPORTS ================= */}
           {activeTab === "reports" && (
             <div className="space-y-4 max-w-2xl mx-auto">
               <div className="flex justify-between items-center">
@@ -1000,95 +820,9 @@ export default function CashFlowProPurpleGlass() {
                   </div>
                 </div>
               )}
-
-              {reportSubTab === "neraca" && (
-                <div className="bg-white/50 backdrop-blur-3xl p-6 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] space-y-4 text-xs">
-                  <div className="border-b border-purple-100/60 pb-3 text-center">
-                    <h3 className="font-black text-sm text-slate-900 uppercase">Neraca Sederhana</h3>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-white/60 p-4 rounded-2xl border border-white">
-                      <h4 className="font-black text-slate-900 border-b border-purple-100 pb-2">Aset</h4>
-                      <div className="space-y-1.5 mt-2.5 text-slate-600">
-                        <div className="flex justify-between"><span>Kas:</span> <span className="font-bold">{formatIDR(cashOnHand)}</span></div>
-                        <div className="flex justify-between"><span>Stok:</span> <span className="font-bold">{formatIDR(inventoryValue)}</span></div>
-                        <div className="flex justify-between"><span>Piutang:</span> <span className="font-bold">{formatIDR(totalReceivables)}</span></div>
-                        <div className="flex justify-between font-black text-slate-900 border-t pt-2"><span>Total:</span> <span>{formatIDR(totalAssets)}</span></div>
-                      </div>
-                    </div>
-                    <div className="bg-white/60 p-4 rounded-2xl border border-white">
-                      <h4 className="font-black text-slate-900 border-b border-purple-100 pb-2">Kewajiban & Modal</h4>
-                      <div className="space-y-1.5 mt-2.5 text-slate-600">
-                        <div className="flex justify-between"><span>Hutang:</span> <span className="font-bold">{formatIDR(totalPayables)}</span></div>
-                        <div className="flex justify-between"><span>Modal:</span> <span className="font-bold">{formatIDR(totalNetCapital)}</span></div>
-                        <div className="flex justify-between"><span>Laba:</span> <span className="font-bold">{formatIDR(netProfit)}</span></div>
-                        <div className="flex justify-between font-black text-slate-900 border-t pt-2"><span>Total:</span> <span>{formatIDR(totalLiabilitiesAndEquity)}</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
-          {/* ================= 8. BUDGET ================= */}
-          {activeTab === "budget" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-900">Alokasi Anggaran Beban</span>
-                <button onClick={() => setShowBudgetModal(true)} className="bg-purple-900 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md">
-                  Atur Anggaran
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {categoryBudgets.map(b => {
-                  const used = expensesByCategory[b.category] || 0;
-                  const percent = Math.min(((used / b.allocated) * 100), 100);
-                  const isOver = used > b.allocated;
-
-                  return (
-                    <div key={b.category} className="bg-white/50 backdrop-blur-3xl p-4.5 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] space-y-2.5">
-                      <div className="flex justify-between text-xs font-black">
-                        <span>{b.category}</span>
-                        <span className={isOver ? "text-rose-600" : "text-slate-600"}>
-                          {formatIDR(used)} / {formatIDR(b.allocated)}
-                        </span>
-                      </div>
-                      <div className="w-full bg-purple-100/60 h-2.5 rounded-full overflow-hidden border border-white/70">
-                        <div className={`h-full ${isOver ? "bg-rose-500" : "bg-gradient-to-r from-purple-600 to-indigo-600"}`} style={{ width: `${percent}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* ================= 9. ANALYTICS ================= */}
-          {activeTab === "analytics" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="bg-white/50 backdrop-blur-3xl p-5 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)]">
-                  <span className="text-[10px] font-black text-purple-900/60 uppercase">Titik Impas (BEP)</span>
-                  <h3 className="text-2xl font-black text-slate-900 mt-1">{formatIDR(bepRevenue)}</h3>
-                  <p className="text-[10px] text-emerald-600 font-bold mt-1">✓ Lolos Ambang Batas</p>
-                </div>
-                <div className="bg-white/50 backdrop-blur-3xl p-5 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)]">
-                  <span className="text-[10px] font-black text-purple-900/60 uppercase">Rasio Margin Kotor</span>
-                  <h3 className="text-2xl font-black text-slate-900 mt-1">{(averageMarginRatio * 100).toFixed(1)}%</h3>
-                  <p className="text-[10px] text-slate-500 font-bold mt-1">Efisiensi HPP Terjaga</p>
-                </div>
-                <div className="bg-white/50 backdrop-blur-3xl p-5 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)]">
-                  <span className="text-[10px] font-black text-purple-900/60 uppercase">Margin Bersih</span>
-                  <h3 className="text-2xl font-black text-emerald-600 mt-1">{profitMarginPercent}%</h3>
-                  <p className="text-[10px] text-slate-500 font-bold mt-1">Profitabilitas Sehat</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ================= 10. AI ADVISOR ================= */}
           {activeTab === "ai" && (
             <div className="bg-white/50 backdrop-blur-3xl p-6 rounded-3xl border border-white/90 shadow-[0_8px_32px_0_rgba(112,66,240,0.08)] space-y-4 text-xs">
               <div className="flex items-center gap-2 text-slate-900 font-black text-sm">
@@ -1096,7 +830,7 @@ export default function CashFlowProPurpleGlass() {
                 Rekomendasi AI untuk Peter
               </div>
               <div className="p-4 bg-purple-50/70 border border-purple-200/60 rounded-2xl space-y-2.5 text-slate-700 leading-relaxed font-medium">
-                <p>• <strong>Bahan Baku:</strong> Pembelian bahan baku menyerap 45% pengeluaran toko. Gunakan skema kontrak grosir bulanan untuk memotong HPP hingga 8%.</p>
+                <p>• <strong>Efisiensi Bahan Baku:</strong> Biaya bahan baku menyerap 45% pengeluaran toko. Gunakan skema kontrak grosir bulanan untuk memotong HPP hingga 8%.</p>
                 <p>• <strong>Keamanan Kas:</strong> Rasio likuiditas kas Peter berada pada angka 3.4x (sangat aman untuk menutup hutang lancar).</p>
                 <p>• <strong>Proyeksi Omzet:</strong> Dengan pola transaksi saat ini, laba bersih diproyeksikan tumbuh 20% bulan depan.</p>
               </div>
@@ -1130,9 +864,7 @@ export default function CashFlowProPurpleGlass() {
         })}
       </div>
 
-      {/* ================= THICK GLASS MODALS ================= */}
-
-      {/* 1. POS MODAL */}
+      {/* ================= POS MODAL ================= */}
       {showAddSaleModal && (
         <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-3">
           <div className="bg-white/85 backdrop-blur-3xl rounded-3xl max-w-lg w-full p-5 shadow-[0_20px_50px_rgba(112,66,240,0.2)] space-y-3.5 border border-white">
@@ -1215,159 +947,7 @@ export default function CashFlowProPurpleGlass() {
         </div>
       )}
 
-      {/* 2. EXPENSE MODAL */}
-      {showAddExpenseModal && (
-        <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-white/85 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_50px_rgba(244,63,94,0.15)] space-y-3 text-xs border border-white">
-            <span className="font-black text-slate-900 block text-sm">Catat Beban Pengeluaran</span>
-            <form onSubmit={handleAddExpense} className="space-y-2.5">
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Kategori</label>
-                <select value={expCategory} onChange={e => setExpCategory(e.target.value as any)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold">
-                  {["Bahan Baku", "Transportasi", "Gaji", "Sewa", "Listrik", "Air", "Internet", "Pajak", "Marketing", "Peralatan", "Operasional Lain"].map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Nominal (Rp)</label>
-                <input type="number" required value={expAmount} onChange={e => setExpAmount(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold" />
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Keterangan</label>
-                <input type="text" required value={expNotes} onChange={e => setExpNotes(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl" />
-              </div>
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowAddExpenseModal(false)} className="flex-1 bg-white border border-white p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-rose-600 text-white p-2.5 rounded-2xl font-black shadow-md shadow-rose-500/25">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 3. PRODUCT MODAL */}
-      {showAddProductModal && (
-        <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-white/85 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_50px_rgba(112,66,240,0.2)] space-y-3 text-xs border border-white">
-            <span className="font-black text-slate-900 block text-sm">Tambah Produk Baru</span>
-            <form onSubmit={handleAddProduct} className="space-y-2">
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Nama Produk</label>
-                <input type="text" required value={newProdName} onChange={e => setNewProdName(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl" />
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-[10px] text-slate-500 font-bold block mb-1">HPP (Modal)</label>
-                  <input type="number" required value={newProdCost} onChange={e => setNewProdCost(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold" />
-                </div>
-                <div>
-                  <label className="text-[10px] text-slate-500 font-bold block mb-1">Harga Jual</label>
-                  <input type="number" required value={newProdSell} onChange={e => setNewProdSell(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold" />
-                </div>
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Stok Awal</label>
-                <input type="number" value={newProdStock} onChange={e => setNewProdStock(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold" />
-              </div>
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowAddProductModal(false)} className="flex-1 bg-white border border-white p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2.5 rounded-2xl font-black shadow-md shadow-purple-500/25">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 4. DEBT MODAL */}
-      {showAddDebtModal && (
-        <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-white/85 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_50px_rgba(112,66,240,0.2)] space-y-3 text-xs border border-white">
-            <span className="font-black text-slate-900 block text-sm">Catat Tagihan / Hutang</span>
-            <form onSubmit={handleAddDebt} className="space-y-2">
-              <div className="grid grid-cols-2 gap-2">
-                <button type="button" onClick={() => setDebtType("Piutang")} className={`p-2 rounded-2xl border text-xs font-black ${debtType === 'Piutang' ? 'bg-purple-900 text-white border-purple-900 shadow-xs' : 'bg-white/80 text-slate-600 border-white'}`}>Piutang</button>
-                <button type="button" onClick={() => setDebtType("Hutang")} className={`p-2 rounded-2xl border text-xs font-black ${debtType === 'Hutang' ? 'bg-purple-900 text-white border-purple-900 shadow-xs' : 'bg-white/80 text-slate-600 border-white'}`}>Hutang</button>
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Nama Pihak Terkait</label>
-                <input type="text" required value={debtPerson} onChange={e => setDebtPerson(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl" />
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Nominal (Rp)</label>
-                <input type="number" required value={debtAmount} onChange={e => setDebtAmount(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold" />
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Jatuh Tempo</label>
-                <input type="date" required value={debtDueDate} onChange={e => setDebtDueDate(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl" />
-              </div>
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowAddDebtModal(false)} className="flex-1 bg-white border border-white p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2.5 rounded-2xl font-black shadow-md shadow-purple-500/25">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 5. CAPITAL MODAL */}
-      {showCapitalModal && (
-        <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-white/85 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_50px_rgba(112,66,240,0.2)] space-y-3 text-xs border border-white">
-            <span className="font-black text-slate-900 block text-sm">Mutasi Modal Usaha</span>
-            <form onSubmit={handleAddCapital} className="space-y-2">
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Jenis</label>
-                <select value={capType} onChange={e => setCapType(e.target.value as any)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold">
-                  <option value="Penambahan Modal">Penambahan Modal</option>
-                  <option value="Penarikan Modal (Prive)">Penarikan (Prive)</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Nominal (Rp)</label>
-                <input type="number" required value={capAmount} onChange={e => setCapAmount(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold" />
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Keterangan</label>
-                <input type="text" value={capNotes} onChange={e => setCapNotes(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl" />
-              </div>
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowCapitalModal(false)} className="flex-1 bg-white border border-white p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-purple-600 text-white p-2.5 rounded-2xl font-black shadow-md shadow-purple-500/25">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 6. BUDGET MODAL */}
-      {showBudgetModal && (
-        <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-3">
-          <div className="bg-white/85 backdrop-blur-3xl rounded-3xl max-w-sm w-full p-5 shadow-[0_20px_50px_rgba(112,66,240,0.2)] space-y-3 text-xs border border-white">
-            <span className="font-black text-slate-900 block text-sm">Atur Anggaran Kategori</span>
-            <form onSubmit={handleSaveBudget} className="space-y-2">
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Kategori Beban</label>
-                <select value={budgetCat} onChange={e => setBudgetCat(e.target.value as any)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold">
-                  {["Bahan Baku", "Transportasi", "Gaji", "Sewa", "Listrik", "Air", "Internet", "Pajak", "Marketing", "Peralatan", "Operasional Lain"].map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 font-bold block mb-1">Batas Anggaran (Rp)</label>
-                <input type="number" required value={budgetNominal} onChange={e => setBudgetNominal(e.target.value)} className="w-full border border-white bg-white/80 p-2 rounded-xl font-bold" />
-              </div>
-              <div className="flex gap-2 pt-1">
-                <button type="button" onClick={() => setShowBudgetModal(false)} className="flex-1 bg-white border border-white p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-purple-900 text-white p-2.5 rounded-2xl font-black">Simpan</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* 7. RECEIPT MODAL */}
+      {/* RECEIPT MODAL */}
       {activeReceiptSale && (
         <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-white/95 rounded-3xl max-w-xs w-full p-5 shadow-2xl space-y-3 font-mono text-[11px] border border-white">
