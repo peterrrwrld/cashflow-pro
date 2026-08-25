@@ -6,8 +6,8 @@ import {
   AlertTriangle, Sparkles, Plus, Download, Search, ShieldCheck, 
   Layers, PieChart as PieIcon, Printer, Trash2, Building2, 
   Wallet, BarChart3, Target, Receipt, ShoppingCart, MessageCircle, 
-  Scale, Edit3, CheckCircle2, QrCode, ArrowLeftRight, Bell, User,
-  FileText, Home, ArrowUpRight, ArrowDownRight, ChevronRight
+  Scale, Edit3, CheckCircle2, ArrowUpRight, ArrowDownRight, User,
+  FileText, Home, ArrowLeftRight
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -153,7 +153,7 @@ const DEFAULT_BUDGETS: CategoryBudget[] = [
   { category: "Operasional Lain", allocated: 500000 },
 ];
 
-export default function CashFlowProBankingUI() {
+export default function CashFlowProColorfulWeb() {
   const [activeTab, setActiveTab] = useState<
     "dashboard" | "sales" | "products" | "expenses" | "debts" | "capital" | "reports" | "budget" | "analytics" | "ai"
   >("dashboard");
@@ -215,16 +215,15 @@ export default function CashFlowProBankingUI() {
 
   const [budgetCat, setBudgetCat] = useState<ExpenseCategory>("Bahan Baku");
   const [budgetNominal, setBudgetNominal] = useState("");
-  const [aiSelectedTopic, setAiSelectedTopic] = useState<string>("analisis_kebocoran");
 
   useEffect(() => {
     setIsClient(true);
-    const p = localStorage.getItem("cfp_bank_products_v5");
-    const s = localStorage.getItem("cfp_bank_sales_v5");
-    const e = localStorage.getItem("cfp_bank_expenses_v5");
-    const d = localStorage.getItem("cfp_bank_debts_v5");
-    const c = localStorage.getItem("cfp_bank_capital_v5");
-    const b = localStorage.getItem("cfp_bank_budgets_v5");
+    const p = localStorage.getItem("cfp_color_products_v6");
+    const s = localStorage.getItem("cfp_color_sales_v6");
+    const e = localStorage.getItem("cfp_color_expenses_v6");
+    const d = localStorage.getItem("cfp_color_debts_v6");
+    const c = localStorage.getItem("cfp_color_capital_v6");
+    const b = localStorage.getItem("cfp_color_budgets_v6");
 
     if (p) setProducts(JSON.parse(p));
     if (s) setSales(JSON.parse(s));
@@ -236,12 +235,12 @@ export default function CashFlowProBankingUI() {
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("cfp_bank_products_v5", JSON.stringify(products));
-      localStorage.setItem("cfp_bank_sales_v5", JSON.stringify(sales));
-      localStorage.setItem("cfp_bank_expenses_v5", JSON.stringify(expenses));
-      localStorage.setItem("cfp_bank_debts_v5", JSON.stringify(debts));
-      localStorage.setItem("cfp_bank_capital_v5", JSON.stringify(capitalLogs));
-      localStorage.setItem("cfp_bank_budgets_v5", JSON.stringify(categoryBudgets));
+      localStorage.setItem("cfp_color_products_v6", JSON.stringify(products));
+      localStorage.setItem("cfp_color_sales_v6", JSON.stringify(sales));
+      localStorage.setItem("cfp_color_expenses_v6", JSON.stringify(expenses));
+      localStorage.setItem("cfp_color_debts_v6", JSON.stringify(debts));
+      localStorage.setItem("cfp_color_capital_v6", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_color_budgets_v6", JSON.stringify(categoryBudgets));
     }
   }, [products, sales, expenses, debts, capitalLogs, categoryBudgets, isClient]);
 
@@ -484,431 +483,711 @@ export default function CashFlowProBankingUI() {
   };
 
   return (
-    <div className="flex justify-center min-h-screen bg-[#edf5fc] text-slate-800 font-sans antialiased selection:bg-sky-200">
+    <div className="flex h-screen bg-[#f0f6fc] text-slate-800 font-sans antialiased overflow-hidden selection:bg-sky-200">
       
-      {/* Container Layar Handphone / Tablet (BCA Mobile Style Frame) */}
-      <div className="w-full max-w-md bg-[#f4f9fd] min-h-screen flex flex-col justify-between shadow-[0_20px_60px_rgba(0,100,200,0.12)] relative border-x border-sky-100 overflow-x-hidden pb-24">
-        
-        {/* ================= BLUE BANKING HEADER ================= */}
-        <div className="bg-gradient-to-b from-[#0060af] via-[#0077d6] to-[#0091ff] text-white p-5 pt-8 rounded-b-[2.5rem] shadow-[0_12px_30px_rgba(0,110,220,0.25)] relative">
-          
-          {/* Top Bar: Logo & Avatar */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-xs text-white border border-white/30 shadow-inner">
+      {/* ================= DESKTOP SIDEBAR (BLUE FINTECH STYLE) ================= */}
+      <aside className="w-64 bg-white border-r border-sky-100 flex flex-col justify-between hidden lg:flex shadow-[0_8px_30px_rgba(0,100,200,0.04)] z-10">
+        <div>
+          {/* Brand Header */}
+          <div className="p-5 border-b border-sky-100/80 bg-gradient-to-r from-sky-50 to-white flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className="h-9 w-9 rounded-2xl bg-gradient-to-tr from-[#0060af] via-[#0077d6] to-sky-400 flex items-center justify-center font-black text-xs text-white shadow-md shadow-sky-500/25">
                 CF
               </div>
               <div>
-                <span className="font-extrabold text-sm tracking-tight text-white block leading-none">
-                  CashFlow<span className="text-sky-200 font-light">mobile</span>
+                <span className="font-extrabold text-sm tracking-tight text-slate-900 leading-none block">
+                  CashFlow<span className="text-[#0060af]">Pro</span>
                 </span>
-                <span className="text-[9px] text-sky-100 font-medium">Kopi Senja Nusantara</span>
+                <span className="text-[9px] text-[#0060af] font-semibold">Kopi Senja Nusantara</span>
               </div>
             </div>
-
-            {/* Profile Peter */}
-            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-md px-2.5 py-1 rounded-full border border-white/25">
-              <div className="h-6 w-6 rounded-full bg-sky-200 text-[#0060af] font-black text-[10px] flex items-center justify-center shadow-xs">
-                P
-              </div>
-              <div className="text-left">
-                <p className="text-[11px] font-bold leading-none">Peter</p>
-                <p className="text-[8px] text-sky-200 uppercase font-semibold">Owner</p>
-              </div>
-            </div>
+            <span className="text-[9px] bg-sky-100 text-[#0060af] font-bold px-2 py-0.5 rounded-full">Web</span>
           </div>
 
-          {/* Saldo Aktif Banner */}
-          <div className="mb-4">
-            <span className="text-[11px] text-sky-100 font-medium block">Sisa Kas Toko (Saldo Aktif):</span>
-            <h2 className="text-2xl font-black tracking-tight text-white mt-0.5">
-              {formatIDR(cashOnHand)}
-            </h2>
-          </div>
+          {/* Navigation Items */}
+          <nav className="p-3 space-y-1 text-xs font-medium">
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1">Menu Utama</div>
+            {[
+              { id: "dashboard", label: "Dashboard Ringkasan", icon: Home, color: "text-[#0060af]" },
+              { id: "sales", label: "Kasir POS", icon: ShoppingCart, color: "text-cyan-600" },
+              { id: "products", label: "Inventori Stok", icon: Package, color: "text-teal-600" },
+              { id: "expenses", label: "Pengeluaran Toko", icon: TrendingDown, color: "text-rose-600" },
+              { id: "debts", label: "Buku Hutang & Piutang", icon: CreditCard, color: "text-amber-600" },
+              { id: "capital", label: "Modal & Ekuitas", icon: Wallet, color: "text-purple-600" },
+            ].map(item => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl transition text-left ${
+                    isActive 
+                      ? "bg-gradient-to-r from-[#0060af] to-[#0080eb] text-white font-bold shadow-md shadow-sky-500/20" 
+                      : "text-slate-600 hover:bg-sky-50/70 hover:text-[#0060af]"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 ${isActive ? "text-white" : item.color}`} />
+                  {item.label}
+                </button>
+              );
+            })}
 
-          {/* ================= VIRTUAL PASPOR PLATINUM CARD ================= */}
-          <div className="bg-gradient-to-br from-white/95 via-sky-50/90 to-white/90 backdrop-blur-xl text-slate-800 p-4 rounded-2xl shadow-[0_10px_25px_rgba(0,60,150,0.18)] border border-white relative overflow-hidden">
-            {/* Card Chip & Network */}
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <span className="text-[10px] font-extrabold text-[#0060af] uppercase tracking-wider block">Paspor Platinum Bisnis</span>
-                <span className="text-[9px] text-slate-400 font-medium">Debit & Cash Card</span>
-              </div>
-              {/* Gold Chip Icon */}
-              <div className="h-6 w-8 rounded bg-gradient-to-tr from-amber-400 via-yellow-300 to-amber-500 border border-amber-600/30 shadow-xs flex items-center justify-center">
-                <div className="w-5 h-3 border border-amber-700/40 rounded-xs grid grid-cols-2 gap-0.5 opacity-60" />
-              </div>
-            </div>
-
-            {/* Card Number & Info */}
-            <div className="space-y-1">
-              <p className="font-mono text-sm font-black tracking-widest text-slate-700">
-                5412 •••• •••• 2026
-              </p>
-              <div className="flex justify-between items-end pt-1">
-                <div>
-                  <span className="text-[8px] text-slate-400 uppercase font-bold block">Pemilik Rekening</span>
-                  <span className="text-xs font-black text-slate-800">PETER</span>
-                </div>
-                {/* Mastercard Dual Circle Logo */}
-                <div className="flex -space-x-2">
-                  <div className="h-5 w-5 rounded-full bg-rose-500/90 shadow-2xs" />
-                  <div className="h-5 w-5 rounded-full bg-amber-400/90 shadow-2xs" />
-                </div>
-              </div>
-            </div>
-          </div>
-
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 pt-3 py-1">Laporan & Strategi</div>
+            {[
+              { id: "reports", label: "Laporan 3-in-1", icon: Layers, color: "text-blue-600" },
+              { id: "budget", label: "Target & Anggaran", icon: Target, color: "text-emerald-600" },
+              { id: "analytics", label: "Analisis BEP", icon: BarChart3, color: "text-indigo-600" },
+              { id: "ai", label: "AI Financial Advisor", icon: Sparkles, color: "text-pink-600" },
+            ].map(item => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => setActiveTab(item.id as any)}
+                  className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl transition text-left ${
+                    isActive 
+                      ? "bg-gradient-to-r from-[#0060af] to-[#0080eb] text-white font-bold shadow-md shadow-sky-500/20" 
+                      : "text-slate-600 hover:bg-sky-50/70 hover:text-[#0060af]"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 ${isActive ? "text-white" : item.color}`} />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
         </div>
 
-        {/* ================= MAIN INTERACTIVE BODY ================= */}
-        <div className="p-4 space-y-4">
+        {/* User Card - Peter */}
+        <div className="p-3 border-t border-sky-100 bg-gradient-to-r from-sky-50/60 to-white">
+          <div className="flex items-center gap-2.5 p-2 rounded-2xl bg-white border border-sky-100 shadow-xs">
+            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-[#0060af] to-sky-400 text-white font-black text-xs flex items-center justify-center shadow-xs">
+              P
+            </div>
+            <div className="flex-1 truncate">
+              <p className="text-xs font-bold text-slate-900 truncate">Peter</p>
+              <p className="text-[10px] text-[#0060af] font-semibold">Owner • Aktif</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* ================= FULL-WIDTH DESKTOP VIEWPORT ================= */}
+      <div className="flex-1 flex flex-col overflow-y-auto">
+        
+        {/* Top Navbar */}
+        <header className="bg-white/90 backdrop-blur-md border-b border-sky-100 px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-xs">
+          <div>
+            <h1 className="text-base font-extrabold text-slate-900">
+              {activeTab === "dashboard" && "Dashboard Eksekutif"}
+              {activeTab === "sales" && "Point of Sale (Kasir)"}
+              {activeTab === "products" && "Katalog Persediaan & Stok"}
+              {activeTab === "expenses" && "Pencatatan Beban Pengeluaran"}
+              {activeTab === "debts" && "Buku Hutang & Piutang"}
+              {activeTab === "capital" && "Modal & Struktur Ekuitas"}
+              {activeTab === "reports" && "Laporan Keuangan Resmi (Laba Rugi, Neraca, Arus Kas)"}
+              {activeTab === "budget" && "Target & Pengawasan Anggaran"}
+              {activeTab === "analytics" && "Analisis Break Even Point & Margin"}
+              {activeTab === "ai" && "AI Financial Advisor"}
+            </h1>
+            <p className="text-[10px] text-slate-400">Sistem Keuangan & Kasir Digital UMKM</p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowAddExpenseModal(true)}
+              className="text-xs font-bold text-rose-700 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 border border-rose-200 px-3.5 py-1.5 rounded-xl transition shadow-2xs"
+            >
+              + Catat Beban
+            </button>
+            <button
+              onClick={() => setShowAddSaleModal(true)}
+              className="text-xs font-black bg-gradient-to-r from-[#0060af] via-[#0077d6] to-sky-500 hover:from-[#005096] hover:to-[#006cc7] text-white shadow-md shadow-sky-500/25 px-4 py-1.5 rounded-xl transition active:scale-95"
+            >
+              + Buka Kasir POS
+            </button>
+          </div>
+        </header>
+
+        {/* Content Body */}
+        <main className="p-5 sm:p-7 max-w-6xl w-full mx-auto space-y-6">
 
           {/* ================= 1. DASHBOARD VIEW ================= */}
           {activeTab === "dashboard" && (
             <>
-              {/* Ringkasan 4 Kartu Mini Finansial */}
-              <div className="grid grid-cols-2 gap-2.5">
-                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
-                  <span className="text-[9px] font-bold text-slate-400 uppercase">Omzet Masuk</span>
-                  <p className="text-sm font-black text-slate-900 mt-0.5">{formatIDR(totalRevenue)}</p>
-                  <span className="text-[8px] text-emerald-600 font-bold flex items-center gap-0.5 mt-0.5">
-                    <ArrowUpRight className="h-2.5 w-2.5" /> Penjualan
+              {/* 4 Kartu Metrik Finansial dengan Warna-Warni Segar */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                {/* 1. Omzet (Cyan / Sky) */}
+                <div className="bg-white p-4.5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.06)] relative overflow-hidden flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-sky-400/15 to-transparent rounded-bl-full pointer-events-none" />
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#0060af]">Total Omzet</span>
+                    <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-[#0060af] to-sky-400 text-white flex items-center justify-center shadow-xs">
+                      <DollarSign className="h-4 w-4" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">{formatIDR(totalRevenue)}</h3>
+                  <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-0.5 mt-1">
+                    <ArrowUpRight className="h-3 w-3" /> Realisasi Penjualan
                   </span>
                 </div>
 
-                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
-                  <span className="text-[9px] font-bold text-slate-400 uppercase">Beban Keluar</span>
-                  <p className="text-sm font-black text-rose-600 mt-0.5">{formatIDR(totalExpenses)}</p>
-                  <span className="text-[8px] text-rose-500 font-bold flex items-center gap-0.5 mt-0.5">
-                    <ArrowDownRight className="h-2.5 w-2.5" /> Biaya Toko
-                  </span>
+                {/* 2. Beban (Coral / Rose) */}
+                <div className="bg-white p-4.5 rounded-3xl border border-rose-100 shadow-[0_8px_25px_rgba(244,63,94,0.06)] relative overflow-hidden flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-rose-400/15 to-transparent rounded-bl-full pointer-events-none" />
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-rose-600">Total Beban</span>
+                    <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-rose-500 to-amber-400 text-white flex items-center justify-center shadow-xs">
+                      <TrendingDown className="h-4 w-4" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-black text-rose-600 tracking-tight">{formatIDR(totalExpenses)}</h3>
+                  <span className="text-[10px] text-slate-400 font-semibold mt-1">{expenses.length} pos beban usaha</span>
                 </div>
 
-                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
-                  <span className="text-[9px] font-bold text-slate-400 uppercase">Laba Bersih</span>
-                  <p className={`text-sm font-black mt-0.5 ${netProfit >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                {/* 3. Laba Bersih (Blue / Teal) */}
+                <div className="bg-white p-4.5 rounded-3xl border border-teal-100 shadow-[0_8px_25px_rgba(20,184,166,0.06)] relative overflow-hidden flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-teal-400/15 to-transparent rounded-bl-full pointer-events-none" />
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-teal-700">Laba Bersih</span>
+                    <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-teal-500 to-emerald-400 text-white flex items-center justify-center shadow-xs">
+                      <TrendingUp className="h-4 w-4" />
+                    </div>
+                  </div>
+                  <h3 className={`text-2xl font-black tracking-tight ${netProfit >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
                     {formatIDR(netProfit)}
-                  </p>
-                  <span className="text-[8px] text-[#0060af] font-bold">Margin: {profitMarginPercent}%</span>
+                  </h3>
+                  <span className="text-[10px] text-teal-700 font-bold mt-1">Margin: {profitMarginPercent}%</span>
                 </div>
 
-                <div className="bg-white p-3 rounded-2xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,200,0.05)]">
-                  <span className="text-[9px] font-bold text-slate-400 uppercase">ROI Modal</span>
-                  <p className="text-sm font-black text-[#0060af] mt-0.5">+{roiPercentage}%</p>
-                  <span className="text-[8px] text-emerald-600 font-bold">Status Sehat</span>
+                {/* 4. Kas & ROI (Purple / Indigo) */}
+                <div className="bg-white p-4.5 rounded-3xl border border-purple-100 shadow-[0_8px_25px_rgba(168,85,247,0.06)] relative overflow-hidden flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-purple-400/15 to-transparent rounded-bl-full pointer-events-none" />
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-purple-700">Kas & ROI</span>
+                    <div className="h-8 w-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-white flex items-center justify-center shadow-xs">
+                      <ShieldCheck className="h-4 w-4" />
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-black text-slate-900 tracking-tight">{formatIDR(cashOnHand)}</h3>
+                  <span className="text-[10px] text-purple-700 font-black mt-1">ROI: +{roiPercentage}%</span>
                 </div>
               </div>
 
-              {/* Grid 8 Menu Ikon Kasir & Finansial (BCA Grid Style) */}
-              <div className="bg-white p-4 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3">
+              {/* 8 Menu Akses Cepat Warna-Warni (Fintech Action Grid) */}
+              <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-3">
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                  <span className="text-xs font-black text-[#0060af]">Layanan Finansial Peter</span>
-                  <span className="text-[9px] bg-sky-50 text-[#0060af] font-bold px-2 py-0.5 rounded-full">Menu Utama</span>
+                  <span className="text-xs font-black text-[#0060af]">Layanan Finansial & Operasional Peter</span>
+                  <span className="text-[10px] bg-sky-50 text-[#0060af] font-bold px-2.5 py-0.5 rounded-full border border-sky-200">Akses Cepat</span>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2.5 text-center">
-                  <button onClick={() => setShowAddSaleModal(true)} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-[#0060af] to-sky-400 text-white flex items-center justify-center shadow-md shadow-sky-500/30">
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-center">
+                  <button onClick={() => setShowAddSaleModal(true)} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-sky-50/50 hover:bg-sky-100/70 border border-sky-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-[#0060af] to-sky-400 text-white flex items-center justify-center shadow-md shadow-sky-500/25">
                       <ShoppingCart className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Kasir</span>
+                    <span className="text-[10px] font-bold text-slate-700">Kasir POS</span>
                   </button>
 
-                  <button onClick={() => setActiveTab("products")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-teal-400 text-white flex items-center justify-center shadow-md shadow-teal-500/30">
+                  <button onClick={() => setActiveTab("products")} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-teal-50/50 hover:bg-teal-100/70 border border-teal-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-teal-500 to-mint-400 text-white flex items-center justify-center shadow-md shadow-teal-500/25">
                       <Package className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Produk</span>
+                    <span className="text-[10px] font-bold text-slate-700">Stok Produk</span>
                   </button>
 
-                  <button onClick={() => setShowAddExpenseModal(true)} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-400 text-white flex items-center justify-center shadow-md shadow-rose-500/30">
+                  <button onClick={() => setShowAddExpenseModal(true)} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-rose-50/50 hover:bg-rose-100/70 border border-rose-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-rose-500 to-amber-400 text-white flex items-center justify-center shadow-md shadow-rose-500/25">
                       <TrendingDown className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Beban</span>
+                    <span className="text-[10px] font-bold text-slate-700">Beban Toko</span>
                   </button>
 
-                  <button onClick={() => setActiveTab("debts")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center shadow-md shadow-amber-500/30">
+                  <button onClick={() => setActiveTab("debts")} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-amber-50/50 hover:bg-amber-100/70 border border-amber-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 text-white flex items-center justify-center shadow-md shadow-amber-500/25">
                       <CreditCard className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Tagihan</span>
+                    <span className="text-[10px] font-bold text-slate-700">Buku Tagihan</span>
                   </button>
 
-                  <button onClick={() => setShowCapitalModal(true)} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-500/30">
+                  <button onClick={() => setShowCapitalModal(true)} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-purple-50/50 hover:bg-purple-100/70 border border-purple-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-500 text-white flex items-center justify-center shadow-md shadow-purple-500/25">
                       <Wallet className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Modal</span>
+                    <span className="text-[10px] font-bold text-slate-700">Modal Ekuitas</span>
                   </button>
 
-                  <button onClick={() => setActiveTab("reports")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-md shadow-blue-500/30">
+                  <button onClick={() => setActiveTab("reports")} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-blue-50/50 hover:bg-blue-100/70 border border-blue-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-cyan-500 text-white flex items-center justify-center shadow-md shadow-blue-500/25">
                       <Layers className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Laporan</span>
+                    <span className="text-[10px] font-bold text-slate-700">Laporan 3-in-1</span>
                   </button>
 
-                  <button onClick={() => setActiveTab("budget")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/30">
+                  <button onClick={() => setActiveTab("budget")} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-emerald-50/50 hover:bg-emerald-100/70 border border-emerald-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/25">
                       <Target className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Target</span>
+                    <span className="text-[10px] font-bold text-slate-700">Target Usaha</span>
                   </button>
 
-                  <button onClick={() => setActiveTab("ai")} className="flex flex-col items-center gap-1 p-2 rounded-2xl hover:bg-sky-50 transition active:scale-90">
-                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-500/30">
+                  <button onClick={() => setActiveTab("ai")} className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-pink-50/50 hover:bg-pink-100/70 border border-pink-100 transition active:scale-95">
+                    <div className="h-11 w-11 rounded-2xl bg-gradient-to-tr from-pink-600 to-rose-400 text-white flex items-center justify-center shadow-md shadow-pink-500/25">
                       <Sparkles className="h-5 w-5" />
                     </div>
-                    <span className="text-[9px] font-bold text-slate-700">m-Advisor</span>
+                    <span className="text-[10px] font-bold text-slate-700">AI Advisor</span>
                   </button>
                 </div>
               </div>
 
-              {/* Mutasi Transaksi Terakhir (Daftar Transfer / Riwayat POS) */}
-              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] overflow-hidden">
-                <div className="p-3.5 border-b border-slate-100 flex justify-between items-center">
-                  <span className="text-xs font-black text-[#0060af]">Riwayat Mutasi Penjualan</span>
-                  <button onClick={() => setActiveTab("sales")} className="text-[10px] font-bold text-[#0060af]">Lihat Semua</button>
-                </div>
-                <div className="divide-y divide-slate-100">
-                  {sales.slice(0, 3).map(s => (
-                    <div key={s.id} className="p-3 flex justify-between items-center hover:bg-sky-50/50 transition">
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-bold text-slate-800">{s.items.map(i => i.name).join(", ")}</p>
-                        <p className="text-[9px] text-slate-400 font-mono">{s.invoiceNo} • {s.paymentMethod}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-xs font-black text-emerald-600">+{formatIDR(s.total)}</span>
-                        <span className="block text-[8px] text-slate-400">{s.date}</span>
-                      </div>
+              {/* Rincian Posisi Keuangan & Target Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                {/* Rincian Keuangan */}
+                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-3">
+                  <div className="flex justify-between items-center border-b border-slate-100 pb-2">
+                    <span className="text-xs font-black text-slate-900">Rincian Posisi Finansial Toko</span>
+                    <span className="text-[10px] bg-sky-50 text-[#0060af] font-bold px-2.5 py-0.5 rounded-full">Real-Time</span>
+                  </div>
+                  <div className="space-y-2 text-xs font-medium">
+                    <div className="flex justify-between text-slate-600">
+                      <span>Harga Pokok Penjualan (HPP):</span>
+                      <span className="font-bold text-slate-900">{formatIDR(totalCOGS)}</span>
                     </div>
-                  ))}
+                    <div className="flex justify-between text-slate-600">
+                      <span>Nilai Persediaan Stok Toko:</span>
+                      <span className="font-bold text-slate-900">{formatIDR(inventoryValue)}</span>
+                    </div>
+                    <div className="flex justify-between text-slate-600">
+                      <span>Piutang Pelanggan:</span>
+                      <span className="font-black text-amber-600">{formatIDR(totalReceivables)}</span>
+                    </div>
+                    <div className="flex justify-between text-slate-600">
+                      <span>Hutang Dagang Supplier:</span>
+                      <span className="font-black text-rose-600">{formatIDR(totalPayables)}</span>
+                    </div>
+                  </div>
                 </div>
+
+                {/* Progress Target */}
+                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-3 flex flex-col justify-between">
+                  <div>
+                    <div className="flex justify-between items-center border-b border-slate-100 pb-2 mb-3">
+                      <span className="text-xs font-black text-slate-900">Pencapaian Target Omzet</span>
+                      <span className="text-xs font-black text-[#0060af]">{((totalRevenue / targetRevenue) * 100).toFixed(0)}%</span>
+                    </div>
+                    <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-2">
+                      <div className="bg-gradient-to-r from-[#0060af] via-sky-500 to-cyan-400 h-full transition-all duration-500" style={{ width: `${Math.min((totalRevenue / targetRevenue) * 100, 100)}%` }} />
+                    </div>
+                    <div className="flex justify-between text-[11px] text-slate-500 font-bold">
+                      <span>Realisasi: {formatIDR(totalRevenue)}</span>
+                      <span>Target: {formatIDR(targetRevenue)}</span>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-sky-50/80 border border-sky-100 rounded-2xl text-[11px] text-[#0060af] font-medium">
+                    💡 <strong>Status Peter:</strong> Usaha berada dalam zona profit sehat di atas titik impas (BEP).
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Tabel Transaksi Terakhir */}
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] overflow-hidden">
+                <div className="p-4 border-b border-slate-100 flex justify-between items-center">
+                  <span className="text-xs font-black text-slate-900">Transaksi Penjualan Terbaru</span>
+                  <button onClick={() => setActiveTab("sales")} className="text-xs font-bold text-[#0060af] hover:underline">Lihat Semua Mutasi &rarr;</button>
+                </div>
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-sky-50/60 text-[#0060af] font-black uppercase text-[10px] tracking-wider border-b border-slate-100">
+                    <tr>
+                      <th className="py-3 px-4">Invoice</th>
+                      <th className="py-3 px-4">Daftar Item</th>
+                      <th className="py-3 px-4">Metode</th>
+                      <th className="py-3 px-4 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {sales.slice(0, 4).map(s => (
+                      <tr key={s.id} className="hover:bg-sky-50/40 transition">
+                        <td className="py-3 px-4 font-mono font-bold text-slate-900">{s.invoiceNo}</td>
+                        <td className="py-3 px-4 text-slate-800 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
+                        <td className="py-3 px-4"><span className="bg-sky-50 text-[#0060af] border border-sky-200 px-2 py-0.5 rounded-lg text-[10px] font-bold">{s.paymentMethod}</span></td>
+                        <td className="py-3 px-4 text-right font-black text-emerald-600 text-sm">+{formatIDR(s.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </>
           )}
 
           {/* ================= 2. SALES / POS VIEW ================= */}
           {activeTab === "sales" && (
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-[#0060af]">Daftar Mutasi Transaksi POS</span>
-                <div className="flex gap-1.5">
-                  <button onClick={handleExportCSV} className="bg-white border border-sky-200 text-[#0060af] px-2.5 py-1 rounded-xl text-xs font-bold shadow-2xs">CSV</button>
-                  <button onClick={() => setShowAddSaleModal(true)} className="bg-[#0060af] text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Kasir</button>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center gap-2">
+                <div className="relative flex-1 max-w-sm">
+                  <Search className="absolute left-3.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Cari nomor faktur..."
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-sky-100 rounded-2xl text-xs shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#0060af]"
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={handleExportCSV} className="bg-white hover:bg-sky-50 border border-sky-200 text-[#0060af] font-bold px-3.5 py-2 rounded-2xl text-xs flex items-center gap-1.5 shadow-2xs">
+                    <Download className="h-3.5 w-3.5" /> Unduh CSV
+                  </button>
+                  <button onClick={() => setShowAddSaleModal(true)} className="bg-gradient-to-r from-[#0060af] to-sky-500 hover:from-[#005096] hover:to-sky-600 text-white font-black px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5 shadow-md shadow-sky-500/25">
+                    <Plus className="h-3.5 w-3.5" /> Buka Kasir POS
+                  </button>
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
-                {sales.map(s => (
-                  <div key={s.id} className="p-3.5 flex justify-between items-center">
-                    <div>
-                      <p className="text-xs font-black text-slate-800">{s.invoiceNo}</p>
-                      <p className="text-[10px] text-slate-500 font-medium">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</p>
-                      <span className="text-[8px] bg-sky-50 text-[#0060af] font-bold px-2 py-0.5 rounded-full">{s.paymentMethod} • {s.cashier}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-black text-emerald-600">+{formatIDR(s.total)}</p>
-                      <button onClick={() => setActiveReceiptSale(s)} className="text-[9px] text-[#0060af] font-bold mt-1 block ml-auto">Struk 🧾</button>
-                    </div>
-                  </div>
-                ))}
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] overflow-hidden">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-sky-50/60 text-[#0060af] font-black uppercase text-[10px] border-b border-slate-100">
+                    <tr>
+                      <th className="py-3 px-4">No. Invoice</th>
+                      <th className="py-3 px-4">Tanggal</th>
+                      <th className="py-3 px-4">Daftar Item</th>
+                      <th className="py-3 px-4">Metode</th>
+                      <th className="py-3 px-4 text-right">Total</th>
+                      <th className="py-3 px-4 text-center">Struk</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {sales.filter(s => s.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase())).map(s => (
+                      <tr key={s.id} className="hover:bg-sky-50/40 transition">
+                        <td className="py-3 px-4 font-mono font-bold text-slate-900">{s.invoiceNo}</td>
+                        <td className="py-3 px-4 text-slate-400">{s.date}</td>
+                        <td className="py-3 px-4 text-slate-800 font-semibold">{s.items.map(i => `${i.name} (${i.qty}x)`).join(", ")}</td>
+                        <td className="py-3 px-4"><span className="bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-lg text-[10px] font-bold text-[#0060af]">{s.paymentMethod}</span></td>
+                        <td className="py-3 px-4 text-right font-black text-emerald-600 text-sm">+{formatIDR(s.total)}</td>
+                        <td className="py-3 px-4 text-center">
+                          <button onClick={() => setActiveReceiptSale(s)} className="p-1.5 text-[#0060af] hover:bg-sky-50 rounded-lg"><Receipt className="h-4 w-4" /></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
 
           {/* ================= 3. PRODUCTS VIEW ================= */}
           {activeTab === "products" && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-[#0060af]">Daftar Stok Produk ({products.length})</span>
-                <button onClick={() => setShowAddProductModal(true)} className="bg-[#0060af] text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Produk</button>
+                <span className="text-xs font-bold text-slate-900">Katalog Produk & Stok ({products.length})</span>
+                <button onClick={() => setShowAddProductModal(true)} className="bg-gradient-to-r from-teal-600 to-cyan-500 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-teal-500/25">
+                  + Tambah Produk
+                </button>
               </div>
 
-              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
-                {products.map(p => (
-                  <div key={p.id} className="p-3.5 flex justify-between items-center">
-                    <div>
-                      <p className="text-xs font-black text-slate-800">{p.name}</p>
-                      <p className="text-[10px] text-slate-400">Modal: {formatIDR(p.costPrice)} | Jual: {formatIDR(p.sellPrice)}</p>
-                      <span className="text-[8px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{p.sku}</span>
-                    </div>
-                    <div className="text-right">
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${p.stock <= p.minStock ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
-                        {p.stock} pcs
-                      </span>
-                    </div>
-                  </div>
-                ))}
+              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] overflow-hidden">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-teal-50/60 text-teal-800 font-black uppercase text-[10px] border-b border-slate-100">
+                    <tr>
+                      <th className="py-3 px-4">SKU</th>
+                      <th className="py-3 px-4">Nama Produk</th>
+                      <th className="py-3 px-4">HPP</th>
+                      <th className="py-3 px-4">Harga Jual</th>
+                      <th className="py-3 px-4">Margin Laba</th>
+                      <th className="py-3 px-4 text-right">Stok Aktif</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {products.map(p => (
+                      <tr key={p.id} className="hover:bg-slate-50 transition">
+                        <td className="py-3 px-4 font-mono text-slate-400">{p.sku}</td>
+                        <td className="py-3 px-4 font-bold text-slate-900">{p.name}</td>
+                        <td className="py-3 px-4 text-slate-500">{formatIDR(p.costPrice)}</td>
+                        <td className="py-3 px-4 font-bold text-slate-900">{formatIDR(p.sellPrice)}</td>
+                        <td className="py-3 px-4 text-emerald-600 font-black">+{formatIDR(p.sellPrice - p.costPrice)}</td>
+                        <td className="py-3 px-4 text-right">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${p.stock <= p.minStock ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
+                            {p.stock} pcs
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
 
           {/* ================= 4. EXPENSES VIEW ================= */}
           {activeTab === "expenses" && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-[#0060af]">Beban Toko: {formatIDR(totalExpenses)}</span>
-                <button onClick={() => setShowAddExpenseModal(true)} className="bg-rose-600 text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Beban</button>
+                <span className="text-xs font-bold text-slate-900">Total Beban Usaha: <strong className="text-rose-600">{formatIDR(totalExpenses)}</strong></span>
+                <button onClick={() => setShowAddExpenseModal(true)} className="bg-rose-600 hover:bg-rose-700 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-rose-500/25">
+                  + Catat Beban
+                </button>
               </div>
 
-              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
-                {expenses.map(e => (
-                  <div key={e.id} className="p-3.5 flex justify-between items-center">
-                    <div>
-                      <p className="text-xs font-bold text-slate-800">{e.notes}</p>
-                      <span className="text-[9px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-bold">{e.category}</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs font-black text-rose-600">-{formatIDR(e.amount)}</p>
-                      <span className="text-[8px] text-slate-400">{e.date}</span>
-                    </div>
-                  </div>
-                ))}
+              <div className="bg-white rounded-3xl border border-rose-100 shadow-[0_8px_25px_rgba(244,63,94,0.05)] overflow-hidden">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-rose-50/60 text-rose-800 font-black uppercase text-[10px] border-b border-slate-100">
+                    <tr>
+                      <th className="py-3 px-4">Tanggal</th>
+                      <th className="py-3 px-4">Kategori</th>
+                      <th className="py-3 px-4">Keterangan</th>
+                      <th className="py-3 px-4 text-right">Nominal</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {expenses.map(e => (
+                      <tr key={e.id} className="hover:bg-slate-50 transition">
+                        <td className="py-3 px-4 text-slate-400">{e.date}</td>
+                        <td className="py-3 px-4"><span className="bg-rose-50 border border-rose-200 text-rose-800 px-2 py-0.5 rounded-lg text-[10px] font-bold">{e.category}</span></td>
+                        <td className="py-3 px-4 text-slate-800">{e.notes}</td>
+                        <td className="py-3 px-4 text-right font-black text-rose-600">-{formatIDR(e.amount)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
 
           {/* ================= 5. DEBTS VIEW ================= */}
           {activeTab === "debts" && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-[#0060af]">Daftar Tagihan Hutang/Piutang</span>
-                <button onClick={() => setShowAddDebtModal(true)} className="bg-[#0060af] text-white px-3 py-1 rounded-xl text-xs font-bold shadow-xs">+ Tagihan</button>
+                <div className="flex gap-3">
+                  <span className="text-xs text-slate-600">Piutang: <strong className="text-amber-700 font-bold">{formatIDR(totalReceivables)}</strong></span>
+                  <span className="text-xs text-slate-600">Hutang: <strong className="text-rose-700 font-bold">{formatIDR(totalPayables)}</strong></span>
+                </div>
+                <button onClick={() => setShowAddDebtModal(true)} className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-amber-500/25">
+                  + Catat Tagihan
+                </button>
               </div>
 
-              <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] divide-y divide-slate-100">
-                {debts.map(d => (
-                  <div key={d.id} className="p-3.5 flex justify-between items-center">
-                    <div>
-                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${d.type === 'Piutang' ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'}`}>{d.type}</span>
-                      <p className="text-xs font-bold text-slate-800 mt-1">{d.person}</p>
-                      <p className="text-[9px] text-slate-400">Tempo: {d.dueDate} ({d.notes})</p>
-                    </div>
-                    <div className="text-right space-y-1">
-                      <p className="text-xs font-black text-slate-900">{formatIDR(d.amount)}</p>
-                      <button onClick={() => handleToggleDebtSettled(d.id)} className="text-[9px] bg-sky-50 text-[#0060af] font-bold px-2 py-0.5 rounded-lg border border-sky-200">
-                        {d.isPaid ? 'Lunas ✓' : 'Tandai Lunas'}
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              <div className="bg-white rounded-3xl border border-amber-100 shadow-[0_8px_25px_rgba(245,158,11,0.05)] overflow-hidden">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-amber-50/60 text-amber-900 font-black uppercase text-[10px] border-b border-slate-100">
+                    <tr>
+                      <th className="py-3 px-4">Tipe</th>
+                      <th className="py-3 px-4">Pihak Terkait</th>
+                      <th className="py-3 px-4">Nominal</th>
+                      <th className="py-3 px-4">Jatuh Tempo</th>
+                      <th className="py-3 px-4 text-center">Status</th>
+                      <th className="py-3 px-4 text-center">Tindakan</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {debts.map(d => (
+                      <tr key={d.id} className="hover:bg-slate-50 transition">
+                        <td className="py-3 px-4"><span className={`px-2 py-0.5 rounded-lg text-[10px] font-black ${d.type === 'Piutang' ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'}`}>{d.type}</span></td>
+                        <td className="py-3 px-4 font-bold text-slate-900">{d.person}</td>
+                        <td className="py-3 px-4 font-black text-slate-900">{formatIDR(d.amount)}</td>
+                        <td className="py-3 px-4 text-slate-500">{d.dueDate}</td>
+                        <td className="py-3 px-4 text-center">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${d.isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
+                            {d.isPaid ? 'LUNAS' : 'BELUM'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-center">
+                          <button onClick={() => handleToggleDebtSettled(d.id)} className="text-[10px] bg-sky-50 hover:bg-sky-100 text-[#0060af] border border-sky-200 px-3 py-1 rounded-xl font-bold">
+                            {d.isPaid ? 'Batal' : 'Tandai Lunas'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
 
-          {/* ================= 6. REPORTS VIEW ================= */}
-          {activeTab === "reports" && (
-            <div className="space-y-3">
+          {/* ================= 6. CAPITAL VIEW ================= */}
+          {activeTab === "capital" && (
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <div className="flex gap-1 bg-white p-1 rounded-xl border border-sky-100">
-                  <button onClick={() => setReportSubTab("labarugi")} className={`px-3 py-1 rounded-lg text-xs font-bold ${reportSubTab === 'labarugi' ? 'bg-[#0060af] text-white' : 'text-slate-500'}`}>Laba Rugi</button>
-                  <button onClick={() => setReportSubTab("neraca")} className={`px-3 py-1 rounded-lg text-xs font-bold ${reportSubTab === 'neraca' ? 'bg-[#0060af] text-white' : 'text-slate-500'}`}>Neraca</button>
+                <span className="text-xs font-bold text-slate-900">Modal Disetor Bersih: <strong className="text-purple-700">{formatIDR(totalNetCapital)}</strong></span>
+                <button onClick={() => setShowCapitalModal(true)} className="bg-purple-600 hover:bg-purple-700 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-purple-500/25">
+                  + Mutasi Modal
+                </button>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-purple-100 shadow-[0_8px_25px_rgba(168,85,247,0.05)] overflow-hidden">
+                <table className="w-full text-left text-xs text-slate-600">
+                  <thead className="bg-purple-50/60 text-purple-900 font-black uppercase text-[10px] border-b border-slate-100">
+                    <tr>
+                      <th className="py-3 px-4">Tanggal</th>
+                      <th className="py-3 px-4">Tipe</th>
+                      <th className="py-3 px-4">Keterangan</th>
+                      <th className="py-3 px-4 text-right">Nominal</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium">
+                    {capitalLogs.map(c => (
+                      <tr key={c.id} className="hover:bg-slate-50 transition">
+                        <td className="py-3 px-4 text-slate-400">{c.date}</td>
+                        <td className="py-3 px-4 font-bold text-slate-900">{c.type}</td>
+                        <td className="py-3 px-4 text-slate-600">{c.notes}</td>
+                        <td className="py-3 px-4 text-right font-black text-slate-900">{formatIDR(c.amount)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ================= 7. REPORTS VIEW ================= */}
+          {activeTab === "reports" && (
+            <div className="space-y-4 max-w-3xl mx-auto">
+              <div className="flex justify-between items-center">
+                <div className="flex gap-1.5 bg-white p-1 rounded-2xl border border-sky-100 shadow-2xs">
+                  <button onClick={() => setReportSubTab("labarugi")} className={`px-4 py-1.5 rounded-xl text-xs font-black ${reportSubTab === 'labarugi' ? 'bg-[#0060af] text-white shadow-xs' : 'text-slate-500'}`}>Laba Rugi</button>
+                  <button onClick={() => setReportSubTab("neraca")} className={`px-4 py-1.5 rounded-xl text-xs font-black ${reportSubTab === 'neraca' ? 'bg-[#0060af] text-white shadow-xs' : 'text-slate-500'}`}>Neraca</button>
                 </div>
-                <button onClick={() => window.print()} className="bg-[#0060af] text-white px-3 py-1.5 rounded-xl text-xs font-bold">Cetak</button>
+                <button onClick={() => window.print()} className="bg-[#0060af] hover:bg-[#005096] text-white font-black px-4 py-2 rounded-2xl text-xs flex items-center gap-1.5 shadow-md">
+                  <Printer className="h-3.5 w-3.5" /> Cetak PDF
+                </button>
               </div>
 
               {reportSubTab === "labarugi" && (
-                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3 text-xs">
-                  <div className="text-center border-b pb-2">
-                    <h3 className="font-black text-[#0060af]">Laporan Laba Rugi</h3>
-                    <p className="text-[9px] text-slate-400">Pemilik: Peter • Agustus 2026</p>
+                <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.06)] space-y-4 text-xs">
+                  <div className="border-b border-slate-100 pb-3 text-center">
+                    <h3 className="font-black text-base text-[#0060af] uppercase">Laporan Laba Rugi (SAK EMKM)</h3>
+                    <p className="text-[10px] text-slate-400">Pemilik: Peter • Agustus 2026</p>
                   </div>
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between"><span>Penjualan Bersih:</span> <span className="font-bold">{formatIDR(totalRevenue)}</span></div>
-                    <div className="flex justify-between text-slate-500"><span>HPP:</span> <span>({formatIDR(totalCOGS)})</span></div>
-                    <div className="flex justify-between font-bold border-t pt-1"><span>Laba Kotor:</span> <span>{formatIDR(grossProfit)}</span></div>
-                    <div className="flex justify-between text-slate-500"><span>Total Beban:</span> <span>({formatIDR(totalExpenses)})</span></div>
-                    <div className="flex justify-between font-black text-emerald-700 bg-emerald-50 p-2.5 rounded-2xl border border-emerald-200 mt-2">
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between"><span>Penjualan Bersih (Omzet):</span> <span className="font-bold text-slate-900">{formatIDR(totalRevenue)}</span></div>
+                    <div className="flex justify-between text-slate-500"><span>Harga Pokok Penjualan (HPP):</span> <span>({formatIDR(totalCOGS)})</span></div>
+                    <div className="flex justify-between font-black border-t border-slate-100 pt-2 text-slate-900"><span>Laba Kotor:</span> <span>{formatIDR(grossProfit)}</span></div>
+                    <div className="flex justify-between text-slate-500"><span>Total Beban Operasional:</span> <span>({formatIDR(totalExpenses)})</span></div>
+                    <div className="flex justify-between font-black text-emerald-700 bg-emerald-50 p-3.5 rounded-2xl border border-emerald-200 shadow-2xs">
                       <span>LABA BERSIH:</span>
-                      <span>{formatIDR(netProfit)}</span>
+                      <span className="text-sm">{formatIDR(netProfit)}</span>
                     </div>
                   </div>
                 </div>
               )}
 
               {reportSubTab === "neraca" && (
-                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3 text-xs">
-                  <div className="text-center border-b pb-2">
-                    <h3 className="font-black text-[#0060af]">Neraca Sederhana</h3>
+                <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.06)] space-y-4 text-xs">
+                  <div className="border-b border-slate-100 pb-3 text-center">
+                    <h3 className="font-black text-base text-[#0060af] uppercase">Neraca Sederhana</h3>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between"><span>Total Aset (Kas + Stok + Piutang):</span> <span className="font-bold">{formatIDR(totalAssets)}</span></div>
-                    <div className="flex justify-between"><span>Kewajiban Hutang:</span> <span className="font-bold text-rose-600">{formatIDR(totalPayables)}</span></div>
-                    <div className="flex justify-between"><span>Ekuitas Modal & Laba:</span> <span className="font-bold text-[#0060af]">{formatIDR(totalEquity)}</span></div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-sky-50/50 p-4 rounded-2xl border border-sky-100">
+                      <h4 className="font-black text-[#0060af] border-b border-sky-100 pb-2">Aset</h4>
+                      <div className="space-y-1.5 mt-2.5 text-slate-600">
+                        <div className="flex justify-between"><span>Kas:</span> <span className="font-bold">{formatIDR(cashOnHand)}</span></div>
+                        <div className="flex justify-between"><span>Stok:</span> <span className="font-bold">{formatIDR(inventoryValue)}</span></div>
+                        <div className="flex justify-between"><span>Piutang:</span> <span className="font-bold">{formatIDR(totalReceivables)}</span></div>
+                        <div className="flex justify-between font-black text-slate-900 border-t pt-2"><span>Total:</span> <span>{formatIDR(totalAssets)}</span></div>
+                      </div>
+                    </div>
+                    <div className="bg-sky-50/50 p-4 rounded-2xl border border-sky-100">
+                      <h4 className="font-black text-[#0060af] border-b border-sky-100 pb-2">Kewajiban & Modal</h4>
+                      <div className="space-y-1.5 mt-2.5 text-slate-600">
+                        <div className="flex justify-between"><span>Hutang:</span> <span className="font-bold">{formatIDR(totalPayables)}</span></div>
+                        <div className="flex justify-between"><span>Modal:</span> <span className="font-bold">{formatIDR(totalNetCapital)}</span></div>
+                        <div className="flex justify-between"><span>Laba:</span> <span className="font-bold">{formatIDR(netProfit)}</span></div>
+                        <div className="flex justify-between font-black text-slate-900 border-t pt-2"><span>Total:</span> <span>{formatIDR(totalLiabilitiesAndEquity)}</span></div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
           )}
 
-          {/* ================= 7. AI ADVISOR VIEW ================= */}
-          {activeTab === "ai" && (
-            <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_6px_20px_rgba(0,100,200,0.06)] space-y-3 text-xs">
-              <div className="flex items-center gap-2 text-[#0060af] font-black">
-                <Sparkles className="h-4 w-4 text-[#0060af]" />
-                m-Advisor untuk Peter
+          {/* ================= 8. BUDGET VIEW ================= */}
+          {activeTab === "budget" && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-bold text-slate-900">Pengawasan Anggaran Kategori</span>
+                <button onClick={() => setShowBudgetModal(true)} className="bg-gradient-to-r from-emerald-600 to-teal-500 text-white font-black px-4 py-2 rounded-2xl text-xs shadow-md shadow-emerald-500/25">
+                  Atur Anggaran
+                </button>
               </div>
-              <div className="p-3.5 bg-sky-50 rounded-2xl space-y-2 text-slate-700 leading-relaxed font-medium">
-                <p>• <strong>Bahan Baku:</strong> Biaya bahan baku memakan 45% pengeluaran. Disarankan kontrak suplai bulanan untuk menghemat 8% HPP.</p>
-                <p>• <strong>Status Kas:</strong> Saldo kas aktif <strong>{formatIDR(cashOnHand)}</strong> sangat cukup untuk menutup hutang operasional.</p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {categoryBudgets.map(b => {
+                  const used = expensesByCategory[b.category] || 0;
+                  const percent = Math.min(((used / b.allocated) * 100), 100);
+                  const isOver = used > b.allocated;
+
+                  return (
+                    <div key={b.category} className="bg-white p-4.5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-2.5">
+                      <div className="flex justify-between text-xs font-black">
+                        <span>{b.category}</span>
+                        <span className={isOver ? "text-rose-600" : "text-[#0060af]"}>
+                          {formatIDR(used)} / {formatIDR(b.allocated)}
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                        <div className={`h-full ${isOver ? "bg-rose-500" : "bg-gradient-to-r from-[#0060af] to-sky-400"}`} style={{ width: `${percent}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
 
-        </div>
+          {/* ================= 9. ANALYTICS VIEW ================= */}
+          {activeTab === "analytics" && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)]">
+                  <span className="text-[10px] font-black text-[#0060af] uppercase">Titik Impas (BEP)</span>
+                  <h3 className="text-2xl font-black text-slate-900 mt-1">{formatIDR(bepRevenue)}</h3>
+                  <p className="text-[10px] text-emerald-600 font-bold mt-1">✓ Lolos Ambang Batas</p>
+                </div>
+                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)]">
+                  <span className="text-[10px] font-black text-teal-700 uppercase">Rasio Margin Kotor</span>
+                  <h3 className="text-2xl font-black text-slate-900 mt-1">{(averageMarginRatio * 100).toFixed(1)}%</h3>
+                  <p className="text-[10px] text-slate-500 font-bold mt-1">Efisiensi HPP Terjaga</p>
+                </div>
+                <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)]">
+                  <span className="text-[10px] font-black text-purple-700 uppercase">Margin Bersih</span>
+                  <h3 className="text-2xl font-black text-emerald-600 mt-1">{profitMarginPercent}%</h3>
+                  <p className="text-[10px] text-slate-500 font-bold mt-1">Profitabilitas Sehat</p>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* ================= BOTTOM NAVIGATION (BCA REDESIGN STYLE) ================= */}
-        <div className="fixed bottom-0 max-w-md w-full bg-white/95 backdrop-blur-xl border-t border-sky-100 px-4 py-2 flex justify-between items-center shadow-[0_-8px_25px_rgba(0,100,200,0.08)] z-40">
-          
-          {/* Nav 1: Home */}
-          <button onClick={() => setActiveTab("dashboard")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'dashboard' ? 'text-[#0060af]' : 'text-slate-400'}`}>
-            <Home className="h-5 w-5" />
-            <span className="text-[8px] font-bold">Home</span>
-          </button>
+          {/* ================= 10. AI ADVISOR VIEW ================= */}
+          {activeTab === "ai" && (
+            <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-4 text-xs">
+              <div className="flex items-center gap-2 text-[#0060af] font-black text-sm">
+                <Sparkles className="h-4 w-4 text-[#0060af]" />
+                Rekomendasi AI untuk Peter
+              </div>
+              <div className="p-4 bg-sky-50/70 border border-sky-100 rounded-2xl space-y-2.5 text-slate-700 leading-relaxed font-medium">
+                <p>• <strong>Bahan Baku:</strong> Pembelian bahan baku menyerap 45% pengeluaran toko. Gunakan skema kontrak grosir bulanan untuk memotong HPP hingga 8%.</p>
+                <p>• <strong>Keamanan Kas:</strong> Rasio likuiditas kas Peter berada pada angka 3.4x (sangat aman untuk menutup hutang lancar).</p>
+                <p>• <strong>Proyeksi Omzet:</strong> Dengan pola transaksi saat ini, laba bersih diproyeksikan tumbuh 20% bulan depan.</p>
+              </div>
+            </div>
+          )}
 
-          {/* Nav 2: Produk / Transaksi */}
-          <button onClick={() => setActiveTab("sales")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'sales' ? 'text-[#0060af]' : 'text-slate-400'}`}>
-            <ArrowLeftRight className="h-5 w-5" />
-            <span className="text-[8px] font-bold">Mutasi</span>
-          </button>
-
-          {/* Nav Center: FLOATING QRIS / KASIR BUTTON */}
-          <div className="-mt-7">
-            <button
-              onClick={() => setShowAddSaleModal(true)}
-              className="h-13 w-13 rounded-2xl bg-gradient-to-tr from-[#0060af] via-sky-500 to-cyan-400 text-white flex items-center justify-center shadow-[0_8px_25px_rgba(0,120,255,0.45)] border-2 border-white active:scale-90 transition"
-            >
-              <QrCode className="h-6 w-6" />
-            </button>
-          </div>
-
-          {/* Nav 4: Tagihan / Hutang */}
-          <button onClick={() => setActiveTab("debts")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'debts' ? 'text-[#0060af]' : 'text-slate-400'}`}>
-            <FileText className="h-5 w-5" />
-            <span className="text-[8px] font-bold">Tagihan</span>
-          </button>
-
-          {/* Nav 5: Profile / Laporan */}
-          <button onClick={() => setActiveTab("reports")} className={`flex flex-col items-center gap-0.5 ${activeTab === 'reports' ? 'text-[#0060af]' : 'text-slate-400'}`}>
-            <Layers className="h-5 w-5" />
-            <span className="text-[8px] font-bold">Laporan</span>
-          </button>
-        </div>
-
+        </main>
       </div>
 
       {/* ================= MODALS (POPUP) ================= */}
 
       {/* 1. POS MODAL */}
       {showAddSaleModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
-          <div className="bg-white rounded-t-[2.5rem] sm:rounded-3xl max-w-md w-full p-5 shadow-2xl space-y-3.5 border border-sky-100 max-h-[85vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl space-y-3.5 border border-sky-100 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-2">
-              <span className="text-xs font-black text-[#0060af]">m-Kasir Transaksi Baru</span>
-              <button onClick={() => setShowAddSaleModal(false)} className="text-slate-400 text-xs">✕</button>
+              <span className="text-xs font-black text-[#0060af]">Kasir POS Multi-Item</span>
+              <button onClick={() => setShowAddSaleModal(false)} className="text-slate-400 hover:text-slate-700 text-xs">✕</button>
             </div>
 
             <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
@@ -925,7 +1204,7 @@ export default function CashFlowProBankingUI() {
               ))}
             </div>
 
-            <div className="bg-slate-50 p-3 rounded-2xl text-xs space-y-1 max-h-24 overflow-y-auto">
+            <div className="bg-slate-50 p-3 rounded-2xl text-xs space-y-1 max-h-28 overflow-y-auto">
               {cart.length === 0 ? (
                 <p className="text-[10px] text-slate-400 italic text-center">Keranjang belanja kosong</p>
               ) : (
@@ -978,7 +1257,7 @@ export default function CashFlowProBankingUI() {
 
               <div className="flex gap-2 pt-1">
                 <button type="button" onClick={() => setShowAddSaleModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
-                <button type="submit" disabled={cart.length === 0} className="flex-1 bg-[#0060af] text-white p-2.5 rounded-2xl font-black shadow-md shadow-sky-500/30">Bayar & Cetak</button>
+                <button type="submit" disabled={cart.length === 0} className="flex-1 bg-gradient-to-r from-[#0060af] to-sky-500 text-white p-2.5 rounded-2xl font-black shadow-md shadow-sky-500/25">Simpan & Cetak Struk</button>
               </div>
             </form>
           </div>
@@ -987,9 +1266,9 @@ export default function CashFlowProBankingUI() {
 
       {/* 2. EXPENSE MODAL */}
       {showAddExpenseModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
-            <span className="font-black text-slate-900 block text-sm">Catat Beban Toko</span>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-rose-100">
+            <span className="font-black text-slate-900 block text-sm">Catat Beban Pengeluaran</span>
             <form onSubmit={handleAddExpense} className="space-y-2.5">
               <div>
                 <label className="text-[9px] text-slate-500 font-bold block mb-1">Kategori</label>
@@ -1018,8 +1297,8 @@ export default function CashFlowProBankingUI() {
 
       {/* 3. PRODUCT MODAL */}
       {showAddProductModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-sky-100">
             <span className="font-black text-slate-900 block text-sm">Tambah Produk Baru</span>
             <form onSubmit={handleAddProduct} className="space-y-2">
               <div>
@@ -1051,8 +1330,8 @@ export default function CashFlowProBankingUI() {
 
       {/* 4. DEBT MODAL */}
       {showAddDebtModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-amber-100">
             <span className="font-black text-slate-900 block text-sm">Catat Tagihan</span>
             <form onSubmit={handleAddDebt} className="space-y-2">
               <div className="grid grid-cols-2 gap-2">
@@ -1082,8 +1361,8 @@ export default function CashFlowProBankingUI() {
 
       {/* 5. CAPITAL MODAL */}
       {showCapitalModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-purple-100">
             <span className="font-black text-slate-900 block text-sm">Mutasi Modal</span>
             <form onSubmit={handleAddCapital} className="space-y-2">
               <div>
@@ -1103,26 +1382,53 @@ export default function CashFlowProBankingUI() {
               </div>
               <div className="flex gap-2 pt-1">
                 <button type="button" onClick={() => setShowCapitalModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
-                <button type="submit" className="flex-1 bg-[#0060af] text-white p-2.5 rounded-2xl font-black">Simpan</button>
+                <button type="submit" className="flex-1 bg-purple-600 text-white p-2.5 rounded-2xl font-black">Simpan</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      {/* 6. RECEIPT MODAL */}
+      {/* 6. BUDGET MODAL */}
+      {showBudgetModal && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-3 text-xs border border-emerald-100">
+            <span className="font-black text-slate-900 block text-sm">Atur Anggaran Kategori</span>
+            <form onSubmit={handleSaveBudget} className="space-y-2">
+              <div>
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Kategori Beban</label>
+                <select value={budgetCat} onChange={e => setBudgetCat(e.target.value as any)} className="w-full border p-2 rounded-xl font-bold">
+                  {["Bahan Baku", "Transportasi", "Gaji", "Sewa", "Listrik", "Air", "Internet", "Pajak", "Marketing", "Peralatan", "Operasional Lain"].map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[9px] text-slate-500 font-bold block mb-1">Batas Anggaran (Rp)</label>
+                <input type="number" required value={budgetNominal} onChange={e => setBudgetNominal(e.target.value)} className="w-full border p-2 rounded-xl font-bold" />
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setShowBudgetModal(false)} className="flex-1 bg-slate-100 p-2.5 rounded-2xl text-slate-600 font-bold">Batal</button>
+                <button type="submit" className="flex-1 bg-emerald-600 text-white p-2.5 rounded-2xl font-black">Simpan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 7. RECEIPT MODAL */}
       {activeReceiptSale && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-xs w-full p-5 shadow-2xl space-y-3 font-mono text-[11px]">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-xs w-full p-5 shadow-2xl space-y-3 font-mono text-[11px] border border-sky-100">
             <div className="text-center border-b pb-2">
               <span className="font-black uppercase block text-xs text-[#0060af]">Kopi Senja Nusantara</span>
               <span className="text-[9px] text-slate-400">Kasir: {activeReceiptSale.cashier}</span>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 text-slate-600">
               <div className="flex justify-between"><span>Faktur:</span> <strong>{activeReceiptSale.invoiceNo}</strong></div>
               <div className="flex justify-between"><span>Tgl:</span> <span>{activeReceiptSale.date}</span></div>
             </div>
-            <div className="border-t border-b py-2 space-y-1">
+            <div className="border-t border-b py-2 space-y-1 text-slate-800">
               {activeReceiptSale.items.map((i, idx) => (
                 <div key={idx} className="flex justify-between">
                   <span>{i.name} x{i.qty}</span>
