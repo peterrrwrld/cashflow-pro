@@ -11,52 +11,62 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-// ================= LOGO IKON RESMI (SESUAI GAMBAR) =================
-function KingsCountyLogo({ className = "h-8 w-8" }: { className?: string }) {
+// ================= LOGO DINAMIS =================
+function BrandLogo({ className = "h-9 w-9" }: { className?: string }) {
+  const [imgError, setImgError] = useState(false);
+
+  if (!imgError) {
+    return (
+      <img 
+        src="/logo.png" 
+        alt="Kings County Roasters Logo" 
+        onError={() => setImgError(true)}
+        className={`${className} object-contain flex-shrink-0 drop-shadow-xs`}
+      />
+    );
+  }
+
+  // Fallback Vektor Logo
   return (
-    <div className={`relative flex items-center justify-center ${className}`}>
+    <div className={`relative flex items-center justify-center ${className} flex-shrink-0`}>
       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-xs">
         <defs>
-          <linearGradient id="cfGradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="cfBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#0052cc" />
-            <stop offset="50%" stopColor="#0080eb" />
+            <stop offset="60%" stopColor="#0080eb" />
             <stop offset="100%" stopColor="#00c8b3" />
           </linearGradient>
-          <linearGradient id="cfGradGreen" x1="0%" y1="100%" x2="100%" y2="0%">
+          <linearGradient id="cfGreenGrad" x1="0%" y1="100%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#0066cc" />
             <stop offset="40%" stopColor="#00a884" />
             <stop offset="100%" stopColor="#10b981" />
           </linearGradient>
         </defs>
-        {/* Curved Wave Line to Arrow */}
         <path 
           d="M 12 78 C 22 78 26 58 35 62 C 44 66 48 84 58 84 C 68 84 74 60 88 32" 
-          stroke="url(#cfGradBlue)" 
-          strokeWidth="10" 
+          stroke="url(#cfBlueGrad)" 
+          strokeWidth="11" 
           strokeLinecap="round" 
           strokeLinejoin="round" 
         />
-        {/* Arrow Head */}
         <path 
-          d="M 72 25 L 90 29 L 85 47 Z" 
-          fill="url(#cfGradGreen)" 
+          d="M 70 24 L 90 28 L 84 48 Z" 
+          fill="url(#cfGreenGrad)" 
         />
-        {/* Upper Stylized F Curve */}
         <path 
-          d="M 38 40 C 38 25 50 20 62 20 C 70 20 74 23 74 23" 
-          stroke="url(#cfGradGreen)" 
-          strokeWidth="8" 
+          d="M 38 40 C 38 24 50 18 64 18 C 72 18 76 22 76 22" 
+          stroke="url(#cfGreenGrad)" 
+          strokeWidth="8.5" 
           strokeLinecap="round" 
         />
         <path 
           d="M 38 46 C 45 46 58 46 62 46" 
-          stroke="url(#cfGradBlue)" 
-          strokeWidth="7" 
+          stroke="url(#cfBlueGrad)" 
+          strokeWidth="7.5" 
           strokeLinecap="round" 
         />
-        {/* Dollar Coin Badge */}
-        <circle cx="55" cy="22" r="7" fill="#00a884" />
-        <text x="55" y="25.5" fontSize="8" fontWeight="bold" fill="white" textAnchor="middle">$</text>
+        <circle cx="56" cy="20" r="7.5" fill="#00a884" />
+        <text x="56" y="23.8" fontSize="8.5" fontWeight="900" fill="white" textAnchor="middle">$</text>
       </svg>
     </div>
   );
@@ -281,12 +291,12 @@ export default function CashFlowProApp() {
 
   useEffect(() => {
     setIsClient(true);
-    const p = localStorage.getItem("cfp_kings_products_v8");
-    const s = localStorage.getItem("cfp_kings_sales_v8");
-    const e = localStorage.getItem("cfp_kings_expenses_v8");
-    const d = localStorage.getItem("cfp_kings_debts_v8");
-    const c = localStorage.getItem("cfp_kings_capital_v8");
-    const b = localStorage.getItem("cfp_kings_budgets_v8");
+    const p = localStorage.getItem("cfp_kings_products_v10");
+    const s = localStorage.getItem("cfp_kings_sales_v10");
+    const e = localStorage.getItem("cfp_kings_expenses_v10");
+    const d = localStorage.getItem("cfp_kings_debts_v10");
+    const c = localStorage.getItem("cfp_kings_capital_v10");
+    const b = localStorage.getItem("cfp_kings_budgets_v10");
 
     if (p) setProducts(JSON.parse(p));
     if (s) setSales(JSON.parse(s));
@@ -298,12 +308,12 @@ export default function CashFlowProApp() {
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("cfp_kings_products_v8", JSON.stringify(products));
-      localStorage.setItem("cfp_kings_sales_v8", JSON.stringify(sales));
-      localStorage.setItem("cfp_kings_expenses_v8", JSON.stringify(expenses));
-      localStorage.setItem("cfp_kings_debts_v8", JSON.stringify(debts));
-      localStorage.setItem("cfp_kings_capital_v8", JSON.stringify(capitalLogs));
-      localStorage.setItem("cfp_kings_budgets_v8", JSON.stringify(categoryBudgets));
+      localStorage.setItem("cfp_kings_products_v10", JSON.stringify(products));
+      localStorage.setItem("cfp_kings_sales_v10", JSON.stringify(sales));
+      localStorage.setItem("cfp_kings_expenses_v10", JSON.stringify(expenses));
+      localStorage.setItem("cfp_kings_debts_v10", JSON.stringify(debts));
+      localStorage.setItem("cfp_kings_capital_v10", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_kings_budgets_v10", JSON.stringify(categoryBudgets));
     }
   }, [products, sales, expenses, debts, capitalLogs, categoryBudgets, isClient]);
 
@@ -344,12 +354,11 @@ export default function CashFlowProApp() {
   const averageMarginRatio = totalRevenue > 0 ? (grossProfit / totalRevenue) : 0.45;
   const bepRevenue = averageMarginRatio > 0 ? (totalExpenses / averageMarginRatio) : 0;
 
-  // Format Rupiah dengan Titik Pemisah Ribuan
   const formatIDR = (val: number) => {
     return "Rp " + new Intl.NumberFormat("id-ID").format(Math.round(val || 0));
   };
 
-  // ================= POS CART LOGIC DENGAN VALIDASI STOK KETAT =================
+  // ================= VALIDASI STOK KASIR =================
   const addToCart = (product: Product) => {
     if (product.stock <= 0) {
       toast.error("Stok Kosong!", { description: `${product.name} saat ini habis (0 pcs).` });
@@ -410,12 +419,11 @@ export default function CashFlowProApp() {
       return;
     }
 
-    // Re-check seluruh stok sebelum proses bayar
     for (const item of cart) {
       const prod = products.find(p => p.id === item.productId);
       if (!prod || item.qty > prod.stock) {
         toast.error("Gagal Memproses Transaksi!", {
-          description: `Jumlah ${item.name} (${item.qty} pcs) melebihi stok yang ada (${prod?.stock || 0} pcs).`
+          description: `Jumlah ${item.name} (${item.qty} pcs) melebihi stok (${prod?.stock || 0} pcs).`
         });
         return;
       }
@@ -613,15 +621,17 @@ export default function CashFlowProApp() {
       {/* ================= DESKTOP SIDEBAR ================= */}
       <aside className="w-64 bg-white border-r border-sky-100 flex flex-col justify-between hidden lg:flex shadow-[0_8px_30px_rgba(0,100,200,0.04)] z-10">
         <div>
-          {/* Brand Header dengan Logo Baru */}
+          {/* Brand Header: Logo + Kings County Roasters + by CashFlow Pro */}
           <div className="p-4 border-b border-sky-100 bg-gradient-to-r from-sky-50/70 to-white flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <KingsCountyLogo className="h-9 w-9 flex-shrink-0" />
+              <BrandLogo className="h-9 w-9" />
               <div>
-                <span className="font-black text-sm tracking-tight text-slate-900 leading-none block">
-                  Kings County
+                <span className="font-black text-sm tracking-tight text-slate-900 leading-tight block">
+                  Kings County Roasters
                 </span>
-                <span className="text-[10px] font-extrabold text-[#0060af] tracking-wide block mt-0.5">Roasters</span>
+                <span className="text-[10px] font-extrabold text-[#0060af] tracking-tight block mt-0.5">
+                  by CashFlow Pro
+                </span>
               </div>
             </div>
             <span className="text-[9px] bg-sky-100 text-[#0060af] font-black px-2 py-0.5 rounded-full">v2.1</span>
@@ -703,7 +713,7 @@ export default function CashFlowProApp() {
         {/* Top Navbar */}
         <header className="bg-white/90 backdrop-blur-md border-b border-sky-100 px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-xs">
           <div className="flex items-center gap-3">
-            <KingsCountyLogo className="h-8 w-8 lg:hidden flex-shrink-0" />
+            <BrandLogo className="h-8 w-8 lg:hidden" />
             <div>
               <h1 className="text-base font-black text-slate-900">
                 {activeTab === "dashboard" && "Dashboard Eksekutif"}
@@ -717,7 +727,9 @@ export default function CashFlowProApp() {
                 {activeTab === "analytics" && "Analisis Break Even Point & Margin"}
                 {activeTab === "ai" && "AI Financial Advisor"}
               </h1>
-              <p className="text-[10px] text-slate-400 font-semibold">Kings County Roasters • Manajemen Finansial Modern</p>
+              <p className="text-[10px] text-slate-500 font-bold">
+                Kings County Roasters <span className="text-[#0060af] font-extrabold">• by CashFlow Pro</span>
+              </p>
             </div>
           </div>
 
@@ -743,7 +755,7 @@ export default function CashFlowProApp() {
           {/* ================= 1. DASHBOARD VIEW ================= */}
           {activeTab === "dashboard" && (
             <>
-              {/* 4 Kartu Metrik Finansial dengan Titik Ribuan */}
+              {/* 4 Kartu Metrik Finansial */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 
                 {/* 1. Omzet */}
@@ -803,7 +815,7 @@ export default function CashFlowProApp() {
                 </div>
               </div>
 
-              {/* 8 Menu Akses Cepat Warna-Warni */}
+              {/* 8 Menu Akses Cepat */}
               <div className="bg-white p-5 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.05)] space-y-3">
                 <div className="flex justify-between items-center border-b border-slate-100 pb-2">
                   <span className="text-xs font-black text-[#0060af]">Layanan Finansial Kings County Roasters</span>
@@ -1030,17 +1042,17 @@ export default function CashFlowProApp() {
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {products.map(p => (
                       <tr key={p.id} className="hover:bg-slate-50 transition">
-                        <td className="py-3 px-4 font-mono text-slate-400">{p.sku}</td>
-                        <td className="py-3 px-4 font-bold text-slate-900">{p.name}</td>
-                        <td className="py-3 px-4 text-slate-500">{formatIDR(p.costPrice)}</td>
-                        <td className="py-3 px-4 font-bold text-slate-900">{formatIDR(p.sellPrice)}</td>
-                        <td className="py-3 px-4 text-emerald-600 font-black">+{formatIDR(p.sellPrice - p.costPrice)}</td>
-                        <td className="py-3 px-4">
+                        <td className="py-3.5 px-4 font-mono text-slate-400">{p.sku}</td>
+                        <td className="py-3.5 px-4 font-bold text-slate-900">{p.name}</td>
+                        <td className="py-3.5 px-4 text-slate-500">{formatIDR(p.costPrice)}</td>
+                        <td className="py-3.5 px-4 font-bold text-slate-900">{formatIDR(p.sellPrice)}</td>
+                        <td className="py-3.5 px-4 text-emerald-600 font-black">+{formatIDR(p.sellPrice - p.costPrice)}</td>
+                        <td className="py-3.5 px-4">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${p.stock <= p.minStock ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}`}>
                             {p.stock} pcs {p.stock <= p.minStock ? "(Kritis)" : ""}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-center">
+                        <td className="py-3.5 px-4 text-center">
                           <button
                             onClick={() => openEditModal(p)}
                             className="p-1.5 bg-sky-50 hover:bg-sky-100 text-[#0060af] rounded-lg font-bold inline-flex items-center gap-1 text-[11px] border border-sky-200"
@@ -1080,10 +1092,10 @@ export default function CashFlowProApp() {
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {expenses.map(e => (
                       <tr key={e.id} className="hover:bg-slate-50 transition">
-                        <td className="py-3 px-4 text-slate-400">{e.date}</td>
-                        <td className="py-3 px-4"><span className="bg-rose-50 border border-rose-200 text-rose-800 px-2 py-0.5 rounded-lg text-[10px] font-bold">{e.category}</span></td>
-                        <td className="py-3 px-4 text-slate-800">{e.notes}</td>
-                        <td className="py-3 px-4 text-right font-black text-rose-600">-{formatIDR(e.amount)}</td>
+                        <td className="py-3.5 px-4 text-slate-400">{e.date}</td>
+                        <td className="py-3.5 px-4"><span className="bg-rose-50 border border-rose-200 text-rose-800 px-2 py-0.5 rounded-lg text-[10px] font-bold">{e.category}</span></td>
+                        <td className="py-3.5 px-4 text-slate-800">{e.notes}</td>
+                        <td className="py-3.5 px-4 text-right font-black text-rose-600">-{formatIDR(e.amount)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1120,16 +1132,16 @@ export default function CashFlowProApp() {
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {debts.map(d => (
                       <tr key={d.id} className="hover:bg-slate-50 transition">
-                        <td className="py-3 px-4"><span className={`px-2 py-0.5 rounded-lg text-[10px] font-black ${d.type === 'Piutang' ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'}`}>{d.type}</span></td>
-                        <td className="py-3 px-4 font-bold text-slate-900">{d.person}</td>
-                        <td className="py-3 px-4 font-black text-slate-900">{formatIDR(d.amount)}</td>
-                        <td className="py-3 px-4 text-slate-500">{d.dueDate}</td>
-                        <td className="py-3 px-4 text-center">
+                        <td className="py-3.5 px-4"><span className={`px-2 py-0.5 rounded-lg text-[10px] font-black ${d.type === 'Piutang' ? 'bg-amber-100 text-amber-900' : 'bg-rose-100 text-rose-900'}`}>{d.type}</span></td>
+                        <td className="py-3.5 px-4 font-bold text-slate-900">{d.person}</td>
+                        <td className="py-3.5 px-4 font-black text-slate-900">{formatIDR(d.amount)}</td>
+                        <td className="py-3.5 px-4 text-slate-500">{d.dueDate}</td>
+                        <td className="py-3.5 px-4 text-center">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black ${d.isPaid ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}`}>
                             {d.isPaid ? 'LUNAS' : 'BELUM'}
                           </span>
                         </td>
-                        <td className="py-3 px-4 text-center">
+                        <td className="py-3.5 px-4 text-center">
                           <button onClick={() => handleToggleDebtSettled(d.id)} className="text-[10px] bg-sky-50 hover:bg-sky-100 text-[#0060af] border border-sky-200 px-3 py-1 rounded-xl font-bold">
                             {d.isPaid ? 'Batal' : 'Tandai Lunas'}
                           </button>
@@ -1165,10 +1177,10 @@ export default function CashFlowProApp() {
                   <tbody className="divide-y divide-slate-100 font-medium">
                     {capitalLogs.map(c => (
                       <tr key={c.id} className="hover:bg-slate-50 transition">
-                        <td className="py-3 px-4 text-slate-400">{c.date}</td>
-                        <td className="py-3 px-4 font-bold text-slate-900">{c.type}</td>
-                        <td className="py-3 px-4 text-slate-600">{c.notes}</td>
-                        <td className="py-3 px-4 text-right font-black text-slate-900">{formatIDR(c.amount)}</td>
+                        <td className="py-3.5 px-4 text-slate-400">{c.date}</td>
+                        <td className="py-3.5 px-4 font-bold text-slate-900">{c.type}</td>
+                        <td className="py-3.5 px-4 text-slate-600">{c.notes}</td>
+                        <td className="py-3.5 px-4 text-right font-black text-slate-900">{formatIDR(c.amount)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1194,7 +1206,7 @@ export default function CashFlowProApp() {
                 <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.06)] space-y-4 text-xs">
                   <div className="border-b border-slate-100 pb-3 text-center">
                     <h3 className="font-black text-base text-[#0060af] uppercase">Laporan Laba Rugi (SAK EMKM)</h3>
-                    <p className="text-[10px] text-slate-400">Kings County Roasters • Pemilik: Peter</p>
+                    <p className="text-[10px] text-slate-500 font-bold mt-0.5">Kings County Roasters • by CashFlow Pro</p>
                   </div>
                   <div className="space-y-2.5">
                     <div className="flex justify-between"><span>Penjualan Bersih (Omzet):</span> <span className="font-bold text-slate-900">{formatIDR(totalRevenue)}</span></div>
@@ -1213,7 +1225,7 @@ export default function CashFlowProApp() {
                 <div className="bg-white p-6 rounded-3xl border border-sky-100 shadow-[0_8px_25px_rgba(0,100,200,0.06)] space-y-4 text-xs">
                   <div className="border-b border-slate-100 pb-3 text-center">
                     <h3 className="font-black text-base text-[#0060af] uppercase">Neraca Sederhana</h3>
-                    <p className="text-[10px] text-slate-400">Kings County Roasters</p>
+                    <p className="text-[10px] text-slate-500 font-bold mt-0.5">Kings County Roasters • by CashFlow Pro</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-sky-50/50 p-4 rounded-2xl border border-sky-100">
@@ -1317,14 +1329,14 @@ export default function CashFlowProApp() {
 
       {/* ================= MODALS (POPUP) ================= */}
 
-      {/* 1. POS MODAL (DENGAN PROTEKSI STOK & METODE UMUM) */}
+      {/* 1. POS MODAL */}
       {showAddSaleModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-3 sm:p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-5 shadow-2xl space-y-3.5 border border-sky-100 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b pb-2">
               <div>
                 <span className="text-xs font-black text-[#0060af] block">Kasir POS Multi-Item</span>
-                <span className="text-[10px] text-slate-400 font-semibold">Kings County Roasters</span>
+                <span className="text-[10px] text-slate-500 font-bold">Kings County Roasters • by CashFlow Pro</span>
               </div>
               <button onClick={() => setShowAddSaleModal(false)} className="text-slate-400 hover:text-slate-700 text-xs">✕</button>
             </div>
@@ -1741,7 +1753,8 @@ export default function CashFlowProApp() {
           <div className="bg-white rounded-3xl max-w-xs w-full p-5 shadow-2xl space-y-3 font-mono text-[11px] border border-sky-100">
             <div className="text-center border-b pb-2">
               <span className="font-black uppercase block text-xs text-[#0060af]">KINGS COUNTY ROASTERS</span>
-              <span className="text-[9px] text-slate-400">Kasir: {activeReceiptSale.cashier}</span>
+              <span className="text-[9px] text-slate-400 block mt-0.5">by CashFlow Pro</span>
+              <span className="text-[9px] text-slate-500">Kasir: {activeReceiptSale.cashier}</span>
             </div>
             <div className="space-y-1 text-slate-600">
               <div className="flex justify-between"><span>Faktur:</span> <strong>{activeReceiptSale.invoiceNo}</strong></div>
