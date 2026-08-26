@@ -11,62 +11,55 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-// ================= LOGO DINAMIS =================
-function BrandLogo({ className = "h-9 w-9" }: { className?: string }) {
-  const [imgError, setImgError] = useState(false);
-
-  if (!imgError) {
-    return (
-      <img 
-        src="/logo.png" 
-        alt="Kings County Roasters Logo" 
-        onError={() => setImgError(true)}
-        className={`${className} object-contain flex-shrink-0 drop-shadow-xs`}
-      />
-    );
-  }
-
-  // Fallback Vektor Logo
+// ================= LOGO VEKTOR RESMI (ANTI PATAH / 100% MUNCUL) =================
+function BrandLogo({ className = "h-10 w-10" }: { className?: string }) {
   return (
     <div className={`relative flex items-center justify-center ${className} flex-shrink-0`}>
       <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full drop-shadow-xs">
         <defs>
-          <linearGradient id="cfBlueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0052cc" />
-            <stop offset="60%" stopColor="#0080eb" />
-            <stop offset="100%" stopColor="#00c8b3" />
+          <linearGradient id="kcrBlueGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#004db3" />
+            <stop offset="50%" stopColor="#0077d6" />
+            <stop offset="100%" stopColor="#00a884" />
           </linearGradient>
-          <linearGradient id="cfGreenGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#0066cc" />
-            <stop offset="40%" stopColor="#00a884" />
+          <linearGradient id="kcrGreenGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#0077d6" />
+            <stop offset="40%" stopColor="#00b37e" />
             <stop offset="100%" stopColor="#10b981" />
           </linearGradient>
         </defs>
+        {/* Curved Wave Line to Arrow */}
         <path 
           d="M 12 78 C 22 78 26 58 35 62 C 44 66 48 84 58 84 C 68 84 74 60 88 32" 
-          stroke="url(#cfBlueGrad)" 
+          stroke="url(#kcrBlueGrad)" 
           strokeWidth="11" 
           strokeLinecap="round" 
           strokeLinejoin="round" 
         />
+        {/* Arrow Head */}
         <path 
-          d="M 70 24 L 90 28 L 84 48 Z" 
-          fill="url(#cfGreenGrad)" 
+          d="M 70 24 L 92 28 L 84 48 Z" 
+          fill="url(#kcrGreenGrad)" 
         />
+        {/* Upper Stylized F Curve */}
         <path 
           d="M 38 40 C 38 24 50 18 64 18 C 72 18 76 22 76 22" 
-          stroke="url(#cfGreenGrad)" 
+          stroke="url(#kcrGreenGrad)" 
           strokeWidth="8.5" 
           strokeLinecap="round" 
         />
         <path 
           d="M 38 46 C 45 46 58 46 62 46" 
-          stroke="url(#cfBlueGrad)" 
+          stroke="url(#kcrBlueGrad)" 
           strokeWidth="7.5" 
           strokeLinecap="round" 
         />
+        {/* Dollar Badge */}
         <circle cx="56" cy="20" r="7.5" fill="#00a884" />
         <text x="56" y="23.8" fontSize="8.5" fontWeight="900" fill="white" textAnchor="middle">$</text>
+        {/* Tiny shopping & scale dots on path */}
+        <circle cx="49" cy="80" r="3" fill="#ffffff" />
+        <circle cx="73" cy="58" r="3" fill="#ffffff" />
       </svg>
     </div>
   );
@@ -291,12 +284,12 @@ export default function CashFlowProApp() {
 
   useEffect(() => {
     setIsClient(true);
-    const p = localStorage.getItem("cfp_kings_products_v10");
-    const s = localStorage.getItem("cfp_kings_sales_v10");
-    const e = localStorage.getItem("cfp_kings_expenses_v10");
-    const d = localStorage.getItem("cfp_kings_debts_v10");
-    const c = localStorage.getItem("cfp_kings_capital_v10");
-    const b = localStorage.getItem("cfp_kings_budgets_v10");
+    const p = localStorage.getItem("cfp_kings_products_v11");
+    const s = localStorage.getItem("cfp_kings_sales_v11");
+    const e = localStorage.getItem("cfp_kings_expenses_v11");
+    const d = localStorage.getItem("cfp_kings_debts_v11");
+    const c = localStorage.getItem("cfp_kings_capital_v11");
+    const b = localStorage.getItem("cfp_kings_budgets_v11");
 
     if (p) setProducts(JSON.parse(p));
     if (s) setSales(JSON.parse(s));
@@ -308,12 +301,12 @@ export default function CashFlowProApp() {
 
   useEffect(() => {
     if (isClient) {
-      localStorage.setItem("cfp_kings_products_v10", JSON.stringify(products));
-      localStorage.setItem("cfp_kings_sales_v10", JSON.stringify(sales));
-      localStorage.setItem("cfp_kings_expenses_v10", JSON.stringify(expenses));
-      localStorage.setItem("cfp_kings_debts_v10", JSON.stringify(debts));
-      localStorage.setItem("cfp_kings_capital_v10", JSON.stringify(capitalLogs));
-      localStorage.setItem("cfp_kings_budgets_v10", JSON.stringify(categoryBudgets));
+      localStorage.setItem("cfp_kings_products_v11", JSON.stringify(products));
+      localStorage.setItem("cfp_kings_sales_v11", JSON.stringify(sales));
+      localStorage.setItem("cfp_kings_expenses_v11", JSON.stringify(expenses));
+      localStorage.setItem("cfp_kings_debts_v11", JSON.stringify(debts));
+      localStorage.setItem("cfp_kings_capital_v11", JSON.stringify(capitalLogs));
+      localStorage.setItem("cfp_kings_budgets_v11", JSON.stringify(categoryBudgets));
     }
   }, [products, sales, expenses, debts, capitalLogs, categoryBudgets, isClient]);
 
@@ -354,6 +347,7 @@ export default function CashFlowProApp() {
   const averageMarginRatio = totalRevenue > 0 ? (grossProfit / totalRevenue) : 0.45;
   const bepRevenue = averageMarginRatio > 0 ? (totalExpenses / averageMarginRatio) : 0;
 
+  // Format Rupiah dengan Titik Pemisah Ribuan
   const formatIDR = (val: number) => {
     return "Rp " + new Intl.NumberFormat("id-ID").format(Math.round(val || 0));
   };
@@ -621,10 +615,10 @@ export default function CashFlowProApp() {
       {/* ================= DESKTOP SIDEBAR ================= */}
       <aside className="w-64 bg-white border-r border-sky-100 flex flex-col justify-between hidden lg:flex shadow-[0_8px_30px_rgba(0,100,200,0.04)] z-10">
         <div>
-          {/* Brand Header: Logo + Kings County Roasters + by CashFlow Pro */}
+          {/* Brand Header: Logo Vektor + Kings County Roasters + by CashFlow Pro */}
           <div className="p-4 border-b border-sky-100 bg-gradient-to-r from-sky-50/70 to-white flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <BrandLogo className="h-9 w-9" />
+              <BrandLogo className="h-10 w-10" />
               <div>
                 <span className="font-black text-sm tracking-tight text-slate-900 leading-tight block">
                   Kings County Roasters
@@ -713,7 +707,7 @@ export default function CashFlowProApp() {
         {/* Top Navbar */}
         <header className="bg-white/90 backdrop-blur-md border-b border-sky-100 px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-xs">
           <div className="flex items-center gap-3">
-            <BrandLogo className="h-8 w-8 lg:hidden" />
+            <BrandLogo className="h-9 w-9 lg:hidden" />
             <div>
               <h1 className="text-base font-black text-slate-900">
                 {activeTab === "dashboard" && "Dashboard Eksekutif"}
